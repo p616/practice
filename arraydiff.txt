@@ -1,0 +1,31 @@
+Given an array A of integers and another non negative integer k, find if there exists 2 indices i and j such that A[i] - A[j] = k, i != j.
+
+
+int Solution::diffPossible(const vector<int> &A, int B) 
+{
+    // save value of each number in set
+    // subsequent entries will look in set for a mate
+    set<int> mates;
+    
+    for (int n : A)
+    {
+        // there are two possible mates for any given number
+        // for A[i]-A[j] = B; i<j and i>j both valid (i==j is not)
+        // ex: FOR A[i]=3, B=5 : A[j] = -2 (3 - -2 = 5) OR A[j] = 8 (8 - 3 = 5)
+        // NOTE: B is positive
+        int mate1 = (n - B);
+        int mate2 = (n + B);
+        
+        // if either one found in set, done
+        if ( (mates.find(mate1) != mates.end()) ||
+             (mates.find(mate2) != mates.end()) )
+        {
+            return 1;
+        }
+        
+        // otherwise add this to set for subsequent matching
+        mates.insert(n);
+    }
+    
+    return 0;
+}

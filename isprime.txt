@@ -1,0 +1,35 @@
+bool IsPrime(int n)
+{
+  if (n == 1)
+  {
+    return false;
+  }
+
+  int divisor = 2;
+  int mate = n/divisor;
+  while (divisor <= mate)
+  {
+    if (n%divisor == 0)
+    {
+      return false;
+    }
+    divisor++;
+    mate = n/divisor;
+  }
+
+  return true;
+}
+
+// Return 1 if A is prime, else 0
+int isPrime(int A) 
+{
+    int upperLimit = (int)(sqrt(A));
+    for (int i = 2; i <= upperLimit; i++) 
+    {
+        // 2 is prime
+        if (i < A && A % i == 0) 
+	    return 0;
+    }
+    // 0 and 1 are not prime
+    return (upperLimit != A);
+}

@@ -1,0 +1,26 @@
+She can jump on any cumulus cloud having a number that is equal to the number of
+        the current cloud plus 1 or 2
+            .She must avoid the thunderheads
+            .Determine the minimum number of jumps it will take Emma to jump
+                from her starting postion to the last
+                    cloud.It is always possible to win the
+                        game. 
+                        // Complete the jumpingOnClouds function below.
+            
+int
+jumpingOnClouds(vector<int> c) {
+  int jumps = 0;
+  int index = 0;
+  while (index < c.size() - 1) {
+    if (c[index] == 1) {
+      index++;
+    } else if (index + 2 < c.size() && c[index + 2] == 0) {
+      index += 2;
+      jumps++;
+    } else {
+      index++;
+      jumps++;
+    }
+  }
+  return jumps;
+}

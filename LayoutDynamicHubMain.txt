@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StorePage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Id>DynamicHubMain</Id>
+  <Title>zStore</Title>
+  <Type>DynamicHub</Type>
+  <Panes>
+    <Pane>
+      <Templates>
+        <Template>
+          <DataSource>
+      	     <Type>FeaturedApps</Type>
+	<Url>http://marketplaceedgeservice.windowsphone.com/v8/catalog/hubs?os={FullPhoneVersion}&amp;cc={DeviceUserGeoIDCountry}&amp;oc={DeviceOverrideCountry}&amp;lang={DeviceUserDefaultUILanguage}&amp;hw={DeviceHardwareBitmask}&amp;dm={DeviceModelName}&amp;oemId={DeviceRawOEMID}&amp;moId={MOUniqueID}&amp;hub=apps&amp;cf={ContentFilter}</Url>
+
+          </DataSource>
+          <Title>Featured</Title>
+          <Type>014</Type>
+          <Id>9884790e-e6b7-4197-90c7-739f96f7ed9e</Id>
+        </Template>
+        <Template>
+          <CollectionId>cf2258da-4b37-4571-86ae-7f583f54c019</CollectionId>         
+          <DataSource>
+            <Type>Applications</Type>
+            <Url>http://marketplaceedgeservice.windowsphone.com/v9/catalog/appCollections/cf2258da-4b37-4571-86ae-7f583f54c019/apps?os={FullPhoneVersion}&amp;cc={DeviceUserGeoIDCountry}&amp;oc={DeviceOverrideCountry}&amp;lang={DeviceUserDefaultUILanguage}&amp;hw={DeviceHardwareBitmask}&amp;dm={DeviceModelName}&amp;chunkSize=20&amp;cf={ContentFilter}</Url>
+          
+	  </DataSource>
+          <Title>Pet Owners</Title>
+          <Type>016</Type>
+          <Id>7482c7f5-d820-41d9-b71d-3205231df768</Id>
+        </Template>
+        <Template>
+          <CollectionId>f8935de8-1f51-4e49-bbc4-f3f7136873a0</CollectionId> 
+          <DataSource>
+            <Type>Applications</Type>
+            <Url>http://marketplaceedgeservice.windowsphone.com/v9/catalog/appCollections/f8935de8-1f51-4e49-bbc4-f3f7136873a0/apps?os={FullPhoneVersion}&amp;cc={DeviceUserGeoIDCountry}&amp;oc={DeviceOverrideCountry}&amp;lang={DeviceUserDefaultUILanguage}&amp;hw={DeviceHardwareBitmask}&amp;dm={DeviceModelName}&amp;chunkSize=20&amp;cf={ContentFilter}</Url>
+          
+	  </DataSource>
+          <Title>The Traveler</Title>
+          <Type>016</Type>
+          <Id>35ab5732-a26c-4d3a-8afb-4ba03d6f82be</Id>
+        </Template>
+        <Template>
+          <CollectionId>af7ab30c-5141-4123-bdd7-b7ec47019379</CollectionId> 
+          <DataSource>
+            <Type>Applications</Type>
+            <Url>http://marketplaceedgeservice.windowsphone.com/v9/catalog/appCollections/af7ab30c-5141-4123-bdd7-b7ec47019379/apps?os={FullPhoneVersion}&amp;cc={DeviceUserGeoIDCountry}&amp;oc={DeviceOverrideCountry}&amp;lang={DeviceUserDefaultUILanguage}&amp;hw={DeviceHardwareBitmask}&amp;dm={DeviceModelName}&amp;chunkSize=20&amp;cf={ContentFilter}</Url>
+          
+	  </DataSource>
+          <Title>For the Kids</Title>
+          <Type>016</Type>
+          <Id>f5dfcb67-a1e5-4458-873a-45efb7de8775</Id>
+        </Template>
+        <Template>
+          <DataSource>
+            <Type></Type>
+            <Url>file://c:/Test/Media/Store/HubMainCollections.xml</Url>
+          
+	  </DataSource>
+          <Title>Collections</Title>
+          <Type>012</Type>
+          <Id>c5cb781c-ca98-4aea-9dee-09ecc6aa8ccd</Id>
+        </Template>
+      </Templates>
+      <Id>bb946ef2-0361-421c-bdf7-5e9de4d5db43</Id>
+    </Pane>
+    <Pane>
+      <Templates>
+        <Template>
+          <DataSource>
+            <Type />
+            <Url>file://c:/Test/Media/Store/QuickLinkFeed.xml</Url>
+          
+	  </DataSource>
+          <Title>Quick Links</Title>
+          <Type>000</Type>
+          <Id>252ee6b0-693e-4e3b-8d4a-7140693363bb</Id>
+        </Template>
+      </Templates>
+      <Id>fd2f6fdd-919d-4217-b0fc-77c42978dca5</Id>
+    </Pane>
+    <Pane>
+      <Templates>
+        <Template>
+          <DataSource>
+            <Type />
+            <Url>file://c:/Test/Media/Store/CategoriesFeed.xml</Url>
+          
+	  </DataSource>
+          <Title>Categories</Title>
+          <Type>003</Type>
+          <Id>24bbd767-21ad-47d7-b292-25e3db6ef68b</Id>
+        </Template>
+      </Templates>
+      <Id>57c036e9-4702-4bf8-ba4a-c84bbc5432cc</Id>
+    </Pane>
+    <Pane>
+      <Templates>
+        <Template>
+          <DataSource>
+            <Type>ApplicationSuggestions</Type>
+            <Url>http://marketplaceedgeservice.windowsphone.com/v8/catalog/appSuggestions?os={FullPhoneVersion}&amp;cc={DeviceUserGeoIDCountry}&amp;oc={DeviceOverrideCountry}&amp;lang={DeviceUserDefaultUILanguage}&amp;hw={DeviceHardwareBitmask}&amp;dm={DeviceModelName}&amp;groupName=App_ForYou&amp;chunkSize=10&amp;oemId={DeviceRawOEMID}&amp;moId={MOUniqueID}&amp;excludeCategory=windowsphone.games&amp;cf={ContentFilter}</Url>
+          </DataSource>
+          <Title>For You</Title>
+          <SubType>ForYou</SubType>
+          <Type>017</Type>
+          <Id>40327f01-5cea-4f72-b5c6-2f7afb7657d7</Id>
+        </Template>
+      </Templates>
+      <Id>dc582bc9-7ec8-4084-90ee-131275d95e05</Id>
+    </Pane>    
+  </Panes>
+</StorePage>

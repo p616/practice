@@ -1,0 +1,49 @@
+vector<int> Solution::postorderTraversal(TreeNode* A) 
+{
+    vector<int> postorder;
+    
+    TreeNode *curr = A;
+    if (curr == NULL)
+    {
+        return postorder;
+    }
+    
+    // LRH
+    stack<TreeNode*> s;
+    do
+    {
+         // push lefts onto stack
+        while (curr != NULL)
+        {
+            if (curr->right != NULL)
+            {
+                s.push(curr->right);
+            }
+            s.push(curr);
+
+            curr = curr->left;
+        }
+        
+        curr = s.top();
+        s.pop();
+        
+        // process right next (if not processed)
+        if ( (curr->right != NULL) && !s.empty() && (s.top() == curr->right) )
+        {
+                        TreeNode *temp = s.top();
+            s.pop();
+            
+            s.push(curr);
+            curr = temp;
+        }
+        else
+        {
+            // process head
+            postorder.push_back(curr->val);
+            curr = NULL;
+        }
+    }
+    while (!s.empty());
+    
+    return postorder;
+}

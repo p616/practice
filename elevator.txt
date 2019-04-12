@@ -1,0 +1,45 @@
+#include <iostream>
+#include <limits>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() 
+{
+    int nFloors;
+    cin >> nFloors;
+    
+    vector<int> v;
+	for (int n = 0; n<nFloors; ++n)
+	{
+	    int peeps;
+	    cin >> peeps;
+	    v.push_back(peeps);
+	}
+	
+	int minU = numeric_limits<int>::max();
+	
+	// choose hold floor
+	for (int i = 0; i<nFloors; i++)
+	{
+	    int currMin = 0;
+	    
+	    // calculate electricity per floor
+	    for (int j=0; j<nFloors; j++)
+	    {
+	        // # people per floor * 
+	        //      2x day (floor to base, hold to base, hold to floor) 
+	        currMin += ( v[j] * ( 2 * ( j + i + abs(i-j) ) ) );
+	        if (currMin > minU)
+	        {
+	            break;
+	        }
+	    }
+	    
+	    minU = min(minU, currMin);
+	}
+	
+	cout << minU;
+	return 0;
+}

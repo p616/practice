@@ -1,0 +1,91 @@
+convert sorted linked list to bst
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+ 
+// left param is in/out (in = linked list, out = first half of list)
+// right param is output only (in = NULL, out = 2nd half of list)
+// return value is middle list node as TreeNode 
+// frees memory for list middle list node
+TreeNode* splitList(ListNode* &left, ListNode* &right)
+{
+    // initialize right list output param
+    right = NULL;
+    
+    // empty list
+    if (left == NULL)
+    {
+        // empty list
+        return NULL;
+    }
+    
+    // one element list
+    if (left->next == NULL)
+    {
+        TreeNode *root = new TreeNode(left->val);
+        delete(left);
+        
+        // no left subtree, null out left list output param 
+        left = NULL;
+                
+        return root;
+    }
+    
+    // find middle of list, keeping track of prev
+    ListNode *prev = left;
+    ListNode *slow = left->next;
+    ListNode *fast = left->next->next;
+    while (fast != NULL && fast->next != NULL)
+    {
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    
+    // root = middle list node (slow)
+    // set prev->next = NULL (truncates list pointed to by left at middle - 1)
+    // set right = slow->next (returns 2nd half of list, middle + 1, in right param)
+    TreeNode *root = new TreeNode(slow->val);
+    prev->next = NULL;
+    right = slow->next;
+    delete(slow);
+    
+    return root;
+}
+
+TreeNode* Solution::sortedListToBST(ListNode* A) 
+{
+    if (A == NULL)
+    {
+        return NULL;
+    }
+    
+    // splitList:
+    // left param is in/out (in = linked list, out = first half of list)
+    // right param is output only (in = NULL, out = 2nd half of list)
+    // return value is middle list node as TreeNode 
+    ListNode *left = A;
+    ListNode *right = NULL;
+    TreeNode *root = splitList(left, right);
+    
+    // repeat above for left and right subtrees
+    root->left = sortedListToBST(left);
+    root->right = sortedListToBST(right);
+    
+    return root;
+}

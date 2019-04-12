@@ -1,0 +1,31 @@
+
+string isBalanced(string s) 
+{
+    bool balanced = true;
+
+    const string opens = "{[(";
+    const string closes = "}])";
+
+    stack<char> brackets;
+
+    for (char c : s)
+    {
+        string::size_type pos;
+        if (opens.find(c) != string::npos)
+        {
+            brackets.push(c);
+        }
+        else if ((pos = closes.find(c)) != string::npos)
+        {
+            // top of stack should be matching open
+            if (brackets.empty() || brackets.top() != opens[pos])
+            {
+                balanced = false;
+                break;
+            }
+            brackets.pop();
+        }
+    }
+
+    return (balanced && brackets.empty()) ? "YES" : "NO";
+}

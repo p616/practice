@@ -1,0 +1,12 @@
+
+string Solution::findDigitsInBinary(int A) 
+{
+    string binary;
+    while (A > 0)
+    {
+        binary.insert(0, ((A & 1) ? "1" : "0"));
+        A >>= 1;
+    }
+    
+    return (binary.empty() ? "0" : binary);
+}

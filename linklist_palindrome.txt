@@ -1,0 +1,69 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+int Solution::lPalin(ListNode* A) 
+{
+    if (A == NULL)
+    {
+        return 0;
+    }
+    
+    if (A->next == NULL)
+    {
+        return 1;
+    }
+    
+
+    // find center of list
+    ListNode *pSlow = A->next;
+    ListNode *pFast = A->next->next;
+    
+    // reversing first half of list as we go
+    ListNode *prev = A;
+    prev->next = NULL;
+    
+    while (pFast != NULL && pFast->next != NULL)
+    {
+        // reversing first half of list as we go
+        ListNode *temp = pSlow;
+        pSlow = pSlow->next;
+        temp->next = prev;
+        prev = temp;
+        
+        pFast = pFast->next->next;
+    }
+    
+    // set up pointers based on odd/even length list
+    if (pFast == NULL)
+    {
+        // even, pSlow pointing at 2nd half of list
+        pFast = pSlow;
+        pSlow = prev;
+    }
+    else
+    {
+        // odd, pSlow pointing at middle
+        pFast = pSlow->next;
+        pSlow = prev;
+    }
+
+    // check for palindrome from center
+    while (pSlow != NULL)
+    {
+        if (pSlow->val != pFast->val)
+        {
+            return 0;
+        }
+        
+        // next = prev for pSlow
+        pSlow = pSlow->next; 
+        pFast = pFast->next;
+    }
+    
+    return 1;
+}

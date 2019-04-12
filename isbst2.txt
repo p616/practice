@@ -1,0 +1,55 @@
+
+
+    int TreeMAX(Node* root, int currMax)
+    {
+        if (root == nullptr)
+        {
+            return currMax;
+        }
+        
+        if (root->data > currMax)
+        {
+            currMax = root->data;
+        }
+        
+        currMax = max(currMax, TreeMAX(root->left, currMax));
+        currMax = max(currMax, TreeMAX(root->right, currMax));
+        
+        return currMax;
+    }
+
+    int TreeMIN(Node* root, int currMin)
+    {
+        if (root == nullptr)
+        {
+            return currMin;
+        }
+        
+        if (root->data < currMin)
+        {
+            currMin = root->data;
+        }
+        
+        currMin = min(currMin, TreeMIN(root->left, currMin));
+        currMin = min(currMin, TreeMIN(root->right, currMin));
+        
+        return currMin;
+    }
+
+	bool checkBST(Node* root) 
+    {
+		if (root == nullptr)
+        {
+            return true;
+        }
+        
+        if ( root->data > TreeMAX(root->left, INT32_MIN) && 
+             root->data < TreeMIN(root->right, INT32_MAX) &&
+             checkBST(root->left) &&
+             checkBST(root->right) )
+        {
+            return true;
+        }
+        
+        return false;
+	}

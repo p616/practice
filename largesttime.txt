@@ -1,0 +1,144 @@
+//Given an array of 4 digits, return the largest 24 hour time that can be made.
+
+class Solution {
+public:
+    string largestTimeFromDigits(vector<int>& A) 
+    {
+        string ret = "";
+        vector<int> time;
+        
+        sort(A.begin(), A.end(), std::greater<int>());
+        
+        // For "2" in first pos need 2 + <0,1,2,3> + <0,1,2,3,4,5> + <any> (20-23:00-59)
+        // For "1" in first pos need 1 + <any> + <0,1,2,3,4,5> + <any> (10-19:00-59)
+        // For "0" in first pos need 0 + <any> + <0,1,2,3,4,5> + <any> (00-09:00-59)
+        
+        // If max possible first digit found (2) try it first
+        // Otherwise 1 or 0 are both equally restricted, don't need to try both
+        //  ==> MAX of 2 loops (2 then 1 or 0)
+        
+        vector<int> testA;
+        int maxFirstDigit = 2;
+        bool done = false;
+        
+        while (!done)
+        {
+            // copy input vector to our test vector
+            testA = A;
+            
+            // If no digits less than max first digit, done
+            int pos = findlargestlessthan(testA, maxFirstDigit+1);
+            if (pos == -1)
+            {
+                break;
+            }   
+                
+            // copy first digit to time vector and remove from test vector
+            time.push_back(testA[pos]);
+            testA.erase(testA.begin()+pos);
+            
+            // Most restricted case starts with 2
+            if (time[0] == 2)
+            {
+                // Next most restricted digit = 2nd
+                pos = findlargestlessthan(testA, 4);
+                if (pos != -1)
+                {
+                    time.push_back(testA[pos]);
+                    testA.erase(testA.begin()+pos);
+                    
+                    // Next is 3rd
+                    pos = findlargestlessthan(testA, 6);
+                    if (pos != -1)
+                    {
+                        // 4th can be any #, done
+                        time.push_back(testA[pos]);
+                        testA.erase(testA.begin()+pos);
+                        time.push_back(testA[0]);
+                        break;
+                    }
+                }
+                
+            }
+            // Otherwise, 1 and 0 equally restricted
+            else
+            {
+                done = true;
+                
+                // Next most restricted digit = 3rd - try to find one
+                pos = findlargestlessthan(testA, 6);
+                if (pos != -1)
+                {                  
+                    // 2nd and 4th can be any #, so done
+                    
+                    int third = testA[pos];
+                    testA.erase(testA.begin()+pos);
+                    
+                    // Just need to verify that 3rd is correct...
+                    // Found one possible for 3rd, but if more than one:
+                    //  if 2nd largest possible value for third is now in first pos,  
+                    //  need to swap 2nd and third
+                    pos = findlargestlessthan(testA, 6);
+                    if (pos == 0)
+                    {
+                        // swap 2nd and third
+                        time.push_back(third);
+                        time.push_back(testA[0]);
+                    }
+                    else
+                    {
+                        // correct as-is
+                        time.push_back(testA[0]);
+                        time.push_back(third);                       
+                    }
+                    time.push_back(testA[1]); 
+                    
+                    break;
+                }
+                
+            }
+            
+            // no valid time found
+            // reset time vector and try next largest first digit             
+            maxFirstDigit = time[0]-1; 
+            time.clear();
+        }
+        
+        if (time.size() == 4)
+        {
+            ret = to_string(time[0]);
+            ret += to_string(time[1]);
+            ret += ':';
+            ret += to_string(time[2]);
+            ret += to_string(time[3]);
+        }
+        
+        return ret;
+        
+    }
+    
+    int findlargestlessthan(vector<int> A, int n)
+    {
+        int pos = -1;       
+        int largest = -1;
+        
+        for (int i=0; i<A.size(); i++)
+        {
+            if (A[i] < n)
+            {
+                if (A[i] > largest)
+                {
+                    largest = A[i];
+                    pos = i;
+                }
+            }
+            
+            if (largest == n-1)
+            {
+                break;
+            }
+        }
+        
+        return pos;
+    }
+};

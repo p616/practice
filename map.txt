@@ -1,0 +1,35 @@
+std::unordered_map<int,int> set;
+    
+for (int i = 0 ; i < A.size(); ++i)
+    
+{
+        
+	auto elem = set.find(A[i]);
+        
+	if (elem == set.end())
+        
+	{
+            
+		set.insert({A[i], 0});
+        
+	}
+        
+	else
+        
+	{
+            
+		elem->second++;
+        
+	}
+    
+}
+    
+for (auto s = set.begin(); s != set.end(); s++)
+    
+{
+        
+	if (s->second == A.size()/2)
+            
+		return s->first;
+    
+}

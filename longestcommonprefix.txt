@@ -1,0 +1,46 @@
+Return the longest common prefix string amongst an array of strings.
+
+string Solution::longestCommonPrefix(vector<string> &A) 
+{
+    // empty vector
+    if (A.size() == 0)
+    {
+        return "";
+    }
+    
+    // only one string?
+    // "common" prefix is length of string
+    if (A.size() == 1)
+    {
+        return A[0];
+    }
+    
+    string prefix = "";
+    
+    // loop thru chars in first string in vector
+    // break out of loop if reach end of any other string first
+    for (int i=0; i<A[0].size(); ++i)
+    {
+        // next char of first string
+        char c = A[0][i];
+        
+        // test c against next char in all other strings
+        for (int j=1; j<A.size(); ++j)
+        {
+            string s = A[j];
+            if (i == s.size() || (c != s[i]))
+            {
+                // matched all chars in this string, or
+                // char at pos i in this string doesn't match
+                // return the prefix found so far
+                return prefix;
+            }
+        }
+        
+        // otherwise all strings have same char at pos i
+        // append matched char to common prefix and try next char
+        prefix += c;
+    }
+    
+    return prefix;
+}

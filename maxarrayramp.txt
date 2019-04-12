@@ -1,0 +1,22 @@
+Given an array A of integers, a ramp is a tuple (i, j) for which i < j and A[i] <= A[j].  The width of such a ramp is j - i.
+
+Find the maximum width of a ramp in A.  If one doesn't exist, return 0.
+
+    int maxWidthRamp(vector<int>& A) 
+    {
+        int tuples = 1;
+        for (int i=A.size()-1; i>=1; i--)
+        {
+            int start = 0;
+            int end = i;
+            for (int j=0; j<tuples; ++j)
+            {
+                if (A[start++] <= A[end++])
+                {
+                    return i;
+                }
+            }
+            tuples++;
+        }
+        return 0;
+    }

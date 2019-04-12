@@ -1,0 +1,33 @@
+
+// Complete the makeAnagram function below.
+int makeAnagram(string a, string b) 
+{
+    string source(a);
+    string dest(b); 
+    if (a.length() > b.length())
+    {
+        source = b;
+        dest = a;
+    }
+    
+    int toremove = 0;
+    for (int i=0; i < source.length(); ++i)
+    {
+        string::size_type index = dest.find(source[i]);
+        if (index != string::npos)
+        {
+            // remove char from dest so don't count again
+            dest.erase(index, 1);
+        }
+        else
+        {
+            // need to remove this char from source string
+            toremove++;
+        }
+    }
+
+    toremove += dest.length();
+
+    return toremove;
+
+}

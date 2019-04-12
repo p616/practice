@@ -1,0 +1,36 @@
+Input: A = [1,2,0,0], K = 34
+Output: [1,2,3,4]
+Explanation: 1200 + 34 = 1234
+
+
+   vector<int> addToArrayForm(vector<int>& A, int K) 
+    {   
+        vector<int> ret(A);
+        
+        int pos = (ret.size()-1);
+        int carry = 0;
+        
+        // array can have less elements than K has digits
+        // and number can carry to create a larger array
+        while (pos >= 0 || K > 0 || carry != 0)
+        {
+            int digit = K % 10;
+            
+            int sum = (pos >=0 ? ret[pos] + digit + carry : digit + carry);
+            
+            carry = sum / 10;
+            
+            if (pos >= 0)
+            {
+                ret[pos] = sum % 10;   
+            }
+            else
+            {
+                ret.insert(ret.begin(), sum % 10);
+            }
+            
+            K /= 10;
+            pos--;
+        }
+        return ret;
+    }

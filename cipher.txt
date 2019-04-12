@@ -1,0 +1,87 @@
+Every message is encoded to its binary representation. Then it is written down k times, shifted by 0,1..k bits. Each of the columns is XORed together to get the final encoded string.
+
+If b=1001011 and k=4 it looks like so: 
+
+1001011     shift 0 
+01001011    shift 1
+001001011   shift 2
+0001001011  shift 3
+----------
+1110101001  <- XORed/encoded string s
+
+
+
+
+// Complete the cipher function below.
+string cipher(int k, string s) 
+{
+    int lenMsg = (s.size() - k + 1);
+
+    // decoded msg
+    string msg(lenMsg, 0);
+
+    int lMsg = 0;
+    int rMsg = (lenMsg-1);
+    
+    int lCode = 0;
+    int rCode = (s.size()-1);
+    
+    // done when n=1 or n=2, regardless of shift
+    msg[lMsg++] = s[lCode++];
+    msg[rMsg--] = s[rCode--];
+
+    int lDecode = 0;
+    int rDecode = 0;
+    
+    while (lMsg <= rMsg)
+    {
+        if ((lMsg - k) >= 0)
+        {
+            lDecode ^= ((int)msg[lMsg-k]);
+            lDecode ^= ((int)msg[lMsg-1]);        
+        }    
+        else
+        {
+            lDecode = ((int)s[lCode-1]);
+        }
+        msg[lMsg++] = ((lDecode ^ ((int)s[lCode++])) ? '1' : '0');
+
+        if ((rMsg + k) < lenMsg)
+        {
+            rDecode ^= ((int)msg[rMsg+k]);
+            rDecode ^= ((int)msg[rMsg+1]);
+        }
+        else
+        {
+            rDecode = ((int)s[rCode+1]); 
+        }
+        msg[rMsg--] = ((rDecode ^ ((int)s[rCode--])) ? '1' : '0');
+    }
+
+    return msg;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nk_temp;
+    getline(cin, nk_temp);
+
+    vector<string> nk = split_string(nk_temp);
+
+    int n = stoi(nk[0]);
+
+    int k = stoi(nk[1]);
+
+    string s;
+    getline(cin, s);
+
+    string result = cipher(k, s);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}

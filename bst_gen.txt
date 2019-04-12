@@ -1,0 +1,108 @@
+Given A, generate all structurally unique BST’s (binary search trees) that store values 1...A.
+
+struct TreeNode 
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+
+void generateBSTs(int low, int high, vector<TreeNode*>& solutions)
+{
+    // recursion end case: no subtrees to generate here
+    if (low > high)
+    {
+        return;
+    }
+
+    // generate left and right subtrees for each possible root from low...high
+    for (int rootVal = low; rootVal <= high; ++rootVal)
+    {
+        // its left tree will contain numbers from low..i.-1
+        vector<TreeNode*> lefts;
+        generateBSTs(low, rootVal - 1, lefts);
+
+        // the right tree will contain i+1...high
+        vector<TreeNode*> rights;
+        generateBSTs(rootVal + 1, high, rights);
+
+        // create all possible trees for this root from combo of lefts and rights
+        if (lefts.empty() || rights.empty())
+        {
+            // one or both of subtrees have zero nodes
+            if (lefts.empty() && rights.empty())
+            {
+                // this is a leaf node, add it to solutions
+                TreeNode *root = new TreeNode(rootVal);
+                solutions.push_back(root);
+            }
+            else if (lefts.empty())
+            {
+                // no left trees for this root
+                // create solution vector from rights only
+                for (TreeNode *right : rights)
+                {
+                    TreeNode *root = new TreeNode(rootVal);
+                    root->right = right;
+                    solutions.push_back(root);
+                }
+            }
+            else 
+            {
+                // no right trees for this root
+                // create solution vector from lefts only
+                for (TreeNode *left : lefts)
+                {
+                    TreeNode *root = new TreeNode(rootVal);
+                    root->left = left;
+                    solutions.push_back(root);
+                }
+            }
+        }
+        else
+        {
+            // can create solutions from using both left and right subtrees
+            for (TreeNode *left : lefts)
+            {
+                for (TreeNode *right : rights)
+                {
+                    TreeNode *root = new TreeNode(rootVal);
+                    root->left = left;
+                    root->right = right;
+                    solutions.push_back(root);
+                }
+            }
+        }
+    }
+}
+
+vector<TreeNode*> generateTrees(int A)
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+
+    // want to create trees from the perumation of set of numbers from 1..N
+    // ex: 3 = {1,2,3} {1,3,2} {2,1,3} {2,3,1} {3,1,2) {3,2,1}
+    // OK, but {2,1,3} and {2,3,1} both generate the SAME TREE (don't want dupes)
+    // checking solutions vector for dupes isn't feasible, so neither is this solution
+
+    // insted, for each number i from 1..N:
+    // the tree rooted at has 1..(i-1) in left subtree and (i+1)..N in right
+    // the solution is to keep a list of "roots" from 1..N
+    // recursively generate left and right subtrees (in same way described here)
+    // solution vector for a specific root is the combo of choices from left * right 
+
+    vector<TreeNode*> solutions;
+    generateBSTs(1, A, solutions);
+    return solutions;
+}
+
+int main()
+{
+    generateTrees(3);
+    return 0;
+}

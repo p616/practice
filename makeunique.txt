@@ -1,0 +1,255 @@
+Given an array of integers A, a move consists of choosing any A[i], and incrementing it by 1.
+
+Return the least number of moves to make every value in A unique.
+
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) 
+    {
+        if (A.size() < 2) 
+        {
+            return 0;
+        }
+        
+        sort(A.begin(), A.end());  
+        
+        int count = 0;
+        for (int i=1; i<A.size(); ++i) 
+        {
+            if (A[i] <= A[i-1]) 
+            {
+                count += ((A[i-1] - A[i]) + 1);
+                A[i] = A[i-1]+1;
+            }
+        }
+        return count;
+    }
+};
+
+
+
+
+
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) {
+        if (A.size()<2) return 0;
+        sort(A.begin(), A.end());        
+        const int n = A.size();
+        int count = 0;
+        for (int i=1;i<n;++i) {
+            if (A[i]<=A[i-1]) {
+                int increment = A[i-1] - A[i];
+                A[i] += increment + 1;
+                count += increment + 1;
+            }
+        }
+        return count;
+    }
+};
+//56/59->time limit
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) 
+    {
+        map<int, int> mapA;
+        set<int> setA;
+        int moves = 0;
+        
+        for (int n : A)
+        {
+            auto it = mapA.find(n);
+            if (it == mapA.end())
+            {
+                mapA.insert({n,1});
+            }
+            else
+            {
+                it->second++;
+            }
+            setA.insert(n);
+        }
+        
+        for (int s : setA)
+        {
+            int count = mapA.find(s)->second;
+            int newNum = s;
+            
+            int currentMoves = 0;
+            
+            while (count > 1)
+            {
+                currentMoves++;
+                newNum++;
+                
+                while (mapA.find(newNum) != mapA.end())
+                {
+                    newNum++;
+                    currentMoves++;
+                }
+                
+                mapA.insert({newNum,1});
+                
+                count--;
+                
+                // each subsequent dupe will need prev moves as well
+                moves += currentMoves; 
+            }
+        }
+        return moves;
+    }
+};
+
+//56/59->time limit
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) 
+    {
+        int moves = 0;
+        
+        map<int, int> mapA;
+        for (int n : A)
+        {
+            auto it = mapA.find(n);
+            if (it == mapA.end())
+            {
+                mapA.insert({n,1});
+            }
+            else
+            {
+                it->second++;
+            }
+        }
+        
+        set<int> setA;
+        for (auto m : mapA)
+        {
+            int num = m.first;
+            int count = m.second;  
+            
+            // if number dupe'd more than just once, those dupes need prev moves as well (ex: 2->3; 2->5; 2->7)
+            int currNumMoves = 0;    
+            
+            while (count > 1)
+            {
+                currNumMoves++;
+                num++;
+                
+                while (setA.find(num) != setA.end() ||
+                       mapA.find(num) != mapA.end())
+                {
+                    num++;
+                    currNumMoves++;
+                }
+                
+                setA.insert({num,1});
+                
+                count--;
+                
+                // each subsequent number dupe will need prev moves as well
+                moves += currNumMoves; 
+            }
+        }
+        return moves;
+    }
+};
+
+//54/59->time limit
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) 
+    {
+        int moves = 0;
+        
+        // map of numbers found in A more than once + count of how many times found
+        // set of unique numbers in A
+        map<int, int> mapA;
+        set<int> setA;
+        
+        for (int n : A)
+        {
+            int countN = count(A.begin(), A.end(), n);
+            auto found = setA.insert(n);
+
+            if (countN > 1 && found.second)
+            {
+                mapA.insert({n, countN});
+            }
+        }
+    
+        for (auto m : mapA)
+        {
+            int num = m.first;
+            int count = m.second;  
+            
+            // if number dupe'd more than just once, those dupes need prev moves as well (ex: 2->3; 2->5; 2->7)
+            int currNumMoves = 0;    
+            
+            while (count > 1)
+            {
+                currNumMoves++;
+                num++;
+                
+                while (setA.find(num) != setA.end())
+                {
+                    num++;
+                    currNumMoves++;
+                }
+                
+                setA.insert(num);
+                
+                count--;
+                
+                // each subsequent number dupe will need prev moves as well
+                moves += currNumMoves; 
+            }
+        }
+        return moves;
+    }
+};
+
+//54/59->time limit
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) 
+    {
+        int moves = 0;
+        
+        // set of unique numbers in A
+        set<int> setA;        
+        for (int n : A)
+        {
+            setA.insert(n);
+        }
+    
+        set<int> moveSet;
+        for (int s : setA)
+        {
+            int num = s;
+            int count = std::count(A.begin(), A.end(), s);  
+            
+            // if number dupe'd more than just once, those dupes need prev moves as well (ex: 2->3; 2->5; 2->7)
+            int currNumMoves = 0;    
+            
+            while (count > 1)
+            {
+                currNumMoves++;
+                num++;
+                                
+                while (moveSet.find(num) != moveSet.end() ||
+                       setA.find(num) != setA.end())
+                {
+                    num++;
+                    currNumMoves++;
+                }
+                moveSet.insert(num);
+                
+                count--;
+                
+                // each subsequent number dupe will need prev moves as well
+                moves += currNumMoves; 
+            }
+        }
+        return moves;
+    }
+};

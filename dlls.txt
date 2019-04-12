@@ -1,0 +1,287 @@
+
+#include <iostream>
+
+DoublyLinkedListNode* sortedInsert(DoublyLinkedListNode* head, int data) 
+{
+    DoublyLinkedListNode *newNode = new DoublyLinkedListNode(data);
+    if (head == NULL)
+    {
+      return newNode;
+    }
+
+    if (data < head->data)
+    {
+        head->prev = newNode;
+        newNode->next = head;
+        return newNode;
+    }
+
+    DoublyLinkedListNode *prev = head;
+    DoublyLinkedListNode *curr = head;
+
+    while (curr != NULL && data > curr->data  )
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    prev->next = newNode;
+    newNode->prev = prev;
+    newNode->next = curr;
+    if (curr)
+    curr->prev = newNode;
+
+    return head;
+}
+DoublyLinkedListNode* reverse(DoublyLinkedListNode* head) 
+{
+  DoublyLinkedListNode *curr = head;
+  DoublyLinkedListNode *next = NULL;
+
+  while (curr != NULL) {
+    // swap next and prev
+    next = curr->next;
+    curr->next = curr->prev;
+    curr->prev = next;
+
+    //  done, reset head
+    if (next == NULL) {
+      head = curr;
+      break;
+    }
+
+    // goto next
+    curr = next;
+  }
+
+  return head;
+}
+
+bool has_cycle(Node* head) {
+    // Complete this function
+    // Do not write the main method
+    
+    if (head == NULL)
+    {
+        return false;
+    }
+    
+    Node *slow = head;
+    Node *fast = head->next;
+    
+    while (slow < fast && fast != NULL)
+    {
+        slow = slow->next;
+        fast = fast->next;
+        if (fast)
+        {
+            fast = fast->next;
+        }
+    }
+    
+    // either reached end, or fast lapped slow
+    return (fast == NULL ? false : true);
+}
+
+int findMergeNode(SinglyLinkedListNode* head1, SinglyLinkedListNode* head2) 
+{
+    SinglyLinkedListNode *p1 = head1;
+    SinglyLinkedListNode *p2 = head2;
+
+    while (p1 != NULL)
+    {
+       while (p2 != NULL)
+        {
+            if (p1==p2)
+            {
+                return p1->data;
+            }
+            p2 = p2->next;
+        }
+        
+        p1 = p1->next;
+        p2 = head2;
+    }
+
+    return -1;
+}
+Node* insert(Node *head,int data)
+      {
+          Node *p = head;
+          if (p == NULL)
+          {
+              head = new Node(data);
+          }
+          else
+          {
+              while (p->next != NULL)
+              {
+                  p = p->next;
+              }
+              p->next = new Node(data);
+          }
+          return head;
+      }
+
+Node* removeDuplicates(Node *head)
+          {      
+            if (head == nullptr)
+            {
+              return nullptr;
+            }
+      
+            Node *p = head;
+            while (p->next != nullptr)
+            {
+              if (p->data == p->next->data)
+              {
+                Node *dupe = p->next;
+                p->next = p->next->next;
+                delete dupe;
+              }
+              else
+              {
+                p = p->next;
+              }
+            }
+
+            return head;
+          }
+
+using namespace std;
+
+class DoublyLinkedListNode {
+    public:
+        int data;
+        DoublyLinkedListNode *next;
+        DoublyLinkedListNode *prev;
+
+        DoublyLinkedListNode(int node_data) {
+            this->data = node_data;
+            this->next = nullptr;
+            this->prev = nullptr;
+        }
+};
+
+class DoublyLinkedList {
+    public:
+        DoublyLinkedListNode *head;
+        DoublyLinkedListNode *tail;
+
+        DoublyLinkedList() {
+            this->head = nullptr;
+            this->tail = nullptr;
+        }
+
+        void insert_node(int node_data) {
+            DoublyLinkedListNode* node = new DoublyLinkedListNode(node_data);
+
+            if (!this->head) {
+                this->head = node;
+            } else {
+                this->tail->next = node;
+                node->prev = this->tail;
+            }
+
+            this->tail = node;
+        }
+};
+
+void print_doubly_linked_list(DoublyLinkedListNode* node, string sep) {
+    while (node) {
+        cout << node->data;
+
+        node = node->next;
+
+        //if (node) {
+            cout << sep;
+        //}
+    }
+}
+
+void free_doubly_linked_list(DoublyLinkedListNode* node) {
+    while (node) {
+        DoublyLinkedListNode* temp = node;
+        node = node->next;
+
+        free(temp);
+    }
+}
+
+DoublyLinkedListNode* sortedInsert(DoublyLinkedListNode* head, int data) 
+{
+    DoublyLinkedListNode *newNode = new DoublyLinkedListNode(data);
+    
+    if (head == NULL)
+    {
+        return newNode;
+    }
+    
+    if (data < head->data)
+    {
+        newNode->next = head;
+        head->prev = newNode;
+        return newNode;
+    }
+    
+    DoublyLinkedListNode *p = head;
+    while (p->next && p->next->data < data)
+    {
+        p = p->next;
+    }
+    
+    newNode->prev = p;
+    newNode->next = p->next;
+    p->next = newNode;
+    if (p->next->next)
+    {
+        p->next->next->prev = newNode;
+    }
+
+    return head;
+}
+
+DoublyLinkedListNode* reverse(DoublyLinkedListNode *head)
+{
+    DoublyLinkedListNode *curr = head;
+    DoublyLinkedListNode *next = NULL;
+    
+    while (curr != NULL)
+    {
+        // swap next and prev
+        next = curr->next;
+        curr->next = curr->prev;
+        curr->prev = next;
+        
+        //  done, reset head
+        if (next == NULL)
+        {
+            head = curr;
+            break;
+        }
+        
+        // goto next
+        curr = next;
+    }
+    
+    return head;
+}
+
+int main() 
+{
+	DoublyLinkedList *list = new DoublyLinkedList();
+	list->insert_node(1);
+	list->insert_node(3);
+	list->insert_node(4);
+	list->insert_node(10);
+	
+	print_doubly_linked_list(list->head, " ");
+	
+	list->head = sortedInsert(list->head, -1);
+	
+	print_doubly_linked_list(list->head, " ");
+	
+	list->head = reverse(list->head);
+	
+	print_doubly_linked_list(list->head, " ");
+}

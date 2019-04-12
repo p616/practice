@@ -1,0 +1,172 @@
+#include <iostream>
+#include <vector>
+#include <limits>
+
+using namespace std;
+
+struct Edge 
+{
+    int dest;
+    int weight;
+    
+    Edge(int d, int w) : dest(d), weight(w) {}
+};
+
+/*
+bool HasSelfLoop(int v, vector<Edge*> edges, int &cost)
+{
+    bool found = false;
+    
+    // cost of path = max of weight of paths
+    cost = numeric_limits<int>::min();
+    
+    // look for existence of self-loop(s)
+    for (auto edge : edges)
+    {
+        if (edge->dest == v)
+        {
+            int wt = edge->weight;
+            if (wt > cost)
+            {
+                cost = wt;
+            }
+            found = true;
+        }
+    }
+    
+    return found;
+}
+*/
+
+void GetDistance
+(
+    int startV,
+    int endV,
+    vector<vector<Edge*>> &edges,
+    vector<bool> &visited,
+    int &maxEdgeCost,
+    int &minPathCost /*distance*/
+)
+{
+    // for every path b/t start+end save path cost (= max edge weight)
+    // track min of all path costs (= distance)
+
+    // exit case: arrived at endV
+    if (startV == endV)
+    {
+        cout << "end of path to " << endV << " maxEdgeCost = " << maxEdgeCost << " minPathCost = " << minPathCost << endl;
+        // end of one possible path
+        if (maxEdgeCost < minPathCost)
+        {
+            minPathCost = maxEdgeCost;
+            return;
+        }
+    }
+    
+    // set the startV visited flag to prevent looping
+    visited[startV-1] = true;
+    
+    // try to reach endV through each paths out of startV
+    for (auto edge : edges[startV-1])
+    {
+        int dest = edge->dest;
+        int weight = edge->weight;
+      
+        // skip dest if visited (includes self loops)
+        if (!visited[dest-1])
+        {  
+            // update path cost
+            cout << "weight of " << dest << " = " << weight << " maxEdgeCost = " << maxEdgeCost << endl;
+            if (weight > maxEdgeCost)
+            {
+                maxEdgeCost = weight;
+            }
+            
+            // recurse: get distance from next V in path to endV
+            GetDistance(dest, endV, edges, visited, maxEdgeCost, minPathCost);
+        }
+    }
+    
+    // backtrack
+    visited[startV-1] = false;
+}
+
+int main() 
+{
+	int V;
+	cin >> V;
+	
+	int numEdges;
+	cin >> numEdges;
+	
+	int numSpecial;
+	cin >> numSpecial;
+	
+	vector<int> specials;
+	for (int i=0; i<numSpecial; ++i)
+	{
+	    int v;
+	    cin >> v;
+	    specials.push_back(v);
+	}
+	
+	vector<vector<Edge*>> edges;
+	edges.reserve(V);
+	
+	for (int i=0; i<numEdges; ++i)
+	{
+	    int v;
+	    cin >> v;
+	    
+	    int d;
+	    cin >> d;
+	    
+	    int w;
+	    cin >> w;
+	    
+	    // forward edge
+	    Edge *e1 = new Edge(d,w);
+	    edges[v-1].push_back(e1);
+	    
+	    if (v != d)
+	    {
+	        // back edge
+    	    Edge *e2 = new Edge(v,w);
+    	    edges[d-1].push_back(e2);
+	    }
+	}
+	
+	for (int startV : specials)
+	{
+	    // for each special vector
+	    //  get the distance to every other special vector
+	    //  (dist = min cost of all paths b/t them)
+	    //  (path cost = max weight of edges in path)
+	    // track farthest distance to any other special
+	    
+	    int distFarthest = numeric_limits<int>::min();
+	    
+	    for (int endV : specials)
+	    {
+	        // minPathCost = distance
+	        int minPathCost = numeric_limits<int>::max();
+	        int maxEdgeCost = numeric_limits<int>::min();
+	        
+	        vector<bool> visited(V, false);
+
+	        // skip self
+	        if (startV != endV)
+	        {
+    	        GetDistance(startV, endV, edges, visited, maxEdgeCost, minPathCost);
+    	        if (minPathCost > distFarthest)
+    	        {
+    	            distFarthest = minPathCost;
+    	        }
+	        }
+	    }
+	    
+	    cout << distFarthest << " ";
+	}
+	
+	return 0;
+}

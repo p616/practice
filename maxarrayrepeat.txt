@@ -1,0 +1,41 @@
+Given an array of size n, find the majority element. The majority element is the element that appears more than floor(n/2) times.
+
+int Solution::majorityElement(const vector<int> &A) 
+{
+    // special case : 1-element array
+    if (A.size() == 1)
+    {
+        return A[0];
+    }
+    
+    // count of each element in the array
+    map<int,int> elemCount;
+    
+    int maxCount = numeric_limits<int>::min();
+    int value = -1;
+    
+    for (int n : A)
+    {
+        // insert into count map or update count if exists
+        auto it = elemCount.find(n);
+        if (it != elemCount.end())
+        {
+            int count = it->second;
+            count++;
+            
+            // if this count > max found so far, update count and value
+            if ( count > maxCount )
+            {
+                maxCount = count;
+                value = n;
+            }
+            it->second = count;
+        }
+        else
+        {
+            elemCount.insert({n, 1});
+        }
+    }
+    
+    return value;
+}

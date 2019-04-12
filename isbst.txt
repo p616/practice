@@ -1,0 +1,53 @@
+
+
+    int maxdata(Node *root)
+    {
+        if (root == nullptr)
+        {
+            return INT32_MIN;
+        }
+        
+        int curmax = root->data;
+        
+        if (root->left)
+        {
+            curmax = max(curmax, maxdata(root->left));
+        }
+        if (root->right)
+        {
+            curmax = max(curmax, maxdata(root->right));
+        }   
+        return curmax;
+    }
+    int mindata(Node *root)
+    {
+        if (root == nullptr)
+        {
+            return INT32_MAX;
+        }
+        
+        int curmin = root->data;
+        
+        if (root->left)
+        {
+            curmin = min(curmin, mindata(root->left));
+        }
+        if (root->right)
+        {
+            curmin = min(curmin, mindata(root->right));
+        }   
+        return curmin;
+    }
+	bool checkBST(Node* root)
+    {
+		if (root == nullptr)
+        {
+            return true;  
+        }          
+        
+        return  root->data > maxdata(root->left) && 
+                root->data < mindata(root->right) &&
+                checkBST(root->left) && 
+                checkBST(root->right);
+        }
+   

@@ -1,0 +1,48 @@
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ *
+ */
+ 
+// if k = 1, return smallest
+// if k = 2, smallest-1, etc
+// can assume 1 <= k <= total number of nodes in BST
+int inorder_k(TreeNode *A, int& k)
+{
+    if (A == NULL)
+    {
+        return -1;
+    }
+    
+    // LHR
+    int kth = inorder_k(A->left, k);  
+    
+    // if kth not found in left subtree, continue
+    if (kth == -1)
+    {
+        // if k = 1, this node is the kth, done
+        if (k == 1)
+        {
+            return A->val;
+        } 
+        
+        // else decrement k
+        k--;
+        
+        // and continue down right subtree
+        kth = inorder_k(A->right, k);   
+    }
+    
+    return kth;
+}
+
+int Solution::kthsmallest(TreeNode* A, int B) 
+{
+    // traverse inorder, stop at kth node found
+    return inorder_k(A, B);
+}

@@ -1,0 +1,51 @@
+Given a string,
+find the length of the longest substring without repeating characters.
+
+
+int Solution::lengthOfLongestSubstring(string A) 
+{
+    int longest = -1;
+    
+    // map of unique chars (key) and most recent occurrence in string
+    map<char,int> dupes;
+
+    int start = 0;
+    for (int i=0; i<A.size(); ++i)
+    {
+        // look for current char in dupes list
+        auto it = dupes.find(A[i]);
+        if (it == dupes.end())
+        {
+            // not found, add it
+            dupes.insert( {A[i], i} );
+        }
+        else
+        {
+            // if this char's dupe in this substring, done
+            if (it->second >= start)
+            {
+                // if this substr is longest so far, update longest 
+                int substrlen = (i - start);
+                if (substrlen > longest)
+                {
+                    longest = substrlen;
+                }
+                
+                // reset substr start pos = just past previous occurrence of dupe
+                start = (it->second + 1);
+            }
+                
+            // update pos in map for this char
+            it->second = i;
+        }
+    }
+    
+    // one last check for longest, in case longest substr at end of string
+    int lastsubstrlen = (A.size() - start);
+    if (lastsubstrlen > longest)
+    {
+        longest = lastsubstrlen;
+    }
+    
+    return longest;
+}

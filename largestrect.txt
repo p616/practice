@@ -1,0 +1,68 @@
+Return an integer representing the largest rectangle that can be formed within the bounds of consecutive buildings. 
+
+For example, heights array h = {3,2,3}.
+Rect of height h=2 and length k=3 can be constructed within the boundaries. 
+The area formed is h*k=2*3=6. 
+
+long largestRectangle(vector<int> h) 
+{
+    // one building = one rectangle
+    int n = h.size();
+    if (n == 1)
+    {
+        return h[0];
+    }
+
+    // finding MAX rect formed using bldg i's height:
+    //  traverse in both directions
+    //  stop prior to first shorter bldg
+    //  that's the range for width of MAX rect for current height
+
+    // ex: 5-10-20-75a-75b-5-100 (max = 75a->75b = 2 * 75 = 150)
+    // ex: 2-4-2-3-6-2-1 (max = 2a->2c = 6 * 2 = 12)
+    // ex: 8-4-6-5-7-3-5-7-2-2 
+    //     no need to check min/max for 2-2 as its thoretical max=20  
+    //     but current max have grown to 24 by this point 
+
+    // do this for each building ==> Big O = n(n-1) = O(n^2)
+
+    long maxRect = numeric_limits<long>::min();
+   
+    for (int i=0; i<n; ++i)
+    {
+        int curr_height = h[i];
+        
+        // fails 4 test cases with this "optimization"
+        // succeeds without...
+        // skip this bldg if theoretical MAX < largest rect found so far
+        //if ( (n * curr_height) <= maxRect )
+        //{
+        //    continue;
+        //}
+
+        // find right pos of MAX rect for this bldg's height
+        int rightpos = i;
+        while ( (rightpos < (n-1)) && (curr_height <= h[rightpos+1]) )
+        {
+            rightpos++;
+        }
+
+        // find left pos of MAX rect for this bldg's height
+        int leftpos = i;
+        while ( (leftpos > 0) && (curr_height <= h[leftpos-1]) )
+        {
+            leftpos--;
+        }
+
+        // Update running MAX rect:
+        // Could calculate area inside loops, but that adds an extra n += ops
+        long curr_area = (curr_height * ((rightpos - leftpos) + 1));
+        if (maxRect < curr_area)
+        {
+            //cout << maxRect << endl;
+            maxRect = curr_area;
+        }
+    }
+
+    return maxRect;
+}

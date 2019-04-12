@@ -1,0 +1,64 @@
+    int numIslands(vector<vector<char>>& grid) 
+    {
+        int count = 0; 
+        
+        if (grid.empty() || grid[0].empty())
+        {
+            return 0;
+        }
+        
+        int rows = grid.size();
+        int cols = grid[0].size(); 
+        
+        vector<vector<bool>> visited(grid.size());
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for (int j=0; j<grid[i].size(); ++j)
+            {
+                visited[i].push_back(false);
+            }
+        }
+        
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for (int j=0; j<grid[0].size(); ++j)
+            {
+                if (!visited[i][j] && grid[i][j] == '1')
+                {
+                    count++;
+                    DFS(grid, i, j, visited);
+                }
+            }
+        }
+        
+        return count;
+    }
+    
+    void DFS(vector<vector<char>>& grid, int i, int j, vector<vector<bool>>& visited)
+    {
+        if (i < 0 || j < 0 || i >= grid.size() || j >= grid[0].size())
+        {
+            return;
+        }
+        
+        if (visited[i][j])
+        {
+            return;
+        }
+        
+        if (grid[i][j] != '1')
+        {
+            return;
+        }
+        
+        
+        // set visited for this coordinate
+        visited[i][j] = true;
+        
+        // call DFS for each direction
+        DFS(grid, i, j+1, visited);
+        DFS(grid, i, j-1, visited);
+        DFS(grid, i+1, j, visited);
+        DFS(grid, i-1, j, visited);
+    }
+};

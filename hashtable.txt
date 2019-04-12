@@ -1,0 +1,33 @@
+// Complete the checkMagazine function below.
+void checkMagazine(vector<string> magazine, vector<string> note) 
+{
+    unordered_map<string,unsigned> magmap;
+    for (auto mword : magazine)
+    {
+        auto entry = magmap.find(mword);
+        if (entry != magmap.end())
+        {
+            entry->second++;
+        }
+        else
+        {
+            magmap.insert({mword, 1});
+        }   
+    }
+
+    for (auto nword : note)
+    {
+        auto entry = magmap.find(nword);
+        if (entry == magmap.end() || entry->second == 0)
+        {
+            cout << "No" << endl;
+            return;
+        }
+        else 
+        {
+            entry->second--;
+        }
+    }
+
+    cout << "Yes" << endl;
+}

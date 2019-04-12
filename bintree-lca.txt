@@ -1,0 +1,28 @@
+LCA binary tree (not BST)
+
+
+    bool findNode(TreeNode* root, TreeNode* node) 
+    {
+        if (root == NULL) 
+        {
+            return false;   
+        }
+        if (root->val == node->val) 
+        {
+            return true;   
+        }
+        return (findNode(root->left, node) || findNode(root->right, node));
+    }
+    
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) 
+    {
+        if (findNode(root->left, p) && findNode(root->left, q))
+        {
+            return lowestCommonAncestor(root->left, p, q);
+        }
+        if (findNode(root->right, p) && findNode(root->right, q))
+        {
+            return lowestCommonAncestor(root->right, p, q); 
+        }            
+        return root;
+    }

@@ -1,0 +1,194 @@
+// integer to roman numeral <= 3999
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+string getOnes(char digit)
+{
+    string roman = "";
+    
+    switch (digit)
+    {
+    case 0:
+        // process in getTens
+        break;
+    case 1:
+        roman = "I";
+        break;
+    case 2:
+        roman = "II";
+        break;
+    case 3:
+        roman = "III";
+        break;
+    case 4:
+        roman = "IV";
+        break;
+    case 5:
+        roman = "V";
+        break;
+    case 6:
+        roman = "VI";
+        break;
+    case 7:
+        roman = "VII";
+        break;
+    case 8:
+        roman = "VIII";
+        break;
+    case 9:
+        roman = "IX";
+        break; 
+    }
+    
+    return roman;
+}
+
+string getTens(char digit)
+{
+    string roman = "";
+    
+    switch (digit)
+    {
+    case 0:
+        // process in getHundreds
+        break;
+    case 1:
+        roman = "X";
+        break;
+    case 2:
+        roman = "XX";
+        break;
+    case 3:
+        roman = "XXX";
+        break;
+    case 4:
+        roman = "XL";
+        break;
+    case 5:
+        roman = "L";
+        break;
+    case 6:
+        roman = "LX";
+        break;
+    case 7:
+        roman = "LXX";
+        break;
+    case 8:
+        roman = "LXXX";
+        break;
+    case 9:
+        roman = "XC";
+        break; 
+    }
+    
+    return roman;
+}
+
+string getHundreds(char digit)
+{
+    string roman = "";
+    
+    switch (digit)
+    {
+    case 0:
+        // process in getThousand
+        break;
+    case 1:
+        roman = "C";
+        break;
+    case 2:
+        roman = "CC";
+        break;
+    case 3:
+        roman = "CCC";
+        break;
+    case 4:
+        roman = "CD";
+        break;
+    case 5:
+        roman = "D";
+        break;
+    case 6:
+        roman = "DC";
+        break;
+    case 7:
+        roman = "DCC";
+        break;
+    case 8:
+        roman = "DCCC";
+        break;
+    case 9:
+        roman = "CM";
+        break; 
+    }
+    
+    return roman;
+}
+
+string getThousands(char digit)
+{
+    string roman = "";
+    
+    switch (digit)
+    {
+    case 1:
+        roman = "M";
+        break;
+    case 2:
+        roman = "MM";
+        break;
+    case 3:
+        roman = "MMM";
+        break;
+    default:
+        // max = 3999
+        roman = "error";
+        break; 
+    }
+    
+    return roman;
+}
+
+string intToRoman(int A) 
+{
+    string roman;
+    
+    int pos = 0;
+    while (A != 0)
+    {
+        int digit = A % 10;
+        
+        switch (pos)
+        {
+        case 0:
+            roman = getOnes(digit);
+            break;
+        case 1:
+            roman = getTens(digit) + roman;
+            break;
+        case 2:
+            roman = getHundreds(digit) + roman;
+            break;
+        case 3:
+            roman = getThousands(digit) + roman;
+            break;
+        default:
+            roman = "error";
+        }
+        
+        A = A / 10;
+        pos++;
+    }
+    
+    return roman;
+}
+
+int main() 
+{
+    cout << intToRoman(405);
+	return 0;
+}

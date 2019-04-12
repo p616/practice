@@ -1,0 +1,80 @@
+// number of times score could be a draw
+
+#include <iostream>
+#include <vector>
+#include <set>
+#include <map>
+#include <stack>
+#include <queue>
+#include <limits>       // numeric_limits<T>::max()
+#include <climits>      // INT_MAX
+#include <cmath>        // pow
+#include <algorithm>    // sort
+#include <utility>      // pair
+
+using namespace std;
+
+int main() 
+{
+    int N;
+    cin >> N;
+    
+    vector<pair<int,int>> scores;
+    for (int i=0; i<N; ++i)
+    {
+        int a;
+        int b;
+        cin >> a;
+        cin >> b;
+        
+        scores.push_back({a,b});
+    }
+    
+    int draws = 0;
+    
+    int nextDraw = 0;
+    for (int i=0; i<N; ++i)
+    {
+        pair<int,int> p = scores[i];
+        
+        if (i == 0)
+        {
+            // draws from match start to first score
+            
+            // ex: 0,0 : 0,0 = 1
+            // ex: 2,0 : 0,0 = 1
+            // ex: 2,1 : 0,0; 1,1 = 2
+            // ex: 2,2 : 0,0; 1,1; 2,2 = 3
+            // ex: 6,3 : 0,0; 1,1; 2,2; 3,3 = 4            
+            // ex: 5,4 : 0,0; 1,1; 2,2; 3,3; 4,4 = 5
+            draws = (min(p.first, p.second)+1);
+        }
+        else
+        {
+            // draws between last score and current score 
+            
+            // max possible draw = current low score
+            int maxdraw = min(p.first, p.second);
+            
+            // prev:  0,0; 2,0; 2,1; 2,2; 6,3; 5,4
+            // curr:  0,0; 3,1; 4,4: 5,4; 6,4; ---
+            // nextD: 1,1; 2,2; 2,2; 3,3; 6,6; 5,5 
+            //  maxD: 0,0; 1,1; 4,4; 4,4; 4,4; ---
+            //  newD:   0;   0;   3;   2;  -1;
+            int newDraws = (maxdraw - nextDraw + 1);
+            if (newDraws > 0)
+            {
+                draws += newDraws;
+            }
+         }
+        
+        // next possible draw = max(high score, low score + 1)
+        // ex: 1,1; 2,2; 2,2; 3,3; 6,6; 5,5
+        nextDraw = ( (p.first == p.second) ? (p.first+1) : max(p.first, p.second));
+
+    }
+    
+    cout << draws;
+    
+	return 0;
+}

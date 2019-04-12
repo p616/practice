@@ -1,0 +1,40 @@
+    int kthsmallest(const vector<int> &A, int B) 
+    {
+        // sorted set of size k, 
+        // can have dupes
+        multiset<int> mset;
+        
+        // init set with first k elements
+        for (int i=0; i<B; ++i)
+        {
+            mset.insert(A[i]);
+        }
+        
+        // current largest value in k size multiset 
+        auto kth = --mset.end();
+        
+        // loop through rest,
+        // if find one smaller than largest, 
+        // remove largest and replace with smaller
+        for (int i=B; i<A.size(); ++i)
+        {
+            if (A[i] < *kth)
+            {
+                // remove largest
+                // insert current
+                mset.erase(kth);
+                mset.insert(A[i]);
+                
+                // reset largest
+                kth = --mset.end();
+            }
+        }
+        
+        // now kth will hold kth smallest
+        
+        return *kth;
+    }
+
+
+
+

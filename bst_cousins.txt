@@ -1,0 +1,88 @@
+2 BST nodes are cousins if on same level but have different parents
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    
+    bool foundACousin(TreeNode *node, int x, int y, bool& xInLevel, bool& yInLevel)
+    {
+        if ( (xInLevel && (node->val == y)) ||
+             (yInLevel && (node->val == x)) )
+        {
+            return true;
+        }
+        else if (node->val == x)
+        {
+            xInLevel = true;
+        }
+        else if (node->val == y)
+        {
+            yInLevel = true;
+        }  
+        return false;
+    }
+    
+    bool isCousins(TreeNode* root, int x, int y) 
+    {
+        if (root == NULL)
+        {
+            return false;
+        }
+        if (root->left == NULL || root->right == NULL)
+        {
+            return false;
+        }
+        
+        queue<TreeNode*> q;
+        q.push(root);
+        
+        while (!q.empty())
+        {
+            bool xInLevel = false;
+            bool yInLevel = false;
+            
+            int nodesInLevel = q.size();
+            for (int i = 0; i < nodesInLevel; ++i)
+            {
+                TreeNode *node = q.front();
+                q.pop();            
+                
+                if (node->left != NULL)
+                {
+                    if (foundACousin(node->left, x, y, xInLevel, yInLevel))
+                    {
+                        return true;
+                    }
+                    q.push(node->left);
+                }
+                if (node->right != NULL)
+                {
+                    
+                    if (foundACousin(node->right, x, y, xInLevel, yInLevel))
+                    {
+                        // one extra check here...
+                        // cousins can't have same parent
+                        if ( (node->left == NULL) || 
+                             ((node->left->val != x) && (node->left->val != y)) )
+                        {  
+                            return true;
+                        }
+                        return false;
+                    }
+                    q.push(node->right);
+                }            
+            }
+        }
+        
+        return false;
+    }
+};

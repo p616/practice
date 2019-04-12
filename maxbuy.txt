@@ -1,0 +1,41 @@
+Given a list of prices and an amount to spend, what is the maximum number of toys Mark can buy? 
+
+// Complete the maximumToys function below.
+int maximumToys(vector<int> prices, int k) 
+{
+    int maxToys = 0;
+
+    sort(prices.begin(), prices.end());
+
+    for (int i=0; i<prices.size()-1; i++)
+    {
+        int numtoys = 0;
+        int total = prices[i];
+
+        if (total < k)
+        {
+            numtoys++;
+
+            for (int j=i+1; j<prices.size(); j++)
+            {
+                total += prices[j];
+                if (total > k)
+                {
+                    break;
+                }
+                numtoys++;
+             
+            }
+        }
+
+        if (numtoys > maxToys)
+        {
+            maxToys = numtoys;
+        }
+    
+    }
+
+    return maxToys;
+
+
+}

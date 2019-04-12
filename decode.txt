@@ -1,0 +1,144 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() 
+{
+	// candy = star = prev letter : remove or keep
+	// snow = ? = prev letter : remove or keep or repeat several times
+	
+	string msg;
+	cin >> msg;
+	
+	int k;
+	cin >> k;
+	
+	int numcanes = count(msg.begin(), msg.end(), '?');
+	int numflakes = count(msg.begin(), msg.end(), '*');
+	int len = msg.size();
+	int numletters = (len - numcanes - numflakes);
+	int diff = k - numletters;
+	
+	// possible to get msg of len k with these rules and this encoding?
+	
+	// must be able to make diff changes on nc + nf
+	// nc = do nothing or -1
+	// nf = do nothing or -1 or + any number
+	
+	// so, if diff = 0, done
+	
+	// if diff negative, must be less than total of nc+nf
+	
+    // if diff positive, => added some, which can only be done with k
+
+	if (diff == 0)
+	{
+	    // either no canes or flakes at all, or
+	    // exactly enough to remove one for each
+	    
+	    string decode = "";
+	    
+	    // copy all chars except:
+	    //  - canes and flakes 
+	    //  - and chars preceding canes and flakes 
+	    auto index = 0;
+	    auto pos = msg.find_first_of("*?");
+    	while (pos != string::npos)
+    	{
+    	    int charstocopy = pos - index;
+    	    decode += msg.substr(index, charstocopy);
+    	    
+    	    k -= charstocopy;
+    	    index = pos+1;
+    	    
+    	    pos = msg.find_first_of("*?", index);
+    	}
+    	
+    	decode += msg.substr(index, k);
+    	
+    	cout << decode;
+    	
+	}
+	else if (diff < 0)
+	{
+	    // only removals
+	    
+	    // just need to make sure any combo of snowflakes and candycanes
+	    // will be enought to create the diff
+	    
+	    if (abs<int>(diff) > (numcanes + numflakes))
+	    {
+	        cout << "Impossible";
+	    }
+	    else
+	    {
+	        string decode = "";
+	        for (char c : msg)
+	        {
+	            if (c == '*' || c == '?')
+	            {
+	                if (diff != 0)
+	                {
+                        // remove last char
+                        decode.pop_back();
+                        diff++;
+	                }
+	                // otherwise, done with the modify
+	                // just skip the rest
+	            }
+	            else
+	            {
+	                // just a letter - copy it
+	                decode += c;
+	            }
+	        }
+	        
+	        cout << decode;
+	    }
+	}
+    else
+    {
+        // combination of removes and adds...
+        
+        // can handle any positive number with just one snowflake
+        // aside from that, can just "keep" the chars before the rest
+        
+	    if (numflakes == 0)
+	    {
+	        cout << "Impossible";
+	    }
+	    else
+	    {
+	        string decode = "";
+	        for (char c : msg)
+	        {
+	            if (c == '*' || c == '?')
+	            {
+	                // ignore all candy canes
+	                // ignore all snowflakes after first
+	                
+	                if (diff != 0 && c == '*')
+	                {
+                        // repeat last char diff # of times
+                        decode.append(diff, decode.back());
+                        diff = 0;
+	                }
+	                // otherwise is candy cane
+	                // or done with the modify
+	                // just skip the rest
+	            }
+	            else
+	            {
+	                // just a letter - copy it
+	                decode += c;
+	            }
+	        }
+	        
+	        cout << decode;
+	    }
+	        
+    }
+    
+    return 0;
+}

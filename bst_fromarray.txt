@@ -1,0 +1,32 @@
+BST from sorted array
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+TreeNode* splitArray(const vector<int> &A, int lo, int hi)
+{
+    if (lo >= hi)
+    {
+        return NULL;
+    }
+    
+    int mid = (lo + ((hi-lo)/2));
+    
+    TreeNode *root = new TreeNode(A[mid]);
+    root->left = splitArray(A, lo, mid);
+    root->right = splitArray(A, mid+1, hi);
+    
+    return root;
+}    
+
+TreeNode* Solution::sortedArrayToBST(const vector<int> &A) 
+{
+    return splitArray(A, 0, A.size());
+}

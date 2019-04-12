@@ -1,0 +1,117 @@
+Given a non-empty string containing an out-of-order English representation of digits 0-9, output the digits in ascending order.
+
+Input: "owoztneoer"
+Output: "012"
+
+    string originalDigits(string s) 
+    {
+        map<char,int> chars;
+        for (char c : s)
+        {
+            chars[c]++;
+        }
+        
+        // Z E R O
+        // O N E
+        // T W O
+        // T H R E E
+        // F O U R
+        // F I V E
+        // S I X
+        // S E V E N
+        // E I G H T
+        // N I N E
+        
+        // Z W X G H S V F O N
+        
+        // Look for unique chars, in order
+        // Remove any overlapping chars, in order
+        // Save count of digits in new vector
+        vector<int> digits(10,0);
+        
+        // first round : unique chars
+        if (chars.find('z') != chars.end())
+        {
+            // zero
+            int n = chars['z'];            
+            chars['o'] -= n; // used by "one"                
+            digits[0] = n;
+        }
+        if (chars.find('w') != chars.end() )
+        {
+            // two
+            int n = chars['w'];            
+            chars['o'] -= n; // used by "one"                
+            digits[2] = n;
+        }
+        if (chars.find('x') != chars.end())
+        {
+            // six
+            int n = chars['x'];            
+            chars['s'] -= n; // used by "seven"               
+            digits[6] = n;
+        }
+        if (chars.find('g') != chars.end() )
+        {
+            // eight
+            int n = chars['g'];            
+            chars['h'] -= n; // used by "three"            
+            digits[8] = n;
+        }
+        // second round : unique chars, now
+        if (chars.find('h') != chars.end())
+        {
+            // three
+            digits[3] = chars['h'];
+        }        
+        if (chars.find('s') != chars.end())
+        {
+            // seven
+            int n = chars['s'];            
+            digits[7] = n;
+            chars['v'] -= n; // used by "five"
+            chars['n'] -= n; // used by "nine"            
+        }        
+        // third round : unique chars, now
+        if (chars.find('v') != chars.end())
+        {
+            // five
+            int n = chars['v'];
+            chars['f'] -= n; // used by "four"              
+            digits[5] = n;
+        }        
+        // fourth round : unique chars, now
+        if (chars.find('f') != chars.end())
+        {
+            // four
+            int n = chars['f'];
+            chars['o'] -= n;  // used by one                           
+            digits[4] = n;
+        }    
+        // fifth round : unique chars, now
+        if (chars.find('o') != chars.end())
+        {
+            // one
+            int n = chars['o'];
+            chars['n'] -= n;  // used by nine                           
+            digits[1] = n;
+        }      
+        // sixth round : only one char left
+        // nine
+        digits[9] = (chars['n']/2);
+        
+        // Convert vector to string        
+        string strDigits = "";
+        strDigits.append(digits[0], '0');
+        strDigits.append(digits[1], '1');
+        strDigits.append(digits[2], '2');
+        strDigits.append(digits[3], '3');
+        strDigits.append(digits[4], '4');
+        strDigits.append(digits[5], '5');
+        strDigits.append(digits[6], '6');
+        strDigits.append(digits[7], '7');
+        strDigits.append(digits[8], '8');
+        strDigits.append(digits[9], '9');
+        
+        return strDigits;   
+    }

@@ -1,0 +1,101 @@
+Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.    
+
+For example:
+Given BST [1,null,2,2],
+
+   1
+    \
+     2
+    /
+   2
+
+return [2].
+
+
+    void inorder(TreeNode *root, int &currVal, int &count, int &maxCount,  vector<int> &modes)
+    {
+        // inorder = LHR
+        
+        if (root == NULL)
+        {
+            return;
+        }
+        
+        // L
+        inorder(root->left, currVal, count, maxCount, modes);
+                    
+        // H
+        if (count == -1)
+        {
+            // first node, initialize current value and count
+            currVal = root->val;
+            count = 1;
+        }
+        else if (currVal == root->val)
+        {
+            // found a potential mode, increment the count
+            count++;
+        }
+        else
+        {
+            // found a node with a new value, end of run for currVal
+            
+            if (count == maxCount)
+            {
+                // found a second mode with same count, add it to the list
+                modes.push_back(currVal);                
+            }
+            else if (count > maxCount)
+            {
+                // found a more frequent mode
+                // clear the list and add this one
+                modes.clear();
+                modes.push_back(currVal);
+                
+                // update maxCount
+                maxCount = count;
+            }
+            // reset current val and count
+            currVal = root->val;
+            count = 1;               
+        }
+        
+        // R
+        inorder(root->right, currVal, count, maxCount, modes); 
+    }
+    
+    vector<int> findMode(TreeNode* root) 
+    {
+        // search inorder
+        // count dupes and collate all dupes with same (MAX) count
+        
+        vector<int> modes;
+        
+        // special case, empty tree
+        if (root == NULL)
+        {
+            return modes;
+        }
+        
+        int currVal = 0;
+        int count = -1;
+        int maxCount = numeric_limits<int>::min();
+        
+        inorder(root, currVal, count, maxCount, modes);
+        
+        // take care of last value run (or one node tree)
+        if (count == maxCount)
+        {
+            // last node matches maxCount, add it to list
+            modes.push_back(currVal);                
+        }
+        else if (count > maxCount)
+        {
+            // last node is the most frequent (or is only one node in tree)
+            // clear the list and add this one
+            modes.clear();
+            modes.push_back(currVal);
+        } 
+        
+        return modes;
+    }

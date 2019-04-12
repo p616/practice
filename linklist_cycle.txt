@@ -1,0 +1,56 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+ListNode* Solution::detectCycle(ListNode* A) 
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+
+    if (A == NULL || A->next == NULL)
+    {
+        return NULL;
+    }
+    
+    // slow pointer traverses list one node at a time, fast by 2's
+    ListNode *slow = A->next;
+    ListNode *fast = A->next->next;
+    
+    // if fast pointer finds end of list ==> no cycle
+    while (fast && fast->next)
+    {
+        // slow pointer has caught up with fast pointer ==> list has cycle
+        if (slow == fast)
+        {
+            break;
+        }
+        
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    
+    // if cycle found, find the start node
+    if (slow == fast)
+    {
+        // reset slow pointer to head
+        slow = A;
+        
+        // this time both pointers traverse list nodes 1x1 
+        // when they meet again, that's the atart of the cycle
+        while (fast != slow)
+        {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        
+        return slow;
+    }
+    
+    return NULL;
+}

@@ -1,0 +1,57 @@
+    bool isBipartite(vector<vector<int>>& graph) {
+               
+        int srcV = -1;
+        
+        set<int> s1;
+        set<int> s2;
+        
+        int edgesTested = 0;
+        while (edgesTested <= graph.size())
+        {
+            srcV = (srcV + 1) % graph.size();
+            
+            if (graph[srcV].empty())
+            {
+                edgesTested++;
+                continue;
+            }
+            
+            if (s1.empty() && s2.empty())
+            {
+                s1.insert(srcV);
+                for (int v : graph[srcV])
+                {
+                    s2.insert(v);
+                } 
+                edgesTested++;
+            }            
+            else if (s1.find(srcV) != s1.end())
+            {
+                // ensure none of dest edges are in the same set, insert in opp set
+                for (int v : graph[srcV])
+                {
+                    if (s1.find(v) != s1.end())
+                    {
+                        return false;
+                    }
+                    s2.insert(v);
+                }                
+                edgesTested++;
+            }
+            else if (s2.find(srcV) != s2.end())
+            {
+                // ensure none of dest edges are in the same set, insert in opp set
+                for (int v : graph[srcV])
+                {
+                    if (s2.find(v) != s2.end())
+                    {
+                        return false;
+                    }
+                    s1.insert(v);
+                }                 
+                edgesTested++;
+            }
+        }
+        return true;
+        
+    }

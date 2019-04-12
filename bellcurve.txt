@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() 
+{
+	int N;
+	cin >> N;
+	
+	vector<int> v;
+	for (int i=0; i<N; ++i)
+	{
+	    int n;
+	    cin >> n;
+	    
+	    v.push_back(n);
+	}
+	
+	sort(v.begin(), v.end());
+	
+	for (int i=0; i<N; i=i+2)
+	{
+	    cout << v[i];
+	    cout << " ";
+	}
+	
+	int start = (N-1);
+	if ((N % 2) != 0)
+	{
+	    start--;
+	}
+	
+	for (int i=start; i>=1; i=i-2)
+	{
+	    cout << v[i];
+	    cout << " ";
+	}
+	
+	return 0;
+}

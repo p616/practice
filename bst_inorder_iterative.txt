@@ -1,0 +1,41 @@
+// (LHR)
+// inorder(left)
+// print
+// inorder(right)
+vector<int> Solution::inorderTraversal(TreeNode* A) 
+{
+    vector<int> inorder;
+    
+    if (A == NULL)
+    {
+        return inorder;
+    }
+    
+    stack<TreeNode*> s;
+    
+    TreeNode *node = A;
+    
+    // if node not null will push node and left's to stack
+    // otherwise will pop from stack
+    while (node != NULL || !s.empty())
+    {
+        // push current and current's lefts all the way down
+        while (node != NULL)
+        {
+            s.push(node);
+            node = node->left;
+        }
+          
+        // node is NULL
+        // get it from the stack
+        node = s.top();
+        s.pop();
+        
+        // visit    
+        inorder.push_back(node->val);
+            
+        // if node->right not null will push to stack + left's
+        // otherwise next node will come from stack
+        node = node->right;
+    }
+}

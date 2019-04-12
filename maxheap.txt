@@ -1,0 +1,155 @@
+
+
+Given N bags, each bag contains Ai chocolates. There is a kid and a magician. In one unit of time, kid chooses a random bag i, eats Ai chocolates, then the magician fills the ith bag with floor(Ai/2) chocolates.
+
+Given Ai for 1 <= i <= N, find the maximum number of chocolates kid can eat in K units of time.
+
+For example,
+
+K = 3
+N = 2
+A = 6 5
+
+Return: 14
+
+At t = 1 kid eats 6 chocolates from bag 0, and the bag gets filled by 3 chocolates
+At t = 2 kid eats 5 chocolates from bag 1, and the bag gets filled by 2 chocolates
+At t = 3 kid eats 3 chocolates from bag 0, and the bag gets filled by 1 chocolate
+so, total number of chocolates eaten: 6 + 5 + 3 = 14
+
+Note: Return your answer modulo 10^9+7
+
+
+class MyMaxHeap
+{
+    public:
+        MyMaxHeap(vector<int> &B);
+
+        int extractMax();
+        void insert(int n);
+        
+    private:
+        vector<int> hArray;
+        
+        int lChild(int i)  { return i*2+1; }
+        int rChild(int i) { return i*2+2; }
+        int parentNode(int i) { return (i-1)/2; }
+        
+        void heapifyDown(int i);
+        void heapifyUp(int i);
+};
+
+MyMaxHeap::MyMaxHeap(vector<int> &B) 
+{
+    hArray = B;
+    
+    // heapify down the tree for each "new" node:
+    // first half of array = nodes, last half = children (root is first)
+    // start at bottom-most nodes, heapify down the tree
+    // move sequentially up to root, hepify down the tree
+    // ensures bottom-most nodes in order
+    // if parent changes, will re-update bottom nodes (otherwise leaves as-is)
+    for (int i = ((B.size()/2) - 1); i >= 0; i--)
+    {
+        heapifyDown(i);
+    }
+}
+
+void 
+MyMaxHeap::heapifyDown(int i)
+{
+    int largest = i;
+    
+    int left = lChild(i);
+    int right = rChild(i);
+    
+    // make sure left and right smaller than i (largest)
+    if (left < hArray.size())
+    {
+        if (hArray[left] > hArray[largest])
+        {
+            largest = left;
+        }
+    }
+    if (right < hArray.size())
+    {
+        if (hArray[right] > hArray[largest])
+        {
+            largest = right;
+        }
+    }
+    
+    if (largest != i)
+    {
+        int temp = hArray[i];
+        hArray[i] = hArray[largest];
+        hArray[largest] = temp;
+        heapifyDown(largest);
+    }
+}
+
+void 
+MyMaxHeap::heapifyUp(int i)
+{
+    int smallest = i;
+    int parent = parentNode(i);
+    
+    // make sure parent is larger than new node
+    if (parent >= 0)
+    {
+        if (hArray[parent] < hArray[smallest])
+        {
+            smallest = parent;
+        }
+    }
+    
+    if (smallest != i)
+    {
+        int temp = hArray[parent];
+        hArray[parent] = hArray[smallest];
+        hArray[smallest] = temp;
+        heapifyUp(smallest);
+    }
+}
+
+int 
+MyMaxHeap::extractMax()
+{
+    int max = hArray.front();
+    
+    hArray.front() = hArray.back();
+    hArray.pop_back();
+    
+    // heapify down the tree from "new" node
+    heapifyDown(0);
+    
+    return max;
+}
+
+void 
+MyMaxHeap::insert(int n)
+{
+    // insert at end
+    hArray.push_back(n);
+    
+    // heapify up the tree from new node
+    // if less than its parent, nothing happens
+    heapifyUp(hArray.size()-1);
+}
+
+int nchoc(int A, vector<int> &B) 
+{
+    MyMaxHeap h(B);
+    
+    unsigned long long count = 0;
+    
+    for (int i=0; i<A; ++i)
+    {
+        int max = h.extractMax();
+        h.insert(max/2);
+        count += max;
+        count = (count % (unsigned long long)(pow(10, 9) + 7));
+    }
+    
+    return count;
+}

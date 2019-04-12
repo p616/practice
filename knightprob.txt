@@ -1,0 +1,50 @@
+ On an NxN chessboard, a knight starts at the r-th row and c-th column and attempts to make exactly K moves. The rows and columns are 0 indexed, so the top-left square is (0, 0), and the bottom-right square is (N-1, N-1).
+
+Each time the knight is to move, it chooses one of eight possible moves uniformly at random (even if the piece would go off the chessboard) and moves there.
+
+The knight continues moving until it has made exactly K moves or has moved off the chessboard. Return the probability that the knight remains on the board after it has stopped moving.
+
+    
+    static const unsigned short POSSIBLE_MOVES = 8;
+    
+    const array<int, POSSIBLE_MOVES> ROWMASK = { -2, -2,  2, 2, -1,  1, -1, 1 };
+    const array<int, POSSIBLE_MOVES> COLMASK = { -1,  1, -1, 1, -2, -2,  2, 2 };
+    
+    bool IsValidMove(int N, int r, int c)
+    {
+        return (r >= 0 && c >= 0 && r < N && c < N);
+    }
+    
+    // total probability = sum of probability of each of 8 possible initial moves
+    // probability of each of 8 possible initial moves (move 1) = prob of move 1 * prob of move 2 * ... * prob of move K
+    double knightProbability(int N, int K, int r, int c) 
+    {
+        double total_prob = 0.0f;
+        
+        // exit condition, successfully stayed on the board
+        if (K == 0)
+        {
+            return 1.0f;
+        }
+        
+        for (int i=0; i<POSSIBLE_MOVES; ++i)
+        {
+            double move_prob = 0.0f;
+            
+            int newRow = r + ROWMASK[i];
+            int newCol = c + COLMASK[i];
+            
+            if (IsValidMove(N, newRow, newCol))
+            {
+                // probability this will be the chosen move is 1:8
+                move_prob = (double) 1.0/8.0;
+                
+                // try K-1 more moves from new location
+                move_prob *= knightProbability(N, K-1, newRow, newCol);                    
+            }
+            
+            total_prob += move_prob;
+        }
+        
+        return total_prob;
+    }

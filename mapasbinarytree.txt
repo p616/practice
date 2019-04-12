@@ -1,0 +1,155 @@
+//Binary Search Tree Program
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <stdio.h>
+#include <windows.h>
+#include <math.h>
+#include <cmath>
+
+using namespace std;
+
+struct node{
+string name;
+string email;
+node* right;
+node* left;
+};
+
+node *addElement(node* root, string name, string email){
+if (root == NULL){
+    node* newNode = new node;
+    root = newNode;
+    newNode->name = name;
+    newNode->email = email;
+    newNode->right = NULL;
+    newNode->left = NULL;
+}
+else if (name < root->name){
+   root->left = addElement(root->left, name, email);
+}
+else if (name > root->name){
+    root->right = addElement(root->right, name, email);
+}
+else{
+    cout << "The name is already in use!\n Select a new name\n";
+}
+return root;
+}
+
+int searchMap(node *root, string name, int input)
+{
+    if (root == NULL){
+            cout << "\nMapOwner does not exist.\n\n"; return 0;
+    }
+    if (name == root->name){
+        cout << "\nFound map! \nMapOwner: " << root->name << "\nEmail: " << root->email << "\n\n";
+        cout << " 1. Edit your email\n 2. Add an email adress\n 3. Delete an email-adress\n 4. Do nothing\n";
+        cin >> input;
+        string mail;
+
+        switch (input){
+            case 1:
+                cout << "Enter mail;\n";
+                cin >> mail;
+                root->email = mail;
+                cout << "\n" << root->email << "\n";
+                break;
+
+            case 2:
+                cout << "Enter mail;\n";
+                cin >> mail;
+                root->email = root->email + ";" + mail + ";"; '\n';
+                cout << root->email;
+                break;
+
+            case 3:
+                root->email = "";
+                cout << "<Empty>\n";
+                break;
+
+            case 4:
+            break;
+        }
+}
+else if (name < root->name){
+    searchMap(root->left, name, input);
+}
+else if (name > root->name){
+    searchMap(root->right, name, input);
+}
+return 0;
+}
+
+node *deleteBook(node *root)
+{
+
+    if (root != NULL){
+    deleteBook(root->left);
+    deleteBook(root->right);
+
+
+    delete root;
+    root = NULL;
+    return root;
+}
+}
+
+
+int main ()
+{
+      /*6. Implement a simple map, in the form of a binary tree, that holds an address book; the key for the map
+should be a person's name and the value should be the person's email address. You should provide the
+ability to add email addresses to the map, remove email addresses, update email addresses, and of
+course find email addresses. You'll also want to clean up your address book when your program shuts
+down. As a reminder, you can use any of the standard C++ comparison operators (such as ==, < or >) to
+compare two strings*/
+
+    /*root = addElement(root,"Wille");
+    root = addElement(root,"Kelle");
+    root = addElement(root,"Lullor");
+    root = addElement(root,"Sollke");
+    root = addElement(root,"Fitto");
+    root = addElement(root,"YxO");
+    root = addElement(root,"Memo");
+    root = addElement(root,"Jayyao");*/
+
+
+    node *root = NULL;
+    int input;
+    string name;
+    string email;
+    while (input != 0){
+
+    cout << "Select method:\n1. Add an element to the tree\n2. Search after a specific map by its Name:\n3. Exit and de-allocate memory\n";
+    cin >> input;
+
+    switch (input){
+    case 1:
+        cin.clear();
+        cin.ignore();
+
+        cout << "Enter your name: \n";
+        getline(cin, name, '\n');
+        cout << "Enter your first email: \n";
+        getline(cin, email, '\n');
+
+        root = addElement(root, name, email);
+        break;
+
+    case 2:
+        cin.clear();
+        cin.ignore();
+
+        cout << "Which Mapname would you like to search after?\n";
+        getline(cin, name);
+        searchMap(root, name, 1000);
+        break;
+
+    case 3:
+        root = deleteBook(root);
+        break;
+}
+
+}
+}

@@ -1,0 +1,146 @@
+// NxN grid with 0 = land, 1 = water
+// find path from src point to dest with min cost
+// if blocked by water, must build a bridge (from one land cell to another)
+// cost = (x-x')^2 + (y-y')^2
+// can only build one bridge per path
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <limits>
+
+using namespace std;
+
+int ROWMASK[] = { 0,  0, 1, -1 };
+int COLMASK[] = { 1, -1, 0,  0 };
+
+bool isValid(int N, vector<vector<int>>& grid, int X, int Y)
+{
+    return ( (X >= 0) && (X < N) && (Y >= 0) && (Y < N) && (grid[X][Y] != -1) );
+}
+
+void findPath(int N, vector<vector<int>>& grid, 
+                int X, int Y, 
+                int destX, int destY,
+                int bridgeStartX, int bridgeStartY,
+                int currCost, int& minCost)
+{
+    if ((X == destX) && (Y == destY) )
+    {
+        // cost for this path less than cost so far?
+        if (currCost < minCost)
+        {
+            minCost = currCost;
+        }
+        
+        return;
+    }
+    
+    // are we on land or water?
+    int onLand = (grid[X][Y] == 0);
+    
+    // set this cell as visited
+    grid[X][Y] = -1;
+    
+    // try starting out in each of the four directions
+    for (int i= 0; i<4; ++i)
+    {
+        int newX = (X + ROWMASK[i]);
+        int newY = (Y + COLMASK[i]);
+        
+        // check if still on grid and not visited
+        if (isValid(N, grid, newX, newY))
+        {
+            // on land or water
+            if (onLand)
+            {
+               if (grid[newX][newY] == 0)
+               {
+                    // land->land
+                    findPath(N, grid, newX, newY, destX, destY, 
+                             bridgeStartX, bridgeStartY, currCost, minCost);
+               }
+               else
+               {
+                    // land->water
+                    // start building a bridge
+                    // if this path already has a cost (i.e. a bridge), not a valid next stop
+                    if (currCost == 0)
+                    {
+                        findPath(N, grid, newX, newY, destX, destY,
+                                 X, Y, currCost, minCost);  
+                    }
+               }
+            }
+            // on water
+            else
+            {
+                if (grid[newX][newY] == 1)
+                {
+                    // water->water
+                    findPath(N, grid, newX, newY, destX, destY, 
+                             bridgeStartX, bridgeStartY, currCost, minCost);
+                }
+                else
+                {
+                    // water->land 
+                    // calculate the cost of this path's bridge
+                    int tunnelCost = ( pow(abs(newX - bridgeStartX), 2) + 
+                                       pow(abs(newY - bridgeStartY), 2) );
+
+                    // reset bridge X+Y
+                    bridgeStartX = -1;
+                    bridgeStartY = -1;
+                    
+                    findPath(N, grid, newX, newY, destX, destY, 
+                             bridgeStartX, bridgeStartY, tunnelCost, minCost);
+                }
+            }
+        }
+    }
+    
+    // backtrack
+    grid[X][Y] = (onLand ? 0 : 1);
+}
+
+int main() 
+{
+	int N;
+	cin >> N;
+	
+	int srcX;
+	int srcY;
+	cin >> srcX;
+	cin >> srcY;
+	srcX--;
+	srcY--;
+	
+	int destX;
+	int destY;
+	cin >> destX;
+	cin >> destY;
+	destX--;
+	destY--;
+	
+	vector<vector<int>> grid;
+	for (int i=0; i<N; ++i)
+	{
+	    string s;
+	    cin >> s;
+	    
+	    vector<int> row;
+	    for (char c : s)
+	    {
+	        row.push_back(c-'0');
+	    }
+	    
+	    grid.push_back(row);
+	}
+	
+	int cost = numeric_limits<int>::max();
+	findPath(N, grid, srcX, srcY, destX, destY, -1, -1, 0, cost);
+
+    cout << cost;
+    
+	return 0;
+}

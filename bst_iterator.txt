@@ -1,0 +1,75 @@
+Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
+
+Calling next() will return the next smallest number in the BST.
+
+
+
+class BSTIterator {
+public:
+    BSTIterator(TreeNode* root)
+    {
+        // save inorder traversal to vector
+        // maintain pos of next node value to return        
+        if (root != NULL)
+        {
+            traverse_inorder(root);
+            currNode = 0;
+        }
+        else
+        {
+            currNode = -1;
+        }        
+    }
+    
+    /** @return the next smallest number */
+    int next() 
+    {
+        // return next value in inorder vector
+        // and increment pos for next next() call
+        int next = -1;
+        if (hasNext())    
+        {
+            next = inorder[currNode++];      
+        }
+        return next;
+    }
+    
+    /** @return whether we have a next smallest number */
+    bool hasNext() 
+    {
+        // true if current pos < size of inorder vector
+        return ( (currNode != -1) && (currNode < inorder.size()) );    
+    }
+    
+private:
+    vector<int> inorder;
+    int currNode;
+    
+    void traverse_inorder(TreeNode *root);
+};
+
+void
+BSTIterator::traverse_inorder(TreeNode *root)
+{
+    // LHR
+    if (root == NULL)
+    {
+        return;
+    }
+    
+    // L
+    traverse_inorder(root->left);
+    
+    // H
+    inorder.push_back(root->val);
+    
+    // R
+    traverse_inorder(root->right);    
+}
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator* obj = new BSTIterator(root);
+ * int param_1 = obj->next();
+ * bool param_2 = obj->hasNext();
+ */

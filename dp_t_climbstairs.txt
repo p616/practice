@@ -1,0 +1,65 @@
+// can take 1 or 2 steps at a time
+
+// ways to get to 1st step = 1 (one step up to 1st)
+// ways to get to 2nd step = 2 (2 single steps: 1st to 2nd, or 1 double-step to 2nd))
+
+// Q: How is it possible to arrive on the 3rd step? 
+// A: Either *directly* from 1st (one double-step) OR from 2nd (one single-step)
+
+// only one way to get to 3rd if coming from 2nd = one step up
+// only one way to get *directly* to 3rd from 1st (w/o stopping on 2nd) = double-step
+//  ==> total ways to get to 3rd = # ways to get to 1st + # ways to get to 2nd
+
+// generalizing, path to nth step:
+// either got there by taking one single-step from n-1 or one double-step from n-2
+// so, # of ways to get to nth = # of ways to get to nth-1 + # ways to get to nth-2
+
+
+int Solution::climbStairs(int A) 
+{
+    // DP : Tabulation (Bottom Up):  
+    // The tabulated program for a given problem builds a table in bottom up fashion 
+    // and returns the last entry from table. For example, for the same Fibonacci number, 
+    // we first calculate fib(0) then fib(1) then fib(2) then fib(3) and so on. 
+    // So literally, we are building the solutions of subproblems bottom-up. 
+    
+    // only need to save n-1 (initialized to second) and n-2 (initialized to first)
+    int nthMinusTwo = 1;
+    int nthMinusOne = 2;
+    
+    // special cases : negative and 0; 1 and 2
+    if (A <= 0)
+    {
+        return 0;
+    }
+    else if (A == 1)
+    {
+        return nthMinusTwo;
+    }
+    else if (A == 2)
+    {
+        return nthMinusOne;
+    }
+     
+    int nth = 0;
+    for (int i = 3; i <= A; ++i)
+    {
+        nth = (nthMinusOne + nthMinusTwo);
+        
+        // evens save their value to nthMinusOne (second)
+        // odds save to nthMinusTwo (first)
+        if ((i & 1) == 0)
+        {
+            // even
+            nthMinusOne = nth;
+        }
+        else
+        {
+            // odd
+            nthMinusTwo = nth;
+        }
+    }
+    
+    return nth;
+}
+  

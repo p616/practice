@@ -1,0 +1,123 @@
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+#1:
+int longestConsecutive(const vector<int> &A) 
+{
+    // sort the vector with "selection sort"
+    // at each iteration will have a sorted array from 0..curr
+    // keep track of length of consecutive #'s as the sort progresses
+    
+    // special case for one element... 
+    if (A.size() == 1)
+    {
+        return 1;
+    }
+    
+    vector<int> B(A);
+    
+    int maxRun = 0;
+    int currentRun = 0;
+    
+    int i = 0;
+    for (; i < (B.size()-1); ++i)
+    {
+        int min = i;
+        for (int j = (i+1); j < B.size(); ++j)
+        {
+            if (B[j] < B[min])
+            {
+                min = j;
+            }
+        }
+        
+        if (min != i)
+        {
+            int temp = B[i];
+            B[i] = B[min];
+            B[min] = temp;
+        }
+                if (currentRun == 0)
+        {
+            // first element
+            // initialize current run count = 1 
+            currentRun = 1;
+        }
+        else if ( B[i] == (B[i-1] + 1) )
+        {
+            // increment current run count next expected value
+            currentRun++;
+        }
+        // if elements equal, just continue with current run, without increment
+        else if ( B[i] != B[i-1])
+        {
+            // check if current run was longest found so far
+            if (currentRun > maxRun)
+            {
+                maxRun = currentRun;
+            }
+            
+            // reset current run count and next expected value
+            currentRun = 1;
+        }
+    }
+    
+    // increment current run for last value
+    if (abs(B[i]-B[i-1]) == 1)
+    {
+        currentRun++;
+    }
+    
+    // one last check in case longest run at end and still in progress
+    if (currentRun > maxRun)
+    {
+        maxRun = currentRun;
+    }
+    
+    return maxRun;
+}
+
+#2:
+int longestConsecutive(const vector<int> &A) 
+{
+    // insert each element into a set
+    set<int> elements;
+    for (int n : A)
+    {
+        elements.insert(n);
+    }
+    
+    int maxRun = 1;
+
+    for (int n : A)
+    {
+        // look for previous element in element set
+        int prev = n-1;
+        auto it = elements.find(prev);
+        
+        // if previous element found in element set, this is NOT a run start element
+        // continue to next element
+        if (it == elements.end())
+        {
+            // previous element not found
+            // look for next element
+            int next = n+1;
+            auto it = elements.find(next++);
+            
+            // if next element IS found, count length of the run
+            int currentRun = 1;
+            while (it != elements.end())
+            {
+                currentRun++;
+                it = elements.find(next++);
+            }
+            
+            // if this is the max run, update max count
+            if (currentRun > maxRun)
+            {
+                maxRun = currentRun;
+            }
+        }
+    }
+    
+    return maxRun;
+}

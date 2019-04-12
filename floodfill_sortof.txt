@@ -1,0 +1,101 @@
+In a given grid, each cell can have one of three values:
+
+    the value 0 representing an empty cell;
+    the value 1 representing a fresh orange;
+    the value 2 representing a rotten orange.
+
+Every minute, any fresh orange that is adjacent (4-directionally) to a rotten orange becomes rotten.
+
+Return the minimum number of minutes that must elapse until no cell has a fresh orange.  If this is impossible, return -1 instead.
+
+Input: [[2,1,1],[1,1,0],[0,1,1]]
+Output: 4
+
+
+class Solution {
+public:
+    
+    int ROWMASK[4] = {0,0,1,-1};
+    int COLMASK[4] = {1,-1,0,0};
+    
+    bool isValid(vector<vector<int>>& grid, int x, int y)
+    {
+        if ( (x >= 0) && (y >= 0) && (x < grid.size()) && (y < grid[0].size()) )
+        {
+            return true;
+        }
+        return false;
+    }
+        
+    int orangesRotting(vector<vector<int>>& grid) 
+    {
+        // count fresh oranges in grid
+        // create list of oranges that start out rotten
+        int numFresh = 0;
+        vector<pair<int,int>> rotten;
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for (int j=0; j<grid[i].size(); ++j)
+            {
+                if (grid[i][j] == 1)
+                {
+                    numFresh++;
+                }
+                else if (grid[i][j] == 2)
+                {
+                    rotten.push_back({i,j});
+                }
+           }
+        }   
+        
+        // special case: all oranges already rotten, done
+        if (numFresh == 0)
+        {
+            return 0;
+        }  
+                
+        // until all oranges have gone rotten, let the clock tick...
+        int timeElapsed = 0;  
+        while (numFresh >= 0)
+        {
+            // each loop represents a new minute
+            timeElapsed++;
+            
+            // loop thru all rotten oranges and rot their neighbors
+            // keep track of those for the next loop
+            vector<pair<int,int>> nextGroup;
+            for (auto p : rotten)
+            {
+                for (int i=0; i<4; ++i)
+                {
+                    int newX = (p.first + ROWMASK[i]);   
+                    int newY = (p.second + COLMASK[i]);  
+                    if (isValid(grid, newX, newY) && (grid[newX][newY] == 1))
+                    {
+                        nextGroup.push_back({newX, newY});
+                        grid[newX][newY] = 2;
+                        numFresh--;
+                    }
+                }
+            }
+            
+            // if all rotted, done nothing in nextGroup, either done, or not doable
+            if (numFresh == 0)
+            {
+                return timeElapsed;
+            }
+            
+            // if still have fresh oranges but nothing in nextGroup, not doable
+            if (nextGroup.empty())
+            {
+                return -1;
+            }
+            
+            rotten = nextGroup;            
+        }
+           
+        // should really only get here for grid with no fresh oranges at time 0 (done)
+        //return ((timeElapsed == 0) ? -1 : timeElapsed);
+        return 0;
+    }
+};

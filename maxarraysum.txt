@@ -1,0 +1,52 @@
+// Complete the maxSubsetSum function below.
+/*
+// Times out for large...
+int maxSubsetSum(vector<int> arr) 
+{
+  int maxsum = INT_MIN;
+
+  for (int i = 0; i < arr.size()-2; i++)
+  {
+    int sum = arr[i];
+    for (int j = 2; j<arr.size()-i; j++)
+    {
+      for (int k = i+j; k < arr.size(); k+=2)
+      {
+          sum += arr[k];
+          if (sum > maxsum)
+          {
+            maxsum = sum;
+          }
+      }
+      sum = arr[i];
+    }
+  }
+  return maxsum;
+}
+*/
+
+// Keep track of the max at POS-2 and POS-3 and compare:
+//  - max at POS-2, max at POS-2 + curr, max at POS-3, max at POS-3 + curr
+// i.e. 0 1 2 3 4 5
+//  - at 3 compare 0,3 and 1,3
+//  - at 5 compare 0,3,5 and 1,3,5 = max at 3 already done; 2,5 = max at 2 already done
+int maxSubsetSum(vector<int> arr) 
+{
+  // 2 compare against 0 
+  // 3 compare against 0 and 1 
+  // 4 compare against 1 and 2
+  // 5 compare against 2 and 3
+  array<int,2> prevSums;
+  prevSums[0] = arr[0];
+  prevSums[1] = max(arr[0], arr[1]);
+
+  for (int i = 2; i< arr.size(); i++)
+  {
+    // max 2-back + curr or curr
+    prevSums[i%2] = max(prevSums[i%2] + arr[i], arr[i]);
+    // or max so far
+    prevSums[i%2] = max(prevSums[0], prevSums[1]);
+  }
+
+  return max(prevSums[0], prevSums[1]);
+}

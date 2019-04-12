@@ -1,0 +1,130 @@
+
+On an 8 x 8 chessboard, there is one white rook.  There also may be empty squares, white bishops, and black pawns.  These are given as characters 'R', '.', 'B', and 'p' respectively. Uppercase characters represent white pieces, and lowercase characters represent black pieces.
+
+The rook moves as in the rules of Chess: it chooses one of four cardinal directions (north, east, west, and south), then moves in that direction until it chooses to stop, reaches the edge of the board, or captures an opposite colored pawn by moving to the same square it occupies.  Also, rooks cannot move into the same square as other friendly bishops.
+
+Return the number of pawns the rook can capture in one move.
+
+Input: [
+[".",".",".",".",".",".",".","."],
+[".",".",".","p",".",".",".","."],
+[".",".",".","R",".",".",".","p"],
+[".",".",".",".",".",".",".","."],
+[".",".",".",".",".",".",".","."],
+[".",".",".","p",".",".",".","."],
+[".",".",".","p",".",".",".","."],
+[".",".",".",".",".",".",".","."]]
+Output: 3
+Explanation: 
+In this example the rook is able to capture all but one pawn.
+
+
+    enum DIRECTION { NORTH = 0, SOUTH = 1, EAST = 2, WEST = 3 } ;
+    
+    int numCaps(vector<vector<char>>& board, int ROWS, int COLS, int x, int y, DIRECTION dir)
+    {
+        int count = 0;
+        switch (dir)
+        {
+        case NORTH:
+        {
+            for (int i=x-1; i>=0; i--)
+            {
+                if (board[i][y] == 'p')
+                {
+                    count++;
+                    break;
+                }
+                else if (board[i][y] == 'B')
+                {
+                    break;
+                }
+            }
+            break;
+        }        
+        case SOUTH:
+        {
+            for (int i=x+1; i<8; ++i)
+            {
+                if (board[i][y] == 'p')
+                {
+                    count++;
+                    break;
+                }
+                else if (board[i][y] == 'B')
+                {
+                    break;
+                }
+                
+            }
+            break;
+        }        
+        case EAST:
+        {
+            for (int i=y+1; i<8; ++i)
+            {
+                if (board[x][i] == 'p')
+                {
+                    count++;
+                    break;
+                }
+                else if (board[x][i] == 'B')
+                {
+                    break;
+                }
+                
+            }
+            break;
+        }        
+        case WEST:
+        {
+            for (int i=y-1; i>=0; i--)
+            {
+                if (board[x][i] == 'p')
+                {
+                    count++;
+                    break;
+                }
+                else if (board[x][i] == 'B')
+                {
+                    break;
+                }
+                
+            }
+            break;
+        }        
+        }
+        
+        return count;
+    }
+    
+    int numRookCaptures(vector<vector<char>>& board) 
+    {
+        // find rook       
+        int x;
+        int y;        
+        for (int i=0; i<8; ++i)
+        {
+            for (int j=0; j<8; ++j)
+            {
+                if (board[i][j] == 'R')
+                {
+                    x=i;
+                    y=j;
+                    break;
+                }
+            }
+        }
+        
+        int caps = 0;
+        caps += numCaps(board, 8, 8, x, y, NORTH);
+        caps += numCaps(board, 8, 8, x, y, SOUTH);
+        caps += numCaps(board, 8, 8, x, y, EAST);
+        caps += numCaps(board, 8, 8, x, y, WEST);        
+        return caps;
+    }
+};
+
+
+
+

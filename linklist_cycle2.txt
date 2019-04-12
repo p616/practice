@@ -1,0 +1,43 @@
+    ListNode *detectCycle(ListNode *head) 
+    {
+        if (head == NULL || head->next == NULL)
+        {
+            return NULL;
+        }
+        
+        if (head->next == head)
+        {
+            return head;
+        }
+        
+        ListNode *pSlow = head->next;
+        ListNode *pFast = head->next->next;
+        
+        while ( (pSlow != pFast) && (pFast != NULL) )
+        {
+            if (pFast->next == NULL)
+            {
+                break;
+            }
+            pSlow = pSlow->next;
+            pFast = pFast->next->next;
+        }
+        
+        if (pSlow != pFast)
+        {
+            return NULL;
+        }
+        
+	// if loop found, 
+	// reset slow to head
+	// incr each one by one until meet
+        pSlow = head;
+        while (pSlow != pFast)
+        {
+            pSlow = pSlow->next;
+            pFast = pFast->next;
+        }
+        
+        return pSlow;
+    }
+        

@@ -1,0 +1,38 @@
+int Solution::titleToNumber(string A) 
+{
+    if (A.size() == 0)
+    {
+        return 0;
+    }
+    
+    int colNum = 0;
+    int pos = (A.size()-1);
+    for (char c : A)
+    {
+        int letterVal = ((c - 'A') + 1);
+        int mult = pow(26, pos--);
+        colNum += (letterVal * mult);
+    }
+    
+    return colNum;
+}
+
+string Solution::convertToTitle(int A) 
+{
+    if (A <= 0)
+    {
+        return NULL;
+    }
+    
+    string num = "";
+    while (A >= 1)
+    {
+        int letterVal = ((A-1) % 26);
+        num.insert(num.begin(), ('A' + (letterVal)));
+        A = ((A-1)/26);
+    }
+    
+    
+    return num;
+}
+

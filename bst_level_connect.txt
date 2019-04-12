@@ -1,0 +1,58 @@
+Given BST:
+
+Populate each next pointer to point to its next right node. 
+If there is no next right node, the next pointer should be set to NULL.
+
+Given the following perfect binary tree,
+
+         1
+       /  \
+      2    5
+     / \  / \
+    3  4  6  7
+
+After calling your function, the tree should look like:
+
+         1 -> NULL
+       /  \
+      2 -> 5 -> NULL
+     / \  / \
+    3->4->6->7 -> NULL
+
+
+void connect(TreeLinkNode* A) 
+{
+    if (A == NULL)
+    {
+        return;
+    }
+    
+    queue<TreeLinkNode *> q;
+    q.push(A);
+    
+    while (!q.empty())
+    {
+        int nodesInLevel = q.size();
+        for (int i = 0; i < nodesInLevel; ++i)
+        {
+            TreeLinkNode *node = q.front();
+            q.pop();
+            
+            if (node->left != NULL)
+            {
+                q.push(node->left);
+            }
+            if (node->right != NULL)
+            {
+                q.push(node->right);
+            }
+            
+            if (i < (nodesInLevel - 1))
+            {
+                node->next = q.front();
+            }
+        }
+    }
+}
+
+

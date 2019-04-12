@@ -1,0 +1,38 @@
+
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+int Solution::searchInsert(vector<int> &A, int B) 
+{
+    int low = 0;
+    int high = (A.size()-1);
+    while (low < high)
+    {
+        if (B == A[low])
+        {
+            return low;
+        }
+        else if (B == A[high])
+        {
+            return high;
+        }
+        int mid = (low + ((high-low)/2));
+        if (B == A[mid])
+        {
+            return mid;
+        }
+        else if (B > A[mid])
+        {
+            low = mid + 1;
+        }
+        else
+        {
+            high = mid - 1;
+        }
+    }
+    
+    if (B <= A[low])
+    {
+        return low;
+    }
+    return low + 1;
+}

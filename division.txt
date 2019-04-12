@@ -1,0 +1,104 @@
+Equations are given in the format A / B = k, 
+where A and B are variables represented as strings, 
+and k is a real number (floating point number). 
+
+Given some queries, return the answers. 
+If the answer does not exist, return -1.0.
+
+Example:
+
+Given a / b = 2.0, b / c = 3.0.
+
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+
+return [6.0, 0.5, -1.0, 1.0, -1.0 ]
+
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) 
+{
+    vector<double> answers;
+    
+    // Holds v1 in terms of v2: v1 = v2 * double
+    // EX: key: v1, value: {v2, double}
+    multimap< string, pair<string, double> > vars;
+    
+    for (int i=0; i<equations.size(); ++i)
+    {
+        pair<string, string> p = equations[i];
+        
+        vars.insert({ p.first,  {p.second, values[i]} });
+        vars.insert({ p.second, {p.first, 1.0L/values[i]} });
+        
+        //cout << p.first << ":" << values[i] << " " << p.second << ":" << 1.0L/values[i] << endl;
+    }
+    
+    for (auto p: queries)
+    {
+        string V1 = p.first;
+        string V2 = p.second;
+        
+        auto rangeV1 = vars.equal_range(V1);
+        if (rangeV1.first == vars.end())
+        {
+            answers.push_back(-1.0L);
+            continue;
+        }
+        else if (V1 == V2)
+        {
+            answers.push_back(1.0L);
+            continue;
+        }
+        
+        auto rangeV2 = vars.equal_range(V2);
+        if (rangeV2.first == vars.end())
+        {
+            answers.push_back(-1.0L);
+            continue;
+        }
+       
+        double f1 = -1.0L;
+        double f2 = -1.0L;
+        string V3 = "";
+        
+        for (auto i = rangeV1.first; i != rangeV1.second; ++i)
+        {
+            pair<string, double> p1 = i->second; // {var, double}
+            V3 = p1.first;
+            
+            for (auto i2 = rangeV2.first; i2 != rangeV2.second; ++i2)
+            {
+                pair<string, double> p2 = i2->second; // {var, double}
+                if (V3 == p2.first)
+                {
+                    f2 = p2.second;
+                    //cout << f2 << " ";
+                    break;
+                }
+            }
+            
+            if (f2 != -1.0L)
+            {
+                f1 = p1.second;
+                //cout << f1 << endl;
+                break;
+            }
+        }
+        
+        if (f1 == -1.0L)
+        {
+            answers.push_back(-1.0L);
+            continue;
+        }
+        else
+        {
+            double ans = f1/f2;
+            answers.push_back(ans);
+            
+            vars.insert({ V1, {V2, ans} });
+            vars.insert({ V2, {V1, 1.0L/ans} });
+        
+            //cout << V1 << ":" << ans << " " << V2 << ":" << 1.0L/ans << endl;
+        }
+    }  
+    
+    return answers;
+}

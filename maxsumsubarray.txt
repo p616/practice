@@ -1,0 +1,69 @@
+Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+
+Return the sum.
+
+int Solution::maxSubArray(const vector<int> &A) 
+{
+    int maxsum = numeric_limits<int>::min();
+    int maxneg = numeric_limits<int>::min();
+    
+    int startIndex = 0;
+    int nextIndex = -1;
+    int sum = 0;
+    
+    while (startIndex < A.size())
+    {
+        // skip leading negative values
+        // but track max in case ALL #'s neg
+        while ((A[startIndex] < 0) && (startIndex < A.size()))
+        {
+            maxneg = max<int>(maxneg, A[startIndex++]);
+        }
+        if (startIndex == A.size())
+        {
+            break;
+        }       
+        
+        // calculate sum(s) that can be obtained from subsequences that start
+        // with the first number (or the first positive number following any negatives)
+        sum = A[startIndex];
+        
+        // single values followed by all negative values need extra check, here
+        if (sum > maxsum)
+        {
+            maxsum = sum;
+        } 
+        
+        // index of value following first negative is saved in nextIndex
+        // passed to next iteration as startIndex
+        // there any string of negative values skipped (until positive found)
+        nextIndex = -1;
+                
+        for (int i = (startIndex + 1); i < A.size(); ++i)
+        {
+            sum += A[i];
+
+            // if haven't seen a negative yet, and this one is neg, save next index
+            if ((nextIndex == -1) && (A[i] < 0))
+            {
+                nextIndex = (i + 1);
+            }
+            
+            // update max on every add (as max might come in middle, before subtracts)
+            if (sum > maxsum)
+            {
+                maxsum = sum;
+            }
+        }
+        
+        // if no negative values in this subloop, done
+        startIndex = nextIndex;
+        if (startIndex == -1)
+        {
+            break;
+        }
+    }
+    
+    // if maxsum still INT MIN, all values were negative
+    return ((maxsum == numeric_limits<int>::min()) ? maxneg : maxsum);
+}

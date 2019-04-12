@@ -1,0 +1,57 @@
+Find the largest continuous sequence in a array which sums to zero.
+
+vector<int> Solution::lszero(vector<int> &A) 
+{
+    // keep running track of sum
+    // if get zero, start index = 0, end = current (len = end-start+1)
+    // map of found sums and the position found
+    // if sum is seen again, know there is a zero sum
+    // ex: 1, 2, -2 => 1, 3, 1 
+    //     start index = found sum index + 1, end = current
+    
+    // <sum, index>
+    map<int,int> sumMap;
+    
+    int start = -1;
+    int end = -1;
+    
+    int sum = 0;
+    for (int i=0; i<A.size(); ++i)
+    {
+        sum += A[i];
+        if (sum == 0)
+        {
+            // this will always be the longest sequence
+            start = 0;
+            end = i;
+        }
+        else
+        {
+            auto foundSum = sumMap.find(sum);
+            if (foundSum != sumMap.end())
+            {
+                // if this sequence is longer than what we have, replace
+                if ((start == -1) || ((end-start+1) < (i-foundSum->second)))
+                {
+                    start = (foundSum->second+1);
+                    end = i;
+                    
+                    // no need to add to sum map, keep the lowest index there
+                    continue;
+                }
+            }
+            sumMap.insert({sum, i});
+        }
+    }
+    
+    vector<int> longest;
+    if (start != -1)
+    {
+        for (int i=start; i<=end; ++i)
+        {
+            longest.push_back(A[i]);
+        }
+    }
+
+    return longest;
+}

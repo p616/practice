@@ -1,0 +1,35 @@
+ignore non alphanumeric chars and case
+
+int Solution::isPalindrome(string A) 
+{
+    int low = 0;
+    int high = A.size()-1;
+    
+    while (low < high)
+    {
+        while (low < high && !isalnum(static_cast<unsigned char>(A[low])))
+        {
+            low++;
+        }
+        while (low < high && !isalnum(static_cast<unsigned char>(A[high])))
+        {
+            high--;
+        }
+        
+        if ( low < high && 
+                isalnum(static_cast<unsigned char>(A[low])) && 
+                isalnum(static_cast<unsigned char>(A[high])) )
+        {
+            if ( tolower(static_cast<unsigned char>(A[low])) != 
+                 tolower(static_cast<unsigned char>(A[high])) )  
+            {
+                return 0;         
+            }
+            
+            low++;
+            high--;
+        }
+    }
+    
+    return 1;
+}

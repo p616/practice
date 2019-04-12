@@ -1,0 +1,64 @@
+// Deterministic Finite Automaton
+
+// RAN OUT OF TIME, COULDN'T SUBMIT OR TEST
+
+bool traverse
+(
+    vector<int> &A, vector<int> &B, 
+    int currState, set<int> &finalStates, 
+    int currStep, int finalStep,
+    string& currPath, set<string>& paths
+)
+{
+    if (currStep == finalStep)
+    {
+        if (finalStates.find(currState) != finalStates.end())
+        {
+            paths.insert(currPath);
+            return true;
+        }
+        return false;
+    }
+    
+    // try path following A
+    int newState = A[currState];
+    string newPath = (currpath + to_string(newState));
+    bool succeeded = traverse(A, B, newState, finalStates, currStep+1, finalStep, newPath, paths);
+    
+    // try path following B
+    newState = B[currState];
+    newPath = (currpath + to_string(newState));
+    succeeded = (succeeded || traverse(A, B, newState, finalStates, currStep+1, finalStep, newPath, paths));
+    
+    return succeeded;
+}
+
+int Solution::automata(vector<int> &A, vector<int> &B, vector<int> &C, int D, int E) 
+{
+    // return count of valid input strings of length E
+    // valid: begin in start state / start node (D), 
+    //        follow the state transitions, 
+    //        end in one of accept states / accept node from C vector
+    
+    // A.size() = number of nodes in "graph"
+    // each node has node in A for "0" transition
+    // each node has node in B for "1" transition
+    
+    // DFS with backtracking
+    // At each step in transition (num steps = E): 
+    // First try 0, then try 1, to see if either can land in an accept state in E steps
+    
+    set<int> acceptStates;
+    for (int n : C)
+    {
+        acceptStates.insert(n);
+    }
+    
+    set<string> paths;
+    string path = "";
+    if (traverse(A, B, D, acceptStates, 0, E, path, paths))
+    {
+        return paths.size();
+    }
+    return -1;
+}

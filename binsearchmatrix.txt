@@ -1,0 +1,100 @@
+
+Write an efficient algorithm that searches for a value in an m x n matrix.
+
+This matrix has the following properties:
+
+Integers in each row are sorted from left to right.
+The first integer of each row is greater than or equal to the last integer of the previous row.
+
+
+int searchMatrix(vector<vector<int> > &A, int B) 
+{
+    int row = 0;
+    
+    int lRow = 0;
+    int hRow = A.size()-1;
+    
+    while (lRow < hRow)
+    {
+        // found at start of row?
+        if (A[lRow][0] == B)
+        {
+            return 1;
+        }
+        if (A[hRow][0] == B)
+        {
+            return 1;
+        }
+    
+        // higher than hRow?  
+        if (B > A[hRow][0])
+        {
+            row = hRow;
+            break;
+        }
+                
+        // lower than lRow?
+        if (B < A[lRow][0])
+        {
+            // if this is the first row, not found
+            if (lRow == 0)
+            {
+                return 0;
+            }
+            lRow = lRow - 1;
+            break;
+        }
+        
+        int mRow = (lRow + ((hRow - lRow)/2));
+        if (A[mRow][0] == B)
+        {
+            return 1;
+        }
+    
+        // lower than mRow?
+        if (B < A[mRow][0])
+        {
+            hRow = mRow - 1;
+        }
+        else 
+        {
+            lRow = mRow + 1;
+        }
+        
+        // search prev row when lRow = hRow
+        row = max(lRow - 1, 0);
+    }
+    
+    int lCol = 0;
+    int hCol = A[row].size()-1;
+        
+    while (lCol < hCol)
+    {
+        if (A[row][lCol] == B)
+        {
+            return 1;
+        }
+        if (A[row][hCol] == B)
+        {
+            return 1;
+        }
+        
+        int mCol = (lCol + ((hCol-lCol)/2));
+        if (A[row][mCol] == B)
+        {
+            return 1;
+        }
+        
+        if (B < A[row][mCol])
+        {
+            hCol = mCol - 1;
+        }
+        else
+        {
+            lCol = mCol + 1;
+        }
+    }
+    
+    return ((B == A[row][lCol]) ? 1 : 0);
+    
+}

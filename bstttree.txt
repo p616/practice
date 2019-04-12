@@ -1,0 +1,799 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+    vector<double> averageOfLevels(TreeNode* root) 
+    {
+        vector<double> avgs;
+        
+        if (root == nullptr)
+        {
+            avgs.push_back(0.0f);
+            return avgs;
+        }
+                
+        queue<TreeNode*> q;
+        q.push(root);
+        
+        while (!q.empty())
+        {
+            int nodes = q.size();
+            long long sum = 0;
+            
+            for (int i=0; i<nodes; ++i)
+            {
+                TreeNode *node = q.front();
+                q.pop();
+                
+                sum += node->val;
+                
+                if (node->left)
+                {
+                    q.push(node->left);
+                }
+                if (node->right)
+                {
+                    q.push(node->right);
+                }
+            }
+            
+            avgs.push_back((double)((double)sum/(double)nodes));
+        } 
+        
+        return avgs;
+    }
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+    int sumOfLeftLeaves(TreeNode* root) 
+    {
+        int sum = 0;
+        
+        if (root != NULL)
+        {
+            if (root->left != NULL && 
+                root->left->left == NULL && root->left->right == NULL)
+            {
+                sum += root->left->val;
+            }
+            else
+            {
+                sum += sumOfLeftLeaves(root->left);
+            }
+            
+            sum += sumOfLeftLeaves(root->right);
+        }
+        
+        return sum;
+    }
+
+    bool isCompleteTree(TreeNode* root)
+    {
+        if (root == NULL)
+        {
+            return false;
+        }
+        
+        queue<TreeNode *> q;
+        q.push(root);
+        
+        bool done = false;
+        while (!q.empty())
+        {
+            for (int i=0; i<q.size(); ++i)
+            {
+                TreeNode *node = q.front();
+                q.pop();
+                
+                if (done && (node->left != NULL || node->right != NULL))
+                {
+                    return false;
+                }
+                
+                if (node->left == NULL)
+                {                   
+                    done = true; 
+                }
+                else
+                {
+                    q.push(node->left);
+                }
+                
+                if (node->right != NULL)
+                {
+                    if (done)
+                    {
+                        return false;
+                    }
+                    q.push(node->right);
+                }
+                else
+                {
+                    done = true;
+                }
+            }
+        }
+        return true;        
+    }
+
+// traverse to right most (largest)
+// if it has a left node, that's the 2nd largest
+// otherwise return parent
+
+    int get2ndLargest(Node * root)
+    {
+        if (root == NULL || (root->right == NULL && root->left == NULL))
+        {
+            return -1;
+        }
+        
+        Node *parent = root;
+        Node *p = root;
+        while (p->right != NULL)
+        {
+            parent = p;
+            p = p->right;
+        }
+        if (p->left != NULL)
+        {
+            return p->left->data;
+        }
+        return parent->data;
+    }
+
+//first idea was to do recursive in-order DFS
+//but no way to quit early...
+//so, do iterative in-order instead:
+
+     int kthSmallest(TreeNode* root, int k) 
+    {               
+        if (root == nullptr)
+        {
+            return -1;
+        }      
+        
+        int ret = -1;
+               
+        stack<TreeNode*> s;
+        s.push(root);
+     
+        TreeNode *curr = root;
+        while (!s.empty())
+        { 
+            // push left side of tree rooted at curr
+            while (curr !=nullptr)
+            {
+                if (curr->left != nullptr)
+                {
+                    s.push(curr->left);          
+                }
+                curr = curr->left;
+            }
+            
+            // pop = next smallest
+            curr = s.top();
+            s.pop();
+            
+            // if its the kth we've popped, we're done
+            k--;
+            if (k == 0)
+            {
+                ret = curr->val;
+                break;
+            }
+            
+            // if there is a right subtree, push it
+            if (curr->right != nullptr)
+            {
+                s.push(curr->right);
+            }                      
+            curr = curr->right; 
+        }
+        
+        return ret;
+    } 
+
+/*Complete the function below*/
+
+void kthLargest(Node *root, int k)
+{
+    vector<int> sorted;
+    stack<Node*> s;
+    
+    Node *curr = root;
+    
+    if (curr != nullptr)
+    {
+        s.push(curr);
+    }
+   
+    
+    while (!s.empty())
+    {
+        // traverse down left tree
+        while (curr != nullptr)
+        {
+            if (curr->left != nullptr)
+            {
+                s.push(curr->left);
+            }
+            curr = curr->left;
+        }
+        
+        // add elements to sorted array in increasing order
+        curr = s.top();
+        s.pop();
+        sorted.push_back(curr->key);
+        
+        if (curr->right != nullptr)
+        {
+            s.push(curr->right);
+        }
+        curr = curr->right;
+    }
+    
+    if (!sorted.empty())
+    {
+        unsigned pos = sorted.size()-k;
+        int kth = sorted[pos];
+        cout << kth << endl;
+    }
+}
+    
+Node *lca(Node *root, int v1,int v2) 
+    {
+		// Write your code here.
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+        if (v1 < root->data && v2 < root->data)
+        {
+            return lca (root->left, v1, v2);
+        }
+        else if (v1 > root->data && v2 > root->data)
+        {
+            return lca(root->right, v1, v2);
+        }
+        else 
+        {
+            // v1 and v2 on either sides of root, this is the lca
+            return root;
+        }
+    }
+
+Node *lcaIterative(Node *root, int v1,int v2)
+{
+		// Write your code here.
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+	Node *currNode = root;
+
+	while (1)
+	{
+        	if (v1 < currNode>data && v2 < currNode>data)
+        	{
+            		currNode = currNode->left;
+        	}
+        	else if (v1 > currNode->data && v2 > currNode->data)
+        	{
+            		currNode = currNode->right
+        	}
+        	else 
+        	{
+            		// v1 and v2 on either sides of root, this is the lca
+            		return currNode;
+        	}
+	}
+}
+    
+/*  The function Compute the "height" of a tree. Height is the  
+        number of nodes along the longest path from the root node  
+        down to the farthest leaf node.*/
+    
+int height(TreeNode* root) 
+    { 
+       /* base case tree is empty */ 
+       if (root == NULL) 
+       {
+           return 0; 
+       }
+
+       /* If tree is not empty then height = 1 + max of left  
+          height and right heights */    
+       return (max(height(root->left), height(root->right)) + 1); 
+    }     
+ 	
+int getHeight(Node* root)
+        {
+          //Write your code here
+          if (root == nullptr)
+          {
+              return -1;
+          }
+
+          int lHeight = getHeight(root->left) + 1;
+          int rHeight = getHeight(root->right) + 1;
+
+          if (lHeight > rHeight)
+          {
+              return lHeight;
+          }
+          else
+          {
+              return rHeight;
+          }
+          //return max(getHeight(root->left), getHeight(root->right)) + 1;
+        } 
+
+  int minDepth(TreeNode* root) 
+    {
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            return 1;
+        }
+        
+        if (root->right == nullptr)
+        {
+            return minDepth(root->left) + 1;
+        }
+        
+        if (root->left == nullptr)
+        {
+            return minDepth(root->right) + 1;
+        }
+        
+        return min(minDepth(root->left), minDepth(root->right)) + 1;
+        
+    }
+  
+int diameterOfBinaryTree(TreeNode* root) 
+    {
+        /* base case where tree is empty */
+        if (root == NULL) 
+        {
+            return 0; 
+        }
+
+        /* get the height of left and right sub-trees */
+        int lheight = height(root->left); 
+        int rheight = height(root->right); 
+
+        /* get the diameter of left and right sub-trees */
+        int ldiameter = diameterOfBinaryTree(root->left); 
+        int rdiameter = diameterOfBinaryTree(root->right); 
+
+        /* Return max of following three 
+        1) Diameter of left subtree 
+        2) Diameter of right subtree 
+        3) Height of left subtree + height of right subtree */
+        return max(lheight + rheight, max(ldiameter, rdiameter));   
+    }
+    
+int TreeMAX(Node* root, int currMax)
+    {
+        if (root == nullptr)
+        {
+            return currMax;
+        }
+        
+        if (root->data > currMax)
+        {
+            currMax = root->data;
+        }
+        
+        currMax = max(currMax, TreeMAX(root->left, currMax));
+        currMax = max(currMax, TreeMAX(root->right, currMax));
+        
+        return currMax;
+    }
+
+int maxdata(Node *root)
+    {
+        if (root == nullptr)
+        {
+            return INT32_MIN;
+        }
+        
+        int curmax = root->data;
+        
+        if (root->left)
+        {
+            curmax = max(curmax, maxdata(root->left));
+        }
+        if (root->right)
+        {
+            curmax = max(curmax, maxdata(root->right));
+        }   
+        return curmax;
+    }
+    
+int TreeMIN(Node* root, int currMin)
+    {
+        if (root == nullptr)
+        {
+            return currMin;
+        }
+        
+        if (root->data < currMin)
+        {
+            currMin = root->data;
+        }
+        
+        currMin = min(currMin, TreeMIN(root->left, currMin));
+        currMin = min(currMin, TreeMIN(root->right, currMin));
+        
+        return currMin;
+    }
+
+int mindata(Node *root)
+    {
+        if (root == nullptr)
+        {
+            return INT32_MAX;
+        }
+        
+        int curmin = root->data;
+        
+        if (root->left)
+        {
+            curmin = min(curmin, mindata(root->left));
+        }
+        if (root->right)
+        {
+            curmin = min(curmin, mindata(root->right));
+        }   
+        return curmin;
+    }
+	
+bool checkBST(Node* root) 
+    {
+		if (root == nullptr)
+        {
+            return true;
+        }
+                
+        if ( root->data > TreeMAX(root->left, INT32_MIN) && 
+             root->data < TreeMIN(root->right, INT32_MAX) &&
+             checkBST(root->left) &&
+             checkBST(root->right) )
+        {
+            return true;
+        }
+        
+        return false;
+	}
+
+bool checkBST(Node* root)
+    {
+		if (root == nullptr)
+        {
+            return true;  
+        }          
+        
+        return  root->data > maxdata(root->left) && 
+                root->data < mindata(root->right) &&
+                checkBST(root->left) && 
+                checkBST(root->right);
+        }
+
+ Node* insert_BST(Node* root, int data, int level) 
+  	{
+        if (root == NULL) 
+        {
+            return new Node(data, level);
+        } 
+        else 
+        {
+            if (data <= root->data) 
+            {
+                root->left = insert_BST(root->left, data, level+1);
+            } 
+            else 
+            {
+                root->right = insert_BST(root->right, data, level+1);
+            }
+        }
+        return root;
+    }
+
+// My TopView passes G4G submission
+// Fails 5 of 6 Hackerrank
+
+    void topView(Node * root) 
+    {
+     if (root == nullptr)
+      {
+        return;
+      }
+
+      // queue to hold nodes for BFS
+      queue<Node*> q;
+      q.push(root);
+
+      // parallel queue to track hDist of BFS nodes
+      queue<int> hDistQ;
+      hDistQ.push(0);
+
+      // set to track when top Node for given horizontal distance found
+      set<int> hDistSet;
+
+      while (!q.empty())
+      {
+        Node *currNode = q.front();
+        q.pop();
+
+        int hDist = hDistQ.front();
+        hDistQ.pop();
+
+        if (hDistSet.find(hDist) == hDistSet.end())
+        {
+          hDistSet.insert(hDist);
+          cout << currNode->data << " ";
+        }
+
+        if (currNode->left != nullptr)
+        {
+          q.push(currNode->left);
+          hDistQ.push(hDist-1);
+        }
+
+        if (currNode->right != nullptr)
+        {
+          q.push(currNode->right);
+          hDistQ.push(hDist+1);
+        }
+      }
+
+    }
+
+// This version was in Hackerrank "top submissions"...
+// Also fails 5 of 6
+       void left_top_view(Node *root) 
+        {
+          if (root != NULL) 
+          {
+            left_top_view(root->left);
+            cout << root->data << " ";
+          }
+        }
+        void right_top_view(Node *root) 
+        {
+          if (root != NULL) 
+          {
+            cout << root->data << " ";
+            right_top_view(root->right);
+          }
+        }
+        void topView(Node *root) 
+        {
+          if (root != NULL) 
+          {
+            left_top_view(root);
+            right_top_view(root->right);
+          }
+        }    
+
+   // Iterative method to do level order traversal line by line 
+    void printLevelOrder(Node *root) 
+    { 
+        // Base Case 
+        if (root == NULL)  
+        {
+            return; 
+        }
+      
+        // Create an empty queue for level order tarversal 
+        queue<Node *> q; 
+      
+        // Enqueue Root 
+        q.push(root); 
+      
+        while (!q.empty()) 
+        { 
+            // Enqueue and print
+            Node *node = q.front(); 
+            q.pop();
+               
+             // Print node
+            cout << "Level " << node->level << ": " << node->data << endl;  
+    
+            // Queue left and right
+            if (node->left != NULL) 
+            {
+                q.push(node->left); 
+            }
+            if (node->right != NULL) 
+            {
+                q.push(node->right); 
+            }
+        } 
+    } 
+   
+    vector<vector<int>> GetLevelOrder(Node* root) 
+    {
+        int levelNum = 0;
+        cout << "LevelOrder:" << endl;
+        
+        vector<vector<int>> allLevels;
+        vector<int> level;    
+        
+        queue<Node*> q;       
+        q.push(root);
+        
+        while (!q.empty())
+        {
+            cout << "Level " << levelNum++ << ": ";
+            
+            int levelNodes = q.size();
+            
+            for (int i=0; i < levelNodes; ++i)
+            {
+                Node *node = q.front();
+                q.pop();
+                            
+                cout << node->data << " ";
+                level.push_back(node->data);
+                
+                if (node->left != NULL)
+                {
+                    q.push(node->left);
+                }
+                if (node->right != NULL)
+                {
+                    q.push(node->right);
+                }
+            }
+            
+            allLevels.push_back(level);
+            level.clear();
+            cout << endl;
+        }
+        
+        return allLevels;
+    }
+  
+
+void preorder(Node *node)
+{
+    if (node == NULL)
+    {
+        return NULL;
+    }
+
+    stack<Node *> s;
+    s.push(node);
+
+    while (!stack.empty())
+    {
+        Node *n = s.top;
+        s.pop();
+
+        cout << n->val;
+
+        if (n->left)
+            s.push(n->left);
+
+        if (n->right)
+            s.push(n->right);
+    }
+}
+
+  
+class Node 
+{
+public:
+    int data;
+    Node *left;
+    Node *right;
+    
+    int level;
+    
+    Node(int d, int l) 
+    {
+        data = d;
+        left = NULL;
+        right = NULL;
+        
+        level = l;
+    }
+};
+
+class MyTree
+{
+public:
+
+  	Node* insert_BST(Node* root, int data, int level) 
+  	{
+        if (root == NULL) 
+        {
+            return new Node(data, level);
+        } 
+        else 
+        {
+            if (data <= root->data) 
+            {
+                root->left = insert_BST(root->left, data, level+1);
+            } 
+            else 
+            {
+                root->right = insert_BST(root->right, data, level+1);
+            }
+        }
+        return root;
+    }
+   
+    void PrintTree(Node *root)
+    {
+        if (root == NULL)
+        {
+            return;
+        }
+        
+        cout << "Node:" << root->data;
+        cout << " Left:" << (root->left ? to_string(root->left->data) : "null");
+        cout << " Right:" << (root->right ? to_string(root->right->data): "null") << endl;
+        if (root->left)
+            PrintTree(root->left);
+        if (root->right)
+            PrintTree(root->right);
+    }   
+ 
+}; //End of MyTree
+
+int main() {
+  
+    MyTree myTree;
+    Node* root = NULL;
+    
+    int numNodes;
+    int data;
+
+    cin >> numNodes;
+
+    while (numNodes > 0) 
+    {
+        cin >> data;
+        root = myTree.insert_BST(root, data, 0);
+        numNodes--;
+    }
+  
+	myTree.PrintTree(root);
+	myTree.printLevelOrder(root);	
+	
+	vector<vector<int>> levelOrder = myTree.GetLevelOrder(root);
+	
+	int level = 0;
+	cout << "Returned LevelOrder: " << endl;
+	for (auto l : levelOrder)
+	{
+	    cout << "Level " << level++ << ": ";
+	    for (auto n : l)
+	    {
+	        cout << n << " ";   
+	    }
+	    cout << endl;
+	}
+	
+    return 0;
+}
+
+
