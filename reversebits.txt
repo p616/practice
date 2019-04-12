@@ -1,0 +1,57 @@
+    uint32_t reverseBits(uint32_t n) 
+    {
+        // n reversed bit by bit into r
+        // loop exits once all set bits have been processed
+        // number of leading zeros in n tracked by "lz"
+        // r shifted left by lz to account for them
+        
+        uint32_t r = 0;
+        int lz = (sizeof(uint32_t) * CHAR_BIT);
+        
+        // shift n right one bit at a time 
+        // until last set bit falls off the end
+        for (n; n != 0; n >>= 1)
+        {            
+            // shift r left, opposite direction from n shift
+            r <<= 1;
+            lz--;  
+
+            // if the LSB set in n, set it in r too
+            r = (r | (n & 1));               
+        }
+               
+        // r now holds all bits set in n, reversed
+        // left shift them into their correct position in r
+        r <<= lz;
+        
+        return r;        
+    }
+
+  uint32_t reverseBits(uint32_t n) 
+    {
+        // n reversed bit by bit into r
+        // loop exits once all set bits have been processed
+        // lzs = shift req to account for leading zeros in n 
+        
+        uint32_t r = 0;
+        int lzs = (sizeof(uint32_t) * 8) - 1;
+        
+        // shift n right one bit at a time 
+        // until last set bit falls off the end
+        while (n)
+        {            
+            // if the LSB set in n, set it in r too
+            r = (r | (n & 1));            
+            
+            // shift r left, opposite direction from n shift
+            r <<= 1;
+ 	    n >>= 1;
+            lzs--;  
+        }
+               
+        // r now holds all bits set in n, reversed
+        // left shift them into their correct position in r
+        r <<= lzs;
+        
+        return r;        
+    }

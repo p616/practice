@@ -1,0 +1,49 @@
+Sansa has an array. She wants to find the value obtained by XOR-ing the contiguous subarrays, followed by XOR-ing the values thus obtained. 
+
+ex:
+1 2 3
+(1) ^ (2) ^ (3) ^ 
+(1 ^ 2) ^ (2 ^ 3) ^ 
+(1 ^ 2 ^ 3)
+
+A:
+(1 ^ 3)
+
+
+ex:
+1 2 3 4 5
+(1) ^ (2) ^ (3) ^ (4) ^ (5) ^
+(1 ^ 2) ^ (2 ^ 3) ^ (3 ^ 4) ^ (4 ^ 5) ^ 
+(1 ^ 2 ^ 3) ^ (2 ^ 3 ^ 4) ^ (3 ^ 4 ^ 5) ^
+(1 ^ 2 ^ 3 ^ 4) ^ (2 ^ 3 ^ 4 ^ 5) ^
+(1 ^ 2 ^ 3 ^ 4 ^ 5)
+
+A:
+(1 ^ 3 ^ 5)
+
+
+ex:
+1 2 3 4
+(1) ^ (2) ^ (3) ^ (4) ^ 
+(1 ^ 2) ^ (2 ^ 3) ^ (3 ^ 4) ^ 
+(1 ^ 2 ^ 3) ^ (2 ^ 3 ^ 4) ^ 
+(1 ^ 2 ^ 3 ^ 4) 
+
+A:
+0
+
+// Complete the sansaXor function below.
+int sansaXor(vector<int> arr) 
+{
+    if (arr.size() % 2 == 0)
+    {
+        return 0;
+    }
+
+    int ret = arr[0];
+    for (int i=2; i<arr.size(); i=i+2)
+    {
+        ret = ret ^ arr[i];
+    }
+    return ret;
+}

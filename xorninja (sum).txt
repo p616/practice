@@ -1,0 +1,196 @@
+// observe following pattern
+//
+// [1, 2, 3, 4] OR:7(111) sum:56(111000)
+// [4, 7, 2, 9] OR:15(1111) sum:120(1111000)
+// [14, 27, 22, 29] OR:31(11111) sum:248(11111000)
+// [14, 12, 2, 29] OR:31(11111) sum:248(11111000)
+// [12, 2, 29] OR:31(11111) sum:124(1111100)
+// [12, 29] OR:29(11101) sum:58(111010)
+// [12, 29, 213, 213123, 23322]
+//      OR:220127(110101101111011111)
+//      sum:3522032(1101011011110111110000)
+// [12, 29, 2, 1, 22, 7, 8, 9] OR:31(11111) sum:3968(111110000000)
+// [12, 0, 2, 1, 22, 7, 8, 9] OR:31(11111) sum:3968(111110000000)
+//
+// OR
+//
+// sum = xor << (N-1)
+// xor = sum >> (N-1)
+// where N = size of input array
+
+// The point here is that, 
+// Each set bit of any number occurs exactly in power(2,N-1) sub arrays.
+// So were we to add all of those subarrays, the sum would be (value at set bit * 2^n-1) (or shift)
+// Extrapolating this out to full solution, 
+// the bitwise OR of the numbers will give a number with all possible bits set
+// mult that num by 2^n-1 (or shift) same as doing one by one...
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+/*
+ * Complete the xoringNinja function below.
+ */
+int xoringNinja(vector<int> arr) 
+{
+    int N = arr.size();
+
+    // special case for empty array
+    if (N == 0)
+    {
+        return 0;
+    }
+    // special case for one element array
+    if (N == 1) 
+    {
+      return arr.front();
+    }
+    
+    int arrOR = 0;
+    for (int n : arr)
+    {
+        arrOR |= n;
+        arrOR = (arrOR % (int)(pow(10, 9) + 7));
+    }
+
+    // running sum of XOR's of elements in each subset
+    unsigned long long xorSum = ( arrOR << ((N - 1) % (int)(pow(10, 9) + 7)) );
+
+    return (xorSum % (int)(pow(10, 9) + 7));
+    
+    
+     // 7 tests pass; 8 tests timeout
+
+    // generate masks representing subsets for array
+    // total subsets for array of size N = pow(2,N) (including empty set)
+    // a subset mask has one bit set for each element in the subset
+    // masks range from 0 to 2N-1 (last = all 1's, represents original set)
+    // can skip empty set - adds nothing to xor sum
+    /*
+    for (int i = 1; i < pow(2, N); ++i)
+    {
+        // generate xor for each subset
+        int xorSubset = 0;
+
+        // subsets contain elements from positions matching set bits in masks
+        // iterate through each set bit in current subset mask
+        int mask = i;
+        int pos = 0;
+        while (mask != 0)
+        {
+            // if the LSB is set, arr[pos] is in this subset
+            if (mask & 1)
+            {
+                xorSubset ^= arr[pos];
+            }
+
+            // shift mask right one bit at a time until
+            // all 1 bits (subset elements) have been processed
+            mask >>= 1;
+            pos++;
+        }
+
+        // update sum of XOR's of subsets
+        xorSum += xorSubset;
+    }
+    */
+
+    // Same 7 tests pass; Same 8 tests timeout
+
+    /*
+    for (int i = 1; i < pow(2, N); ++i)
+    {
+        // generate xor for each subset
+        int xorSubset = 0;
+
+        // subsets contain elements from positions matching set bits in masks
+        // iterate through each set bit in current subset mask
+        int mask = i;
+        while (mask != 0)
+        {
+          // get leftmost set bit
+          int leftBit = (mask & -mask);
+
+          // convert bit position to array index
+          int index = log2(leftBit);
+
+          // update xor for subset
+          xorSubset ^= arr[index];
+
+          // unset leftmost bit in subset mask
+          mask = mask & ~leftBit;
+        }
+
+        // update sum of XOR's of subsets
+        xorSum += xorSubset;
+    }
+    */
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int t;
+    cin >> t;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        int arr_count;
+        cin >> arr_count;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        string arr_temp_temp;
+        getline(cin, arr_temp_temp);
+
+        vector<string> arr_temp = split_string(arr_temp_temp);
+
+        vector<int> arr(arr_count);
+
+        for (int arr_itr = 0; arr_itr < arr_count; arr_itr++) {
+            int arr_item = stoi(arr_temp[arr_itr]);
+
+            arr[arr_itr] = arr_item;
+        }
+
+        int result = xoringNinja(arr);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}

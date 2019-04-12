@@ -1,0 +1,15 @@
+For given number return count of numbers 0 <= x <= num such that x+num = x^num
+
+long sumXor(long n) 
+{
+    long count = 1;
+    while (n > 0)
+    {
+        if ((n & 0x1b) == 0)
+        {
+            count *= 2;
+        }
+        n = n >> 1;
+    }
+    return count;
+}

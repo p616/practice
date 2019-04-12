@@ -1,0 +1,30 @@
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+int main() 
+{
+    unsigned short x;   // Interleave bits of x and y, so that all of the
+    unsigned short y;   // bits of x are in the even positions y in the odd;
+    unsigned int z = 0; // z gets the resulting Morton Number.
+    
+    x = 9;      // 00001001
+    y = 76;     // 01001100
+                // 11100001 = z ????
+    
+    for (int i = 0; i < sizeof(x) * 8/*CHAR_BIT*/; i++) 
+    // unroll for more speed...
+    {
+        z |= 
+            (
+                ( (x & (1U << i)) << i ) 
+            | 
+                ( (y & (1U << i)) << (i + 1) )
+            );
+    }
+    
+    cout << bitset<8>(z);
+    
+    return 0;
+}

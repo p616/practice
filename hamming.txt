@@ -1,0 +1,15 @@
+    int hammingDistance(int x, int y) 
+    {      
+        int xorXY = (x ^ y);
+        
+        int count = 0;
+        while (xorXY != 0)
+        {
+            if ((xorXY & 0x1) == 0x1)
+            {
+                count++;
+            }
+            xorXY = xorXY >> 1;
+        }
+        return count; 
+    }

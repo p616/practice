@@ -1,0 +1,16 @@
+// Complete the flippingBits function below.
+long flippingBits(long n) 
+{
+    long flipped = 0;
+    int pos = 0;
+    while (pos < (sizeof(n)/2)*8)
+    {
+        if ((n & 0x1) == 0)
+        {
+            flipped |= (0x1b << pos);
+        }
+        pos++;
+        n = n >> 1;
+    }
+    return (unsigned)flipped;
+}

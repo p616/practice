@@ -1,0 +1,59 @@
+bitwise and of value of a, a+1, ..., b
+
+long andProduct(long a, long b) 
+{
+    // one timeout    
+    long p = a;
+    for (long i=a+1; i<=b; ++i)
+    {
+        p &= i;
+    }
+    return p;
+    
+
+    // even slower
+    /*
+    long ret = 0;
+    while (a != 0 && b != 0) 
+    {
+        // Get MSB for each #
+        long MSB_a = (1 << (int)log2(a));
+        long MSB_b = (1 << (int)log2(b));
+
+        // if not same, done (if initially not same, ret = 0)
+        if (MSB_a != MSB_b) 
+        {
+            break;
+        }
+
+        // Add MSB to result
+        ret |= MSB_a;
+
+        // Unset MSB's and recalc on next loop
+        a ^= MSB_a;
+        b ^= MSB_b;
+    }
+
+    return ret;
+    */
+
+    // Above bails when it finds non matching MSB's, so...
+
+    // EX:
+    // ANDing the range [101010, 111001] is equivalent to preserving the ALL 
+    //  leftmost ALIGNED bits (both 1s and 0s) and zeroing out all bits starting 
+    //  with the first non-aligned bit.
+
+    // To zero - out all bits starting with the first non - aligned bit,
+    //  we need to AND these bits with 0s.
+
+    // To do so, we first a XOR b = 10011
+    // These bits will have to be zeroed - out
+    // Next, we get the smallest power of 2 larger than this XOR value = 100000
+    // Subtract 1 : 11111
+    // And invert the bits : 11111111111111111111111111100000
+
+    // This value ANDed with either A or B will produce the final AND product.
+
+    return (a & ~((1 << (int)log2(a ^ b)) - 1));
+}

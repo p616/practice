@@ -1,0 +1,65 @@
+The gray code is a binary numeral system where two successive values differ in only one bit.
+
+Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0.
+
+For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+
+00 - 0
+01 - 1
+11 - 3
+10 - 2
+
+There might be multiple gray code sequences possible for a given n.
+Return any such sequence.
+
+
+// n = 1
+    // 0 - 0
+    // 1 - 1
+// prepend 1 in reverse (n=2)
+    // 11 - 3
+    // 10 - 2
+// prepend 1 in reverse (n=3)
+    // 110 - 6
+    // 111 - 7
+    // 101 - 5
+    // 100 - 4
+// prepend 1 in reverse (n=4)
+    // 1100 - 12
+    // 1101 - 13
+    // 1111 - 15
+    // 1110 - 14
+    // 1010 - 10
+    // 1011 - 11
+    // 1001 - 9
+    // 1000 - 8
+
+vector<int> Solution::grayCode(int A) 
+{
+    vector<int> grays;
+    
+    // 0 bits
+    if (A <= 0)
+    {
+        return grays;
+    }
+    
+    // start pattern for n = 1 (i.e. number of bits = 1)
+    grays.push_back(0);
+    grays.push_back(1);
+    
+    // build up grays vector, bit by bit
+    for (int i=2; i<=A; ++i)
+    {
+        // append nums currently in vector, in reverse...
+        int vectorLen = grays.size();
+        for (int j=vectorLen-1; j>=0; j--)
+        {
+            // ...prepended with 1
+            int newGray = ( (1 << (i-1)) | grays[j] );
+            grays.push_back(newGray);
+        }
+    }
+    
+    return grays;
+}

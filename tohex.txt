@@ -1,0 +1,27 @@
+?    string toHex(int num) 
+    {
+        string hex;
+        
+        if (num == 0)
+        {
+            hex = "0";
+            return hex;
+        }
+        
+        // need to adjust negative input
+        unsigned int unum = num > 0 ? num : UINT_MAX + num + 1;
+        
+        // convert
+        while (unum != 0)
+        {
+            int rem = unum % 16; 
+            unum = (unum / 16);  
+            
+            hex += (rem > 9 ? ('a' + (rem - 10)) : ('0' + rem));
+        }
+    
+        // reverse the string
+        reverse(hex.begin(), hex.end());
+        
+        return hex;
+    }

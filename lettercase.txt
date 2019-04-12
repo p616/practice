@@ -1,0 +1,69 @@
+Given a string S, we can transform every letter individually to be lowercase or uppercase to create another string.  Return a list of all possible strings we could create.
+
+Examples:
+Input: S = "a1b2"
+Output: ["a1b2", "a1B2", "A1b2", "A1B2"]
+
+Input: S = "12345"
+Output: ["12345"]
+
+
+    vector<string> letterCasePermutation(string S) 
+    {    
+        // save bitmask of indexes in string that are chars
+        int charMask = 0;
+        for (int i=0; i<S.size(); ++i)
+        {
+            if (isalpha(S[i]))
+            {
+                charMask |= (1 << i);
+            }
+        }
+        
+        vector<string> permutes;
+        
+        // add original string to subset vector
+        permutes.push_back(S);
+        
+        // iterate through subMasks of charMask
+        for (int subs = charMask; subs != 0; subs = ((subs - 1) & charMask))
+        {
+            string s = S;
+            
+            // for each set bit in subMask...
+            int subMask = subs;
+            while (subMask != 0)
+            {
+                // get left most set bit
+                int leftBit = (subMask & -subMask);
+                
+                // convert bit value to string index
+                int index = log2(leftBit & charMask);
+                
+                char c = s[index]; 
+               
+                // uppercase = 0100xxxx
+                // lowercase = 0110xxxx
+                // space = 00100000
+                // underscore = 11011111
+                if (c & ' ')
+                {
+                    // letter is lowercase, convert to upper
+                    s[index] = (c & '_');
+                }
+                else
+                {
+                    // letter is uppercase, convert to lower
+                    s[index] = (c | ' ');                
+                }  
+                
+                // unset current bit in subMask
+                subMask = subMask & ~leftBit;
+            }
+            
+            // add new string to return vector
+            permutes.push_back(s);
+        }
+        
+        return permutes;
+    }

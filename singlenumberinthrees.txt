@@ -1,0 +1,167 @@
+// all numbers 3x, one 1x
+
+
+Mine with comments:
+
+    int singleNumber(vector<int>& nums) 
+    {
+        // Count number of 1's that apear at each possible bit position.
+        // If the number is multiple of 3, then x has 0 in that pos
+        // Otherwise x has 1 in that pos
+ 
+        // i.e  Bit pos has 0 1's, x = 0
+        //      Bit pos has 1 1,   x = 1
+        //      Bit pos has 3 1's, x = 0
+        //      Bit pos has 4 1's, x = 1
+        //      Bit pos has 6 1's, x = 0
+        //      Bit pos has 7 1's, x = 1
+        //      ...
+    
+        // So if count of 1's at given bit position % 3 = 0, x = 0 
+
+        // Note count % 3 (0, 1 or 2) == count & 2 (0, 1 or 2)
+        // IOW count % divisor == count & (divisor-1)        
+        
+        // Linear runtime : O(n)
+        // Constant space : O(1) 
+        
+        // EX: {3, 3, 2, 3} 
+ 
+        int ones = 0;
+        int twos = 0;
+        int threes_mask = 0;
+        
+        for (auto n : nums)
+        {
+        /* The expression "ones & n" gives the bits that are 
+           there in both 'ones' and new element from nums[]. 
+           Add these bits to 'twos' using bitwise XOR.  IOW:  
+           keep the twos we already have in twos (npos = 0), 
+           add the ones now become twos (npos = 1 & bit set in ones), 
+           remove any twos now become threes (npos = 1 & bit set in twos)
+  
+           Value of 'twos' will be set as 0, 3, 3 and 1 after 
+           1st, 2nd, 3rd and 4th iterations respectively:
+           1st: initial state, no doubles possible yet
+           2nd: for 1st and 2nd bits set in first two 3's,
+           3rd: removes the 2nd bit set in first 2,
+           4th: removes the 1st bit re-adds the 2nd bit from last 3.
+        */
+            twos = twos ^ (ones & n); 
+            //cout << twos << endl;
+  
+  
+        /* Update the ones:
+           XOR the new bits with previous 'ones' to get all bits 
+           appearing odd number of times.
+  
+           Value of 'ones' will be set as 3, 0, 2 and 3 after 
+           1st, 2nd, 3rd and 4th iterations respectively :
+           1st: 3 is first value - sets first and second bit
+           2nd: removes both bits due to second 3
+           3rd: 2 is next value - sets second bit
+           4th: 3 is last - sets both (2 was removed below since it's a three)
+        */
+            ones = ones ^ n;
+            //cout << ones << endl;
+   
+        /* The common bits are those bits which appear third time 
+           So these bits should not be there in both 'ones' and 'twos'. 
+           threes_mask contains these bits as 0, with the rest set at 1,
+           so that the bits can be removed from 'ones' and 'twos'    
+  
+           Bits = 0 in 'threes_mask' will be none, none, bit 2 and bit 1 after 
+           1st, 2nd, 3rd and 4th iterations respectively: 
+           1st: initial state, no threes
+           2nd: only 2nd number, no threes
+           3rd: 2 is next value - this is the first three
+           4th: 3 is last - sets bit 1 and negates set bit 2 (now it's a 4/1)
+        */
+            threes_mask = ~(ones & twos); 
+            //cout << bitset<3>(threes_mask) << endl;
+ 
+  
+        /* Remove common bits (the bits that appear third time) from 'ones' 
+              
+           Value of 'ones' will be set as 3, 0, 0 and 2 after 
+           1st, 2nd, 3rd and 4th iterations respectively 
+           1st: no change, mask is all 1's
+           2nd: no change, mask is all 1's
+           3rd: removes 2nd bit (now a three)
+           4th: removes 1st bit (now a three)
+        */
+            ones &= threes_mask; 
+            //cout << ones << endl;
+  
+  
+        /* Remove common bits (the bits that appear third time) from 'twos' 
+  
+           Value of 'twos' will be set as 0, 3, 1 and 0 after 
+           1st, 2nd, 3rd and 4th itearations respectively 
+           1st: no change, mask is all 1's
+           2nd: no change, mask is all 1's
+           3rd: removes the 2nd bit, now a three
+           4th: removes the 1st bit, now a three
+        */
+            twos &= threes_mask; 
+            //cout << twos << endl;
+        }
+        
+        // The bits left in ones are the ones set in n
+        //cout << ones;
+        return ones;   
+    }
+
+int main() 
+{
+    vector<int> v = {3,3,2,3};
+    singleNumber(v);
+    return 0;
+}
+
+
+// From Generic Alg:
+
+    
+    int singleNumber(vector<int>& nums) 
+    {
+        int x1 = 0; //ones
+        int x2 = 0; //twos
+        int mask = 0; //threesmask
+        for (int n : nums)
+        {
+            x2 ^= (x1&n);
+            x1 ^= n;
+            mask = ~(x1&x2);
+            x1 &= mask;
+            x2 &= mask;
+        }
+        return x1;
+    }
+
+// From Discuss:
+
+   int singleNumber(vector<int>& nums) 
+{
+      /*
+        //we need to implement a tree-time counter(base 3) that if a bit appears three time ,it will be zero.
+        //#curent  income  ouput
+        //# ab      c/c       ab/ab
+        //# 00      1/0       01/00
+        //# 01      1/0       10/01
+        //# 10      1/0       00/10
+        // a=~abc+a~b~c;
+        // b=~a~bc+~ab~c;
+        int a=0;
+        int b=0;
+        for(int c:nums)
+        {
+            int ta=(~a&b&c)|(a&~b&~c);
+            b=(~a&~b&c)|(~a&b&~c);
+            a=ta;
+        }
+        //we need find the number that is 01,10 => 1, 00 => 0.
+        //return a|b;
+        return b; // a is zero
+        
+    }

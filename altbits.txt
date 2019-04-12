@@ -1,0 +1,8 @@
+    bool hasAlternatingBits(int n) 
+    {
+        // XOR + shift = all lower bits set when N's bits alternate 
+        // All lower bits are set => adding 1 flips them to 0
+        //  Otherwise one or more are 0 and flip to 1 with add
+        // If lower bits all 0, & with n = 0 (otherwise > 0)
+        return (((((n >> 1) ^ n) + 1) & n) == 0);
+    }

@@ -1,0 +1,40 @@
+Louise and Richard have developed a numbers game. 
+They pick a number and check to see if it is a power of 2. 
+If it is, they divide it by 2. 
+If not, they reduce it by the next lower number which is a power of 2. Whoever reduces the number to 1 wins the game. 
+Louise always starts.
+
+If they initially set counter to 1, Richard wins. 
+Louise cannot make a move so she loses.
+
+
+// Complete the counterGame function below.
+string counterGame(long n) 
+{
+    // Richard wins if start w/1 b/c Louise has no move
+    bool bRichardWins = true;
+
+    // n == 0 or n == 1 ends the game
+    // last move made wins
+    while (n > 1)
+    {
+        // check if power of 2
+        // if so, div by 2
+        if ((n & (n-1)) == 0)
+        {
+            // shift right = div by 2
+            n >>= 1;
+        }
+        // otherwise subtract largest power of 2        
+        else
+        {
+            // xor with 1 << MSB
+            n ^= (1L << ((long)log2(n)));
+        }
+
+        // last move made wins at loop end 
+        bRichardWins = !bRichardWins;
+    }
+    
+    return bRichardWins ? "Richard" : "Louise";
+}

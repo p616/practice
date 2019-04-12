@@ -1,0 +1,132 @@
+A character in UTF8 can be from 1 to 4 bytes long, subjected to the following rules:
+
+    For 1-byte character, the first bit is a 0, followed by its unicode code.
+    For n-bytes character, the first n-bits are all one's, the n+1 bit is 0, followed by n-1 bytes with most significant 2 bits being 10.
+
+ Note:
+The input is an array of integers. Only the least significant 8 bits of each integer is used to store the data. This means each integer represents only 1 byte of data.
+
+Example 1:
+
+data = [197, 130, 1], which represents the octet sequence: 11000101 10000010 00000001.
+
+Return true.
+It is a valid utf-8 encoding for a 2-bytes character followed by a 1-byte character.
+
+Example 2:
+
+data = [235, 140, 4], which represented the octet sequence: 11101011 10001100 00000100.
+
+Return false.
+The first 3 bits are all one's and the 4th bit is 0 means it is a 3-bytes character.
+The next byte is a continuation byte which starts with 10 and that's correct.
+But the second continuation byte does not start with 10, so it is invalid.
+
+
+
+
+    const int MAXBYTES = 4;
+    
+    void IntToBin(int n, string& buf)
+    {
+        auto it = buf.begin();
+        while (n > 0)   
+        {          
+            *it++ = ((n & 1) == 1) ? '1': '0';
+            n = n >> 1;
+        }
+        reverse(buf.begin(), buf.end());
+    }
+    
+    bool validUtf8(vector<int>& data) 
+    {     
+        /*
+        // convert input to binary
+        vector<string> octetSeq;
+        for (int n : data)
+        {
+        //    // only least significant 8 bits of int used 
+            string s(8, '0');
+            IntToBin(n, s);
+            octetSeq.push_back(s);
+            cout << s << "   ";
+        }        
+        */
+        
+        // validate the sequence
+        int bytes = data.size();
+        int byteIndex = 0;
+        while (byteIndex < bytes)
+        {
+            // EITHER MASK + NUM OR CONVERT TO BIN...
+            // only least significant 8 bits of int used for char byte encoding
+            //string utf8(8, '0');
+            //IntToBin(data[byteIndex], utf8);
+            //const char *pstr = utf8.data();
+            
+            // validate MB char encoding
+            // no validation needed for single byte chars
+            int mask = (1 << 7);
+            //if (*pstr == '1')
+            if ((mask & data[byteIndex]) != 0)
+            {
+                // char rep by how many bytes?
+                int charBytes = 0;            
+                //while (*pstr++ == '1')
+                while ((mask & data[byteIndex]) != 0)
+                {
+                    // specifies more bytes than are allowed
+                    // or more bytes specified than supplied
+                    if (++charBytes > MAXBYTES || byteIndex + charBytes > bytes)
+                    {
+                        return false;
+                    }
+                    
+                    mask = mask >> 1;
+                }
+                
+                // specified MB char but only supplied one byte
+                if (charBytes == 1)
+                {
+                    return false;
+                }
+                    
+                // validate continuation bytes
+                byteIndex++;
+                for (int i=1; i<charBytes; ++i)
+                {                    
+                    // To check if the most significant bit is a 1 
+                    // and the second most significant bit is a 0, 
+                    // we can make use of the following two masks:
+                    int mask1 = (1 << 7);
+                    int mask2 = (1 << 6);
+                    if ( !( ((data[byteIndex] & mask1) != 0) && 
+                            ((data[byteIndex] & mask2) == 0) ) 
+                       )
+                    {
+                        return false;
+                    }
+                    
+                    byteIndex++;
+
+                    // OR 
+                    // convert next int (byte) to binary
+                    //string utf8(8, '0');
+                    //IntToBin(data[byteIndex++], utf8);
+                    //const char *pstr = utf8.data();
+                    
+                    // Continuation bytes start with 10
+                    //if (*pstr != '1' || *(pstr+1) != '0')
+                    //{
+                    //    return false;
+                    //}                    
+                }
+            }
+            else
+            {
+                byteIndex++;
+            }
+        }
+        
+        return true;
+    }

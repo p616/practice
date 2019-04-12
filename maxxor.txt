@@ -1,0 +1,14 @@
+Return the maximal value of the xor operations for all permutations of the integers from to l to r, inclusive.
+
+int maximizingXor(int l, int r) 
+{
+    int maxXOR = numeric_limits<int>::min();
+    for (int i=l; i<r; ++i)
+    {
+        for (int j=l+1; j<=r; ++j)
+        {
+            maxXOR = max(maxXOR, i^j);
+        }
+    }
+    return maxXOR;
+}

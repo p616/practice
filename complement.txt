@@ -1,0 +1,88 @@
+Given a positive integer, output its complement number. The complement strategy is to flip the bits of its binary representation.
+
+Note:
+
+    The given integer is guaranteed to fit within the range of a 32-bit signed integer.
+    You should assume no leading zero bit in the integer’s binary representation.
+
+Example 1:
+
+Input: 5
+Output: 2
+Explanation: The binary representation of 5 is 101 (no leading zero bits), and its complement is 010. So you need to output 2.
+
+Example 2:
+
+Input: 1
+Output: 0
+Explanation: The binary representation of 1 is 1 (no leading zero bits), and its complement is 0. So you need to output 0
+
+
+// mine, times out
+
+    int findComplement(int num) 
+    {
+        int comp = num;
+        int mask = 0x1b;
+        while (mask <= num)
+        {
+            comp ^= mask;
+            mask = mask << 1;
+        }
+        return comp;        
+    }
+
+
+// from "submissions", no timeout
+
+//num = 5: 0b'00000101
+//initial mask: 0b'11111111
+//after shifting: 0b'11111000
+//return value: 0b'00000101 ^ 0b'00000111 -> 0b' 00000010
+
+    int findComplement(int num) {
+        
+        int mask = ~0; // all 1s
+        
+        //let least significant part which overlaps num's valid bits becomes 0
+        while (num & mask) { 
+            mask = mask << 1;
+        }
+        
+        return num ^ ~mask; // flip the mask, letting overlaping part become all 1s and XOR them
+    }
+};
+
+// mine, no timeout
+
+    int findComplement(int num) 
+    {
+        // Time limit Exceeded (on 2147483647)
+        /*
+        int comp = num;
+        int mask = 0x1b;
+        while (mask <= num)
+        {
+            comp ^= mask;
+            mask = mask << 1;
+        }
+        return comp; 
+        */
+        
+        // ~num = answer prepended with 1's to left of highest set bit in num 
+        //      (not handling the "no leading zero bits" condition of problem)
+        
+        // num & ~(num + (1<<n)) = run of set bits in num starting at n and extending left
+        
+        // (int)log2(num) = number you must raise 2 by to get num 
+        //      (so, 1 << this represents mask for leftmost set bit)
+        // want to go one step further
+        //      (so n = (int)log2(num) + 1)
+        
+        // run ^ prepended answer = answer
+                
+        int comp = ~num;
+        int n = ((int)log2(num) + 1);
+        int run = comp & ~(comp + (1<<n));
+        return comp ^ run;
+    }

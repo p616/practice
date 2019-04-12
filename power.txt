@@ -1,0 +1,103 @@
+    
+bool isPowerOfTwo(int n) 
+    
+{
+        
+	return ((n >= 1) && ((n & (n-1)) == 0));
+    
+}
+
+    bool isPowerOfTwo(int n) 
+    {
+        return (n > 0 && (n & (n-1)) == 0);
+    }
+
+    bool isPowerOfFour(int num) 
+    {
+        while (num % 4 == 0 && num > 1)
+        {
+            num /= 4;
+        }
+        return num == 1;
+    }
+
+    bool isPowerOfThree(int n) 
+    {
+        while (n % 3 == 0 && n > 1)
+        {
+            n /= 3;
+        }
+        return (n == 1);     
+    }
+
+    bool isPowerOfThree(int n) 
+    {
+    	// 1162261467 is 3^19, 3^20 will overflow int32
+    	return (n > 0 && 1162261467 % n == 0);
+    }
+
+    bool isPowerOfFour(int n) 
+    {
+        
+        long value = 1;
+        
+        while (value < n) 
+        {
+	    // value *= 4;
+            value = value << 2;
+        }
+        
+        return (n == value);
+    }
+
+    bool isPowerOfFour(int num) 
+    {
+        // negative or 0 or NOT power of 2 = (n & (n-1) == 0)
+        if (num <= 0 || ((num & (num - 1)) != 0))
+        {
+            return false;
+        }
+
+        // 5:  101
+        // 4:  100 => 001
+        // 24: 11000 => 110
+        // Since four will eventually shift down to 1, any
+        // bits set in 2's or 1's place (aside from 1) => not pwr 4
+        while (!(num & 3) && (num != 1))
+        {
+            // div by 4
+            num = num >> 2;
+        }
+        
+        // four >> 2 == 1
+        return (num == 1);
+    }
+}
+
+bool isMultipleOfFour(int n)
+{
+	if (n==1)
+		return false;
+
+	int XOR = 0;
+	for (i=1; i<=n)
+		XOR = XOR ^ i;
+
+	// due to cyclic property of XOR
+	// see bit tactics #1 = XOR 1..N
+	return (XOR == n);
+}
+
+bool isMultipleOfFour(int n)
+{
+	// remove last 2 bits
+	//n =  (n >> 2);
+
+	// multiply by 4 via shift
+	//n = (n << 2);
+
+	// if result = n => last 2 bits were 0 => mult of 4
+	return (n == ((n >> 2) << 2));
+}
+
+

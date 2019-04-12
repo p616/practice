@@ -1,0 +1,58 @@
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+int main() 
+{
+    // Clear:
+    // All bits in x
+    //      from (AND INCLUDING) 
+    // LSB 
+    //      to (AND INCLUDING) 
+    // ith bit 
+    
+    // So:
+    // Clear right-most i bits
+    // Left-most totalbits-i bits stay set, if set
+    // Max value for i = totalbits (value = 0)
+    // Min value for i (for change) = 1
+    // i=0 ==> no change
+
+    int x = 157;    // 0b10011101 -> 
+    int i = 4;      // 0b10010000
+    
+    cout << "0b" << bitset<8>(x) << endl;   
+    
+    int mask = ( (1 << i) - 1 );
+    x &= ~mask;
+    
+    cout << "0b" << bitset<8>(x) << endl;
+    
+    // Clear:
+    // All bits in x
+    //      from (BUT *NOT* INCLUDING) 
+    // ith bit 
+    //      to (AND INCLUDING) 
+    // MSB 
+    
+    // So:
+    // Clear left-most totalbits-i bits
+    // Right-most i bits stay set, if set
+    // Min value for i (for change) = 0 (value = 0)
+    // Max value for i (for change) = totalbits-1
+    // i=totalbits ==> no change
+    
+    x = 157;    // 0b10011101 -> 
+    i = 4;      // 0b00001101
+    
+    cout << "0b" << bitset<8>(x) << endl;   
+    
+    // Only change from above: No ~ on mask
+    mask = ( (1 << i) - 1 );
+    x &= mask;
+    
+    cout << "0b" << bitset<8>(x) << endl;
+     
+    return 0;
+}

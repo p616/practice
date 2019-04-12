@@ -1,0 +1,38 @@
+number of values, 0 < a < x, where a^x > x:
+
+long theGreatXor(long x) 
+{
+    // 4 timeouts
+    /*
+    long count = 0;
+
+    for (int a=1; a<x; ++a)
+    {
+        if ((a ^ x) > x)
+        {
+            count++;
+        }
+    }
+
+    return count;
+    */
+
+    // take example of 10 (1010):
+    // constraints say a^x must be > than x, but a < x, so 
+    // a^x values are bounded by MSB (or number of bits in 10)
+
+    // number of bits (or MSB pos) in 10 (1010) = 4:
+    // all the possible combinations of x bits = pow(2, x)
+    //  = 16 for 4 bits (= 1 << bits)
+    // max we can go in x bits is all 1's set = ((1 << bits)-1)
+    //  ==> bounded by max value = 1111 = 15
+
+    // so, again, since a must be < x, bounded by 4 bits
+    // max value in 4 bits is 1111 = 15
+    // and since bounded by a^x > 10
+    // number of values for xor meeting these conditions is 15-10 = 5
+
+    long bits = (log2(x)+1); // also is MSB pos where first bit is bit 1
+    long maxNum = ((1L << bits) - 1); // sets each of "bits" = 1
+    return (maxNum - x);
+}

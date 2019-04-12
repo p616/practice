@@ -1,0 +1,45 @@
+You will be given an array of integers. All of the integers except one occur twice. That one is unique in the array.
+
+Given an array of integers, find and print the unique element.
+
+int lonelyinteger(vector<int> a) 
+{
+    int lonely = 0;
+    for (auto n : a)
+    {
+        lonely = lonely ^ n;
+    }
+    return lonely;
+}
+
+
+Given a non-empty array of integers, every element appears twice except for one. Find that single one.
+
+    int singleNumber(vector<int>& nums) 
+    {
+        // repeated numbers cancel themselves out
+        int lonely = 0;
+        for (int n : nums)    
+        {
+            lonely = lonely ^ n;
+        }
+        return lonely;
+    }
+
+int Solution::singleNumber(const vector<int> &A) 
+
+{
+    
+	int lonely = 0;
+    
+	for (int a : A)
+    
+	{
+        
+		lonely ^= a;
+    
+	}
+    
+	return lonely;
+
+}

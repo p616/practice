@@ -1,0 +1,47 @@
+In an array A containing only 0s and 1s, a K-bit flip consists of choosing a (contiguous) subarray of length K and simultaneously changing every 0 in the subarray to 1, and every 1 in the subarray to 0.
+
+Return the minimum number of K-bit flips required so that there is no 0 in the array.  If it is not possible, return -1.
+
+Input: A = [0,0,0,1,0,1,1,0], K = 3
+Output: 3
+Explanation:
+Flip A[0],A[1],A[2]: A becomes [1,1,1,1,0,1,1,0]
+Flip A[4],A[5],A[6]: A becomes [1,1,1,1,1,0,0,0]
+Flip A[5],A[6],A[7]: A becomes [1,1,1,1,1,1,1,1]
+
+
+    int minKBitFlips(vector<int>& A, int K) 
+    {
+        int ret = 0;
+        
+        int N = A.size();
+        vector<int> hint(N,0);
+        int flip = 0;
+        
+        // When we flip a subarray like A[i], A[i+1], ..., A[i+K-1]
+        // we can instead flip our current writing state, and put a hint at
+        // position i+K to flip back our writing state.
+        for (int i = 0; i < N; ++i)
+        {            
+            // If we must flip the subarray starting here...
+            flip ^= hint[i];
+            if (A[i] == flip) 
+            {  
+                ret++;  // We're flipping the subarray from A[i] to A[i+K-1]
+                            
+                // If we can't flip the entire subarray, it's impossible 
+                if (i + K > N) 
+                {
+                    return -1;  
+                } 
+                
+                flip ^= 1;
+                if (i + K < N) 
+                {
+                   hint[i + K] ^= 1; 
+                }
+            }
+        }
+        
+        return ret;
+    }

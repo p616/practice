@@ -1,0 +1,25 @@
+1,2,3...N
+print max A&B where A<B and A&B<k
+
+       int max = 0;
+        for (int i=1; i<n; ++i)
+        {
+          for (int j=(i+1); j<=n; ++j)
+          {
+            int curr = (i & j);
+            if (curr < k && curr > max)
+            {
+              max = curr;
+              if (max == (k-1))
+              {
+                break;
+              }
+            }
+          }
+
+          if (max == (k-1))
+          {
+            break;
+          }
+        }
+        cout << max << "\n";
