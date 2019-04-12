@@ -1,0 +1,238 @@
+#include <iostream>
+#include <utility>
+#include <queue>
+#include <array>
+
+using namespace std;
+
+const unsigned ROWS = 8;
+const unsigned COLS = 6;
+
+
+bool IsValid(int x, int y)
+{
+    return (x >=0 && y >=0 && x < ROWS && y < COLS);
+}
+
+// First Way : inner level loop
+int SolveTheMaze(int maze[ROWS][COLS])
+{
+    int count = -1;    
+    
+    if (maze[0][0] != 1)
+    {
+        return count;
+    }
+
+    // queue start and mark as blocked
+    queue<pair<unsigned,unsigned>> q; 
+    q.push(make_pair(0,0));
+    maze[0][0] = 0;
+    
+    while (!q.empty())
+    {
+        // increment path count for this "level", i.e. level one = one move past start
+        count++;
+        
+        // for each cell at this "level"
+        //   test if it's the finish cell, or
+        //   queue its valid non-visited adjacents and mark them blocked
+        
+        int nextMoves = q.size();
+        for (int i=0; i<nextMoves; ++i)
+        {
+            pair<unsigned,unsigned> nextPos = q.front();
+            q.pop();
+            
+            int x = nextPos.first;
+            int y = nextPos.second;
+            
+            // done, return current "level" (i.e.) move count
+            if (x == ROWS-1 && y == COLS-1)
+            {
+                return count;
+            }
+            
+            // try right
+            if (IsValid(x, y+1) && maze[x][y+1] == 1)
+            {
+                q.push(make_pair(x,y+1));
+                maze[x][y+1] = 0;
+            }
+            // try left
+            if (IsValid(x, y-1) && maze[x][y-1] == 1)
+            {
+                q.push(make_pair(x,y-1));
+                maze[x][y-1] = 0;
+            } 
+            // try down
+            if (IsValid(x+1, y) && maze[x+1][y] == 1)
+            {
+                q.push(make_pair(x+1,y));
+                maze[x+1][y] = 0;
+            }  
+            // try up
+            if (IsValid(x-1, y) && maze[x-1][y] == 1)
+            {
+                q.push(make_pair(x-1,y));
+                maze[x-1][y] = 0;
+            }            
+        }
+
+    }
+    
+    // no path found  
+    return -1;
+}
+
+int main() 
+{
+    // 12
+	int maze[ROWS][COLS]=
+    {
+        { 1, 1, 1, 1, 1, 0 },
+        { 0, 1, 1, 1, 1, 1 },
+        { 0, 0, 1, 0, 1, 1 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 1, 0, 0 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 1, 0 },
+        { 0, 1, 1, 1, 1, 1 }
+    };
+
+/*
+    // -1
+	int maze[ROWS][COLS]=
+    {
+        { 0, 1, 1, 1, 1, 0 },
+        { 0, 1, 1, 1, 1, 1 },
+        { 0, 0, 1, 0, 1, 1 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 1, 0, 0 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 1, 0 },
+        { 0, 1, 1, 1, 1, 1 },
+    };
+    // -1
+	int maze[ROWS][COLS]=
+    {
+        { 1, 1, 1, 1, 1, 0 },
+        { 0, 1, 1, 1, 1, 1 },
+        { 0, 0, 1, 0, 1, 1 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 1, 0, 0 },
+        { 1, 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 1, 0 },
+        { 0, 1, 1, 1, 0, 1 },
+    }; 
+    // 18
+    int maze[ROWS][COLS]= 
+    {
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
+        { 0, 1, 1, 1, 1, 1, 0, 1, 0, 1 },
+        { 0, 0, 1, 0, 1, 1, 1, 0, 0, 1 },
+        { 1, 0, 1, 1, 1, 0, 1, 1, 0, 1 },
+        { 0, 0, 0, 1, 0, 0, 0, 1, 0, 1 },
+        { 1, 0, 1, 1, 1, 0, 0, 1, 1, 0 },
+        { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
+        { 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
+        { 0, 0, 1, 0, 0, 1, 1, 0, 0, 1 },
+    };
+    // 6
+    int maze[ROWS][COLS]=  
+    {
+        {1,1,1,1},
+        {1,1,0,1},
+        {0,1,0,1},
+	    {1,1,1,1},
+    };
+    // 0
+	int maze[ROWS][COLS]={{1}};
+*/
+    
+    
+    cout << SolveTheMaze(maze);
+
+	return 0;
+}
+
+///////////
+
+
+struct Cell
+{
+    pair<unsigned,unsigned> pt;  // The cordinates of a cell 
+    int dist;  // cell's distance of from the source 
+};
+
+// Second Way : save count in queue
+int SolveTheMaze(int maze[ROWS][COLS])
+{
+    int count = -1;    
+    
+    if (maze[0][0] != 1)
+    {
+        return count;
+    }
+
+    queue<Cell> q; 
+    
+    // queue start cell and mark as blocked
+    Cell cell;
+    cell.pt = make_pair(0,0);
+    cell.dist = 0;
+    q.push(cell);
+    maze[0][0] = 0;
+    
+    while (!q.empty())
+    {
+        cell = q.front();
+        q.pop();
+            
+        int x = cell.pt.first;
+        int y = cell.pt.second;
+        
+        // done, return current "level" (i.e.) move count
+        if (x == ROWS-1 && y == COLS-1)
+        {
+            return cell.dist;
+        }
+        
+        // update distance in cell
+        cell.dist++;
+        
+        // try right
+        if (IsValid(x, y+1) && maze[x][y+1] == 1)
+        {
+            cell.pt = make_pair(x,y+1) ;
+            q.push(cell);
+            maze[x][y+1] = 0;
+        }
+        // try left
+        if (IsValid(x, y-1) && maze[x][y-1] == 1)
+        {
+            cell.pt = make_pair(x,y-1) ;
+            q.push(cell);
+            maze[x][y-1] = 0;
+        } 
+        // try down
+        if (IsValid(x+1, y) && maze[x+1][y] == 1)
+        {
+            cell.pt = make_pair(x+1, y) ;
+            q.push(cell);
+            maze[x+1][y] = 0;
+        }  
+        // try up
+        if (IsValid(x-1, y) && maze[x-1][y] == 1)
+        {
+            cell.pt = make_pair(x-1, y) ;
+            q.push(cell);
+            maze[x-1][y] = 0;
+        }            
+
+    }
+    
+    // no path found  
+    return -1;
+}

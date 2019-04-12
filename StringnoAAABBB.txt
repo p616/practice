@@ -1,0 +1,63 @@
+Given two integers A and B, return any string S such that:
+
+    S has length A + B and contains exactly A 'a' letters, and exactly B 'b' letters;
+    The substring 'aaa' does not occur in S;
+    The substring 'bbb' does not occur in S.
+
+
+class Solution {
+public:
+    string strWithout3a3b(int A, int B) 
+    {
+        int len = (A + B);
+        
+        // special case: A and B both 0
+        if (len == 0)
+        {
+            return "";
+        }
+            
+        char initChar = 'a';
+        char overwriteChar = 'b';
+        int charsToOverwrite = B;
+        
+        if (A < B)
+        {
+            initChar = 'b';
+            overwriteChar = 'a';
+            charsToOverwrite = A;
+        }
+        
+        // initialize final string to contain all chars with larger int
+        string without(len, initChar);
+
+        // special case: if smaller int is zero, done
+        if (charsToOverwrite != 0)
+        {   
+            // final special case: string with only one of each char
+            if (len == 2)
+            {
+                without[1] = overwriteChar;
+            }
+            else
+            {
+                // overwite every third char, then wraparound to double up
+                int pos = 2;
+                for (int i = 0; i < charsToOverwrite; ++i)
+                {
+                    without[pos] = overwriteChar;
+                    
+                    // update pos and wraparound when needed
+                    pos += 3;
+                    if (pos >= len)
+                    {
+                        pos = 3;
+                    }
+                    
+                }            
+            }
+        }
+        
+        return without;
+    }
+};

@@ -1,0 +1,48 @@
+Given a digit string, return all possible letter combinations that the number could represent based on phone keypad.
+
+#include <iostream>
+using namespace std;
+
+int main() {
+	cout<<"GfG!";
+	return 0;
+}
+
+string charsForDigit(char digit)
+{
+    vector<string> keypad = 
+    {
+        {"0"}, {"1"}, 
+        {"abc"}, {"def"}, {"ghi"}, {"jkl"},
+        {"mno"}, {"pqrs"}, {"tuv"}, {"wxyz"}
+    };
+    
+    return keypad[(int)(digit - '0')];
+}
+
+void lcRecurse(string input, int pos, string &s, vector<string> &res)
+{
+    if (pos == input.size())
+    {
+        // done with current combo
+        res.push_back(s);
+        return;
+    }
+    
+    // append chars for current pos one at a tune
+    string keypadChars = charsForDigit(input[pos]);
+    
+    for (char c : keypadChars)
+    {
+        string test = s + c;
+        lcRecurse(input, pos + 1, test, res);
+    }
+}
+
+vector<string> Solution::letterCombinations(string A) 
+{
+    vector<string> results;
+    string current;
+    lcRecurse(A, 0, current, results);
+    return results;
+}

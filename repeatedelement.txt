@@ -1,0 +1,22 @@
+In a array A of size 2N, there are N+1 unique elements, and exactly one of these elements is repeated N times.
+
+Return the element repeated N times.
+
+    int repeatedNTimes(vector<int>& A) 
+    {
+        set<int> unique;
+        int ret = 0;
+        for (auto a : A)
+        {
+            if (unique.find(a) == unique.end())
+            {
+                unique.insert(a);
+            }
+            else
+            {
+                ret = a;
+                break;
+            }
+        }
+        return ret;
+    }

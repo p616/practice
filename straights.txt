@@ -1,0 +1,65 @@
+Alice has a hand of cards, given as an array of integers.
+
+Now she wants to rearrange the cards into groups so that each group is size W, and consists of W consecutive cards.
+
+Return true if and only if she can.
+
+ 
+
+Example 1:
+
+Input: hand = [1,2,3,6,2,3,4,7,8], W = 3
+Output: true
+Explanation: Alice's hand can be rearranged as [1,2,3],[2,3,4],[6,7,8].
+
+
+    bool isNStraightHand(vector<int>& hand, int W) 
+    {
+        int size = hand.size();
+
+        // return false if not evenly broken up into W sized groups
+        if (size % W != 0)
+        {
+             return false;
+        }
+        
+        // return true if group size is 1
+        if (W == 1)
+        {
+            return true;
+        }
+          
+        sort(hand.begin(), hand.end());
+        
+        while (size != 0)
+        {
+            int num = hand[0];
+            hand.erase(hand.begin());
+            size--;
+                        
+            int start = 0;  
+            for (int i=1; i<W; ++i)
+            {         
+                while (hand[start] == num && start != size)
+                {
+                    start++;
+                }
+
+                if (start == size || start + W - i > size)
+                {
+                    return false;
+                }
+                
+                num++;
+                if (hand[start] != num)
+                {
+                    return false;
+                }
+                
+                hand.erase(hand.begin()+start);
+                size--;
+            }
+        }
+        
+        return true;
+    }

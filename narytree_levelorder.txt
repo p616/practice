@@ -1,0 +1,40 @@
+Print level order traversal, grouped by level, for n-ary tree.
+
+    vector<vector<int>> levelOrder(Node* root) 
+    {
+        vector<vector<int>> levels;
+        
+        if (root == NULL)
+        {
+            return levels;
+        }
+        
+        queue<Node *> q;
+        q.push(root);
+        
+        while (!q.empty())
+        {
+            vector<int> level;            
+            level.clear();
+            
+            // pop all nodes on current level 
+            // and push their children from/to queue
+            int nodesPerLevel = q.size();
+            for (int i = 0; i < nodesPerLevel; ++i)
+            {
+                Node *node = q.front();
+                q.pop();
+                
+                level.push_back(node->val);
+                
+                for (Node *child : node->children)
+                {
+                    q.push(child);
+                }
+            }
+            
+            levels.push_back(level);
+        }
+        
+        return levels;
+    }

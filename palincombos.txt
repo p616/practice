@@ -1,0 +1,89 @@
+#include <iostream>
+#include <set>
+
+using namespace std;
+
+set<string> GetPals(string s)
+{
+    set<string> pals;
+    
+	int len = s.size();
+	
+ 	int first = 0;
+	int last = len-1;
+	
+	for (int i=0; i<len-1; ++i)
+	{
+	    first = i;
+	    last = len;
+	    
+	    // single char is a palindrome
+	    pals.insert(s.substr(i,1));
+	    
+	    while ((last = s.rfind(s[first], last-1)) != first)
+	    {
+	        int start = first;
+	        int end = last;
+	        
+	        while (start <= end && s[start] == s[end])
+	        {
+    	        start++;
+    	        end--;
+	        }
+	        if (start > end)
+	        {
+	            string pal = s.substr(first, last-first+1); 
+                pals.insert(pal);
+                break;
+	        }
+	    }
+	}  
+	
+	pals.insert(s.substr(len-1,1));
+	
+	/*
+	cout << "pals:\n";
+	for (auto c : pals)
+	{
+	    cout << c << endl;
+	}
+	*/
+	
+	return pals;
+}
+
+int main() 
+{
+	string s1;
+	cin >> s1;
+	
+	string s2;
+	cin >> s2;
+	
+	set<string> s1Pals = GetPals(s1);
+	set<string> s2Pals = GetPals(s2);
+	
+	set<string> combos;
+	
+	for (auto pal1 : s1Pals)
+	{
+	    for (auto pal2 : s2Pals)
+	    {
+	        string c = pal1+pal2;
+	        combos.insert(c);
+	    }
+	}
+	
+	/*
+	cout << "combos:\n";
+	for (auto c : combos)
+	{
+	    cout << c << endl;
+	}
+	*/
+	
+    cout << combos.size();
+
+	
+	return 0;
+}

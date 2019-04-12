@@ -1,0 +1,156 @@
+Nadaca is a country with N cities. These cities are numbered 1 through N and connected by M
+bidirectional roads. Each city can be reached from every other city using these roads.
+
+Initially, Ryan is in city 1.At each of the following K seconds, he may move from his current city to an adjacent city (a city connected by a road to his current city) or stay at his current city. Ryan also has Q conditions (a1,b1),(a2,b2),…,(aQ,bQ) meaning that during this K-second trip, for each valid i, he wants to be in city ai after exactly bi seconds.
+
+Since you are very good with directions, Ryan asked you to tell him how many different trips he could make while satisfying all conditions. Compute this number modulo 109+7. A trip is a sequence of Ryan's current cities after 1,2,…,K seconds.
+
+
+// time limit exceeded
+
+#include <iostream>
+#include <cassert>
+#include <vector>
+#include <map>
+#include <string>
+#include <cmath>
+
+
+using namespace std;
+
+// to print paths:
+// add string &path to CountPaths params, 
+// and pass:
+// string newPath = path;
+// newPath += " ";
+// newPath += to_string(newCity);
+
+// cities, roads, time:city rules, total trip time, city to start from, current time in trip, return count of valid trip paths
+bool CountTrips(int cities, vector<vector<int>> &roads, map<int,int> &rules, int tripTime, int startCity, int currentTime, int &count)
+{
+    // exit case : time's up = current trip ends here
+    if (currentTime == tripTime)
+    {
+        count++;
+        count = ( count % (int)(pow(10, 9) + 7) );
+        return true;
+    }
+
+    // check if there is a rule for the next time slot
+    // if there is, the only valid "next" city for the current trip is that one
+    // otherwise try all raachable cities (+ staying at same city)
+
+    bool validTrip = false;
+
+    auto nextRule = rules.find(currentTime+1);
+    if (nextRule != rules.end())
+    {
+        int nextCity = nextRule->second;
+        
+        // must be in a specific city by the next time slot
+        // if not already there and not possible to get there from here in one second,
+        // this is a dead-end path (no need to continue)
+
+        bool continuePath = false;
+        if (startCity == nextCity)
+        {
+            continuePath = true;
+        }
+        else
+        {
+            // make sure a road out of startCity ends at the rule city
+            for (int n : roads[startCity - 1])
+            {
+                if (n == nextCity)
+                {
+                    continuePath = true;
+                    break;
+                }
+            }
+        }
+
+        if (continuePath)
+        { 
+            validTrip = CountTrips(cities, roads, rules, tripTime, nextCity, currentTime + 1, count);
+        }
+    }
+    else
+    {
+        // first try reamianing in same city for the next second
+        validTrip = CountTrips(cities, roads, rules, tripTime, startCity, currentTime + 1, count);
+
+        // then try a trip down each of the current city's roads
+        for (int n : roads[startCity - 1])
+        {
+            validTrip = ( CountTrips(cities, roads, rules, tripTime, n, currentTime + 1, count) || validTrip );
+        }
+    }
+
+    return validTrip;
+}
+
+
+int main()
+{
+    int T;
+    cin >> T;
+
+    for (int i = 0; i < T; ++i)
+    {
+        int cities;
+        cin >> cities;
+
+        int numRoads;
+        cin >> numRoads;
+
+        // total trip time
+        int seconds;
+        cin >> seconds;
+
+        // each city has a vector of other cities it's connected to via a bi-directional road
+        vector<vector<int>> roads(cities);
+        for (int i = 0; i < numRoads; ++i)
+        {
+            int u;
+            cin >> u;
+
+            int v;
+            cin >> v;
+
+            // cities are 1-based numbers
+            // roads between cities are bi-directional
+            roads[u-1].push_back(v);
+            roads[v-1].push_back(u);
+        }
+
+        // number of rules to follow, could be zero
+        int Q;
+        cin >> Q;
+
+        // map of rules = <key=time, value=city> : rules for which city to be in at any given time (in seconds)
+        map<int, int> rules;
+        for (int i = 0; i < Q; ++i)
+        {
+            int city;
+            cin >> city;
+
+            int time;
+            cin >> time;
+    
+            // later will search on time (key) to get city (1-based)
+            rules.insert( {time, city} );
+        }
+
+        // each city is reachable from every other city : DFS traverse
+        // print number of valid trip paths within given time frame and following specified rules
+        int totalTrips = 0;
+
+        // problem states that you will always start in city #1, duh
+        string path = to_string(1);
+        CountTrips(cities, roads, rules, seconds, 1 /*startCity*/, 0 /*currentTime*/, totalTrips);
+
+        cout << totalTrips << endl;
+    }
+
+    return 0;
+}

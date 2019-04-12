@@ -1,0 +1,162 @@
+Create a timebased key-value store class TimeMap, that supports two operations.
+
+1. set(string key, string value, int timestamp)
+
+    Stores the key and value, along with the given timestamp.
+
+2. get(string key, int timestamp)
+
+    Returns a value such that set(key, value, timestamp_prev) was called previously, with timestamp_prev <= timestamp.
+    If there are multiple such values, it returns the one with the largest timestamp_prev.
+    If there are no values, it returns the empty string ("").
+
+
+struct MapNode
+{
+    string key;
+    string value;
+    int timestamp;
+    
+    // if there are 2 or more entries for the same key
+    // last holds the index of the most recent entry
+    // (so can jump right to the largest timestamp in get)
+    size_t last;
+    
+    MapNode(string k, string v, int t) : key(k), value(v), timestamp(t), last(-1) {}
+};
+
+class TimeMap 
+{       
+    static const unsigned int TABLESIZE = 120000;   
+    
+public:
+    /** Initialize your data structure here. */
+    TimeMap() : table(TABLESIZE, NULL)
+    { 
+    }
+    
+    void set(string key, string value, int timestamp) 
+    {
+        // generate hash from key
+        size_t hash = std::hash<string>{}(key);
+        hash = hash % TABLESIZE;
+        
+        size_t newIndex = hash;
+        if (table[newIndex] != NULL)
+        {
+            // either found a hash collision or this is a duped key
+            // for either one, insert at next available slot
+            // for dupes, can jump to last dupe directly
+            bool dupe = (table[newIndex]->key == key);
+            
+            newIndex++;
+            if ( dupe && (table[hash]->last != (size_t)-1) ) 
+            {
+                newIndex = (table[hash]->last + 1);    
+            }
+            if ( newIndex == TABLESIZE )
+            {
+                newIndex = 0;
+            }
+            
+            // iterate through next elements to find empty slot
+            while (table[newIndex] != NULL)
+            {
+                // for initial collisions, have we now found a dupe?
+                if (!dupe)
+                {
+                    dupe = (table[newIndex]->key == key);
+                    
+                    // reset hash for saving "last index"
+                    if (dupe)
+                    {
+                        hash = newIndex;
+                        
+                        // jump to last dupe if there is one
+                        newIndex++;
+                        if ( table[hash]->last != (size_t)-1 )
+                        {
+                            newIndex = (table[hash]->last + 1);
+                        }
+                        if ( newIndex == TABLESIZE )
+                        {
+                            newIndex = 0;
+                        }           
+                        continue;
+                    }
+                }
+                
+                newIndex = ( (newIndex == (TABLESIZE - 1)) ? 0 : (newIndex + 1) );
+            }
+            
+            // if newIndex = hash, looped => resize
+            
+            // for dupes, update the last pointer 
+            if (dupe)
+            {
+                table[hash]->last = newIndex;
+            }
+        }
+        
+        table[newIndex] = new MapNode(key, value, timestamp);
+    }
+    
+    string get(string key, int timestamp) 
+    {
+        // generate hash from key
+        size_t hash = std::hash<string>{}(key);
+        hash = hash % TABLESIZE;        
+        
+        // look for node with this key (for collision case)
+        while (table[hash]->key != key)
+        {
+            hash = ( (hash == (TABLESIZE - 1)) ? 0 : (hash + 1) );
+        }
+        
+        // is this a match?
+        if (table[hash]->timestamp == timestamp)
+        {
+            return table[hash]->value;
+        }
+        
+        // is this time greater?
+        if (table[hash]->timestamp > timestamp)
+        {
+            // all subsequent times are greater still => not found
+            return "";       
+        }
+        
+        // first time is less than requested
+        
+        // if this is the only entry with this key, return its value
+        int newIndex = table[hash]->last;
+        if (newIndex == (size_t)-1)
+        {
+            return table[hash]->value;
+        }
+         
+        // if greatest timestamp with this key is still less than, 
+        // or is equal to, time requested, return its value
+        if (table[newIndex]->timestamp <= timestamp)
+        {
+            return table[newIndex]->value;
+        }
+        
+        // otherwise, greatest timestamp is larger than time requested
+        // walk back until actual timestamp found 
+        // or until time flips back to less than
+        while ( (newIndex != hash) && (table[newIndex]->timestamp > timestamp) )
+        { 
+            newIndex = ( (newIndex == 0) ? (TABLESIZE - 1) : (newIndex - 1) );           
+        }
+       
+        return table[newIndex]->value;
+    }
+    
+private:    
+    // if get and set called a combination of 120000 times, 
+    // worst case would be if set called all 120000 times,
+    // either with the same key(dupes) or all different,
+    // size = 120000 guarantees all fill fit without resize
+    vector<MapNode*> table;
+};

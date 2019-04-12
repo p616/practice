@@ -1,0 +1,126 @@
+You're given a tree consisting of n nodes. Every node u has a weight au. You want to choose an integer k (1=k=n) and then choose k connected components of nodes that don't overlap (i.e every node is in at most 1 component). Let the set of nodes you chose be s
+
+. You want to maximize:
+
+?u?sauk
+
+In other words, you want to maximize the sum of weights of nodes in s
+divided by the number of connected components you chose. Also, if there are several solutions, you want to maximize k.
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <limits>
+#include <queue>
+
+using namespace std;
+
+
+int main() 
+{
+    int V;
+    cin >> V;
+    
+    bool *visited = new bool [V];
+    int *weight = new int [V];
+    for (int n=0; n<V; ++n)
+    {
+        int w;
+        cin >> w;
+        
+        weight[n] = w;
+        visited[n] = false;
+    }
+    
+    vector<int> *adj = new vector<int> [V];
+    for (int n=0; n<V-1; ++n)
+    {
+        int u;
+        int v;
+        cin >> u;
+        cin >> v;
+        
+        adj[u-1].push_back(v);
+        adj[v-1].push_back(u);
+    } 
+    
+    for (int n=0; n<V; ++n)
+    {
+        sort(adj[n].begin(), adj[n].end(), 
+            [weight] (int x, int y) 
+            { 
+                return weight[x-1] < weight[y-1]; 
+                
+            } );
+    }
+
+    int maxWeight = numeric_limits<int>::min();
+    int maxK = 0;
+    
+    for (int k=V; k>=1; k--)
+    {
+        // k = num nodes in path to traverse
+        // try all path sizes, maximize ratio weight : k
+        // when ratio is equal: maximize k, so
+        // start with largest k + only update ratio when larger found
+        
+        for (int i=0; i<V; ++i)
+        {
+            // i = start node
+            // test start from all
+            
+            for (int n=0; n<V; ++n)
+            {
+                visited[n] = false;
+            }            
+            
+            queue<int> q;
+            
+            q.push(i+1);
+            visited[i] = true;
+           
+            int currWeight = 0;
+            int nodes = 0;
+            
+            while (!q.empty())
+            {
+                int v = q.front();
+                q.pop();
+                
+                currWeight += weight[v-1];
+                nodes++;
+                
+                if (nodes == k)
+                {
+                    break;
+                }
+                
+                // queue all connected nodes
+                for (int e : adj[v-1])
+                {
+                    if (!visited[e-1])
+                    {
+                        visited[e-1] = true;
+                        q.push(e);
+                    }
+                }
+            }
+            
+            if (nodes == k)
+            {
+                float maxRatio = (float)((float)maxWeight / (float)maxK);
+                float currRatio = (float)((float)currWeight / (float)k);
+                if (currRatio > maxRatio)
+                {
+                    maxWeight = currWeight;
+                    maxK = k;
+                }
+            }
+            
+        }
+    }
+    
+    return 0;
+}

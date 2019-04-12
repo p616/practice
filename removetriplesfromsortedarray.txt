@@ -1,0 +1,20 @@
+int Solution::removeDuplicates(vector<int> &A) 
+{
+    map<int,int> elemCount;
+    for (int n : A)
+    {
+        elemCount[n]++;
+    }
+    
+    int pos = 0;
+    for (auto it = elemCount.begin(); it != elemCount.end(); ++it)
+    {
+        A[pos++] = it->first;
+        if (it->second > 1)
+        {
+            A[pos++] = it->first;   
+        }
+    }
+    
+    return pos;
+}

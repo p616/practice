@@ -1,0 +1,35 @@
+Count of consecutive subsequences with B <= sum <= C
+
+int Solution::numRange(vector<int> &A, int B, int C) 
+{
+    int count = 0;
+    
+    int N = A.size();        
+    for (int i = 0; i < N; ++i)
+    {
+        int sum = 0;
+        for (int j = 0; j < (N-i); ++j)
+        {      
+            // EX:
+            // i=0  j=0-2   (0) (0+1) (0+1+2)
+            // i=1  j=0-1   (1) (1+2)
+            // i=2  j=0     (2)
+            sum += A[i+j];
+            
+            if (sum <= C) 
+            {
+                if (sum >= B)
+                {
+                    count++;
+                }
+            }  
+            else
+            {
+                // already too big, can skip rest of inner loop
+                break;
+            }
+        }
+    }
+    
+    return count;
+}

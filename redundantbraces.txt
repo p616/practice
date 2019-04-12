@@ -1,0 +1,71 @@
+Write a program to validate if the input string has redundant braces?
+
+int braces(string A) 
+{
+    stack<char> stk;
+    
+    bool hasBraces = false;
+    for (char c : A)
+    {
+        if (c == ')')
+        {
+            // pop back off stack to prev
+            // must not immediately find close
+            // must find op inside as well
+            bool foundOp = false;
+            if (stk.empty() || stk.top() == '(')
+            {
+                return 1;
+            }
+            while (!stk.empty() && stk.top() != '(')
+            {
+                char op = stk.top();
+                if (op == '+' || op == '-' || op == '*' || op == '/')
+                {
+                    foundOp = true;
+                }
+                stk.pop();
+            }
+                        if (stk.empty() || !foundOp)
+            {
+                return 1;
+            }
+            // pop the open brace
+            stk.pop();
+        }
+        else
+        {
+            if (c == '(')
+            {
+                hasBraces = true;
+            }
+            stk.push(c);
+        }
+    }
+    
+    // can't be mismatched if none there to begin with
+    if (!hasBraces)
+    {
+        return 0;
+    }
+    
+    // if stack empty, braces all matched
+    if (stk.empty())
+    {
+        return 0;
+    }
+    
+    // if anything left on stack, can't be an open brace
+    // ex: (a+b)-(a*b)+a
+    while (!stk.empty())
+    {
+        char op = stk.top();
+        if (op == '(')
+        {
+            return 1;
+        }
+        stk.pop();
+     }
+    
+    return 0;
+}

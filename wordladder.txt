@@ -1,0 +1,86 @@
+Given two words (start and end), and a dictionary, 
+find the length of shortest transformation sequence from start to end, 
+such that:
+        You must change exactly one character in every transformation
+        Each intermediate word must exist in the dictionary
+
+
+int Solution::ladderLength(string start, string end, vector<string> &dictV) 
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+    
+    // add start word to queue
+    queue<string> bfsQ;
+    bfsQ.push(start);
+    
+    // create dictionary set from input dictonary vector
+    // since all words in ladder must be in dictionary, 
+    // will remove from dictionary as they're added to the ladder
+    // so, don't bother adding start word at all
+    set<string> dictS;
+    for (string s : dictV)
+    {
+        if (s != start)
+        {
+            dictS.insert(s);
+        }
+    } 
+    
+    // init len = 0 (start = end ==> ladder length of 1)
+    int ladderlen = 0;
+    
+    while (!bfsQ.empty())
+    {
+        // increment ladder length for this "level"
+        ladderlen++;
+        
+        int wordsinlevel = bfsQ.size();
+        for (int i = 0; i < wordsinlevel; ++i)
+        {
+            string s = bfsQ.front();
+            bfsQ.pop();
+            
+            // is this the end of the ladder?
+            if (s == end)
+            {
+                return ladderlen;
+            }
+            
+            // get all possible "next" words in ladder
+            // can only change one letter at a time to get "next" word
+            // all intermediate words must be in the dictionary
+            for (int pos=0; pos < s.length(); ++pos)
+            {
+                // save character at current position in string
+                char currentChar = s[pos];
+                
+                // change char at current position to all possible chars 
+                // and check to see if that word is in the dictionary
+                for (char c = 'a'; c <= 'z'; ++c)
+                {
+                    if (c != currentChar)
+                    {
+                        s[pos] = c;
+                        
+                        auto it = dictS.find(s);
+                        if (it != dictS.end())
+                        {
+                            // found a possible "next" word
+                            // add it to queue and remove from dictionary
+                            bfsQ.push(s);
+                            dictS.erase(it);
+                        }
+                    }
+                }
+                
+                // reset original char in original position and move to next pos
+                s[pos] = currentChar;
+            }
+        }
+    }
+    
+    return 0;
+}

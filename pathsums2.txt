@@ -1,0 +1,66 @@
+
+// Function to find the shortes path from root  
+// to leaf with given sum 
+void hasPathSum(struct Node* node, int sum, 
+                     int& mini, int level) 
+{ 
+    // check if leaf node and check sum 
+    if (node == NULL) { 
+  
+        // Store the minimum path 
+        if (sum == 0) 
+            mini = min(level - 1, mini); 
+  
+        return; 
+    } 
+    else { 
+        int subSum = sum - (node->data); 
+  
+        // Recur in the left tree 
+        hasPathSum(node->left, subSum, mini, level + 1); 
+  
+        // Recur in the right tree 
+        hasPathSum(node->right, subSum, mini, level + 1); 
+    } 
+} 
+
+
+  
+// This function returns overall maximum path sum in 'res' 
+// And returns max path sum going through root. 
+int findMaxUtil(Node* root, int &res) 
+{ 
+    //Base Case 
+    if (root == NULL) 
+        return 0; 
+  
+    // l and r store maximum path sum going through left and 
+    // right child of root respectively 
+    int l = findMaxUtil(root->left,res); 
+    int r = findMaxUtil(root->right,res); 
+  
+    // Max path for parent call of root. This path must 
+    // include at-most one child of root 
+    int max_single = max(max(l, r) + root->data, root->data); 
+  
+    // Max Top represents the sum when the Node under 
+    // consideration is the root of the maxsum path and no 
+    // ancestors of root are there in max sum path 
+    int max_top = max(max_single, l + r + root->data); 
+  
+    res = max(res, max_top); // Store the Maximum Result. 
+  
+    return max_single; 
+} 
+  
+// Returns maximum path sum in tree with given root 
+int findMaxSum(Node *root) 
+{ 
+    // Initialize result 
+    int res = INT_MIN; 
+  
+    // Compute and return result 
+    findMaxUtil(root, res); 
+    return res; 
+} 
+  

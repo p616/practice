@@ -1,0 +1,7 @@
+Problem #2:
+
+set[2,2,2,3,3]
+
+set of updates (change index 2 to 3)
+
+output mode (= most frequent element) after each update

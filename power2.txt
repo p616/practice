@@ -1,0 +1,100 @@
+// string is power of 2?
+
+// ex: 1112
+// div 1/2, write 0 carry 10
+// div 11/2, write 5, carry 10
+// div 11/2, write 5, carry 10
+// div 12/2 write 6
+string divideByTwo(string &A)
+{
+    string answer = "";
+
+    int rem = 0;
+    for (int i = 0; i < A.size(); i++) 
+    {
+        // get most significant digit 
+        int msDigit = (A[i] - '0');
+        
+        // add remainder from last divide
+        int cur = msDigit + rem;
+        
+        // divide by 2 and write char to outbuf
+        int val = cur / 2;
+        
+        // skip writing out leading zeros
+        if (!answer.empty() || (val != 0))
+        {
+            answer += (val + '0');
+        }
+        
+        // carry-over any remainder
+        rem = ((cur % 2) * 10);
+    }
+    
+    return answer;
+}
+
+bool isEven(string A) 
+{
+    {
+    char c = A[A.size()-1];
+    int onesDigit = (c - '0');
+    return ((onesDigit & 1) == 0);
+}
+
+
+int Solution::power(string A) 
+{
+    // special case
+    // treating 1 as false (even tho 2^0 = 1)
+    if (A == "1")
+    {
+        return 0;
+    }
+    
+    unsigned long long ullMax = numeric_limits<unsigned long long>::max();
+    string strMax = to_string(ullMax);
+    
+    char *end;
+    unsigned long long n = strtoull(A.data(), &end, 10);
+    
+    // do the most efficient if possible...
+    
+    // if (string entry = MAX) 
+    // or (string entry != MAX) && (converted n != MAX) ==> less than MAX
+    if ((A == strMax) || (ullMax != n))
+    {
+        if ( (n > 1ULL) && ((n & (n-1ULL)) == 0) )
+        {
+            return 1;
+        }
+    }
+    // (string entry != MAX) but (converted n == MAX) ==> grater than MAX
+    else
+    {
+        // while divisible by 2, divide by 2
+        while (isEven(A))
+        {
+            A = divideByTwo(A);
+            
+             // once snaller than max, do the most efficient...
+            n = strtoull(A.data(), &end, 10);
+            if ((A == strMax) || (ullMax != n))
+            {
+                if ( (n > 1ULL) && ((n & (n-1ULL)) == 0) )
+                {
+                    return 1;
+                } 
+                return 0;
+            }
+        }
+        
+        // if got all the way down to 1, is power of 2
+        if (A == "1")
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}

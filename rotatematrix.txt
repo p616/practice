@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Write a method to rotate a square matrix by 90 degrees clockwise
+// Example: [ 0 1   -> [ 2 0
+//            2 3 ]      3 1 ]
+
+vector<vector<unsigned int>> RotateMatrix(vector<vector<unsigned int>>& mat)
+{
+  int size = mat.Size();
+  vector<vector<unsigned int>> rot(size);
+
+  for (int i=0; i<size; ++i)
+  {
+    vector<int> row;
+    for (int j=0; j<size; ++j)
+    {
+        // doh! swap.
+        //row[i][j] = mat[j][size-i-1];
+        mat[j][size-i-1] = row[i][j];
+    }
+    rot.push_back(rot);
+  }
+
+  return mat;
+}
+
+void RotateMatrixInPlace(vector<vector<unsigned int>>& mat)
+{
+  int size = mat.Size();
+
+  for (int i=0; i<(size+1)/2; ++i)
+  {
+    for (int j=i; j<size-i-1; ++j)
+    {
+      // save top and copy backwards
+      unsigned int temp = mat[i][j];
+      // go up (left->top)
+      // go left (bottom->left)
+      // go down (right->bottom)
+      // go right (top->bottom) (i.e. temp->bottom)
+
+    }
+
+    /*
+    // go right
+    // 00 01 02 03
+    for (int j=i; j<size-i-1; ++j)
+    {
+      int temp = mat[j][size-i];
+      mat[j][size-i] = mat[i][j];
+
+    }
+    // go down
+    // 13 23 33
+    for (int j=i+1; j<size-i; ++j)
+    {
+    }
+    // go left
+    for (int j=size-i; j>=i; j--)
+    {
+    }
+    // go up
+    for (int j=size-1; j>=i; j--)
+    {
+    }
+    */
+  }
+}
+
+
+int main() {
+	cout<<"Hello";
+	return 0;
+}

@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+vector<int> sortDupes(vector<int>& A)
+{
+    map<int,int> dupes;
+    for (int n : A)
+    {
+        auto it = dupes.find(n);
+        if (it == dupes.end())
+        {
+            // not found, add it
+            dupes.insert({n, 1});
+        }
+        else
+        {
+            it->second++;
+        }
+    }
+    
+    vector<int> ret;
+    for (auto it = dupes.begin(); it != dupes.end(); ++it)
+    {
+        if (it->second > 1)
+        {
+            ret.push_back(it->first);
+        }
+    }
+    
+    return ret;
+}
+
+int main() 
+{
+    vector<int> v = {2, 4, 12, 2, 3, 6, 12, 1, 1, 8, 32, 8, 8};
+    vector<int> dupes = sortDupes(v);
+    for (int n : dupes)
+    {
+        cout << n << endl;
+    }
+	return 0;
+}

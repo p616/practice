@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
+    
+}; 
+
+vector<Interval> merge(vector<Interval> &A)
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+
+    vector<Interval> merged;
+
+    // sort input by start times
+    // for equal start times, sort by end times
+    sort(A.begin(), A.end(),
+        [](Interval a, Interval b)
+    {
+        if (a.start == b.start)
+        {
+            return a.end < b.end;
+        }
+        return a.start < b.start;
+    });
+
+    int i = 0;
+    while (i < A.size())
+    {
+        int start = A[i].start;
+        int end = A[i].end;
+
+        i++;
+
+        while ((i < A.size()) &&
+            (A[i].start >= start) && (A[i].start <= end))
+        {
+            // start time for next interval is within current, merge them
+            end = max(end, A[i].end);
+            i++;
+        }
+
+        Interval m(start, end);
+        merged.push_back(m);
+    }
+
+    return merged;
+}

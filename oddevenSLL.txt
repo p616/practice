@@ -1,0 +1,41 @@
+Given a singly linked list, group all odd nodes together followed by the even nodes. Please note here we are talking about the node number and not the value in the nodes.
+
+Input: 1->2->3->4->5->NULL
+Output: 1->3->5->2->4->NULL
+
+
+
+    ListNode* oddEvenList(ListNode* head) 
+    {
+        // empty
+        if (head == nullptr)
+        {
+            return nullptr;
+        }
+                       
+        // create one list of evens and another list of odds and concat        
+        // save head of evens list for chaining with end of odds
+        ListNode *odds = head;
+        ListNode *evens = head->next;
+        ListNode *evenHead = evens;
+        
+        // 1 node and 2 node lists need no modification
+        if (evens == nullptr || evens->next == nullptr)
+        {
+            return head;
+        }
+                
+        // end of loop depends on number of nodes : even or odd
+        while (odds->next != nullptr && evens->next != nullptr)
+        {
+            odds->next = evens->next;
+            odds = odds->next;
+            evens->next = odds->next; 
+            evens = odds->next;
+        }
+        
+        // concat even and odd lists
+        odds->next = evenHead;
+
+        return head;      
+    }

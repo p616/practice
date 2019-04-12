@@ -1,0 +1,42 @@
+// return min in rotated arrayh
+
+int Solution::findMin(const vector<int> &A) 
+{
+    int low = 0;
+    int high = (A.size()-1);
+    
+    while (low < high)
+    {
+        int mid = (low + ((high-low)/2));
+        
+        // 567891234
+        // 678912345
+        // 789123456
+        // 891234567
+        // 234567891
+        // 123456789
+        if (A[mid] < A[low])
+        {
+            // is this low?
+            if (A[mid] < A[mid-1])
+            {
+                return A[mid];
+            }
+            // low is in low half
+            high = mid-1;
+        }
+        else
+        {
+            // is this low?
+            if (A[mid] > A[mid+1])
+            {
+                return A[mid+1];
+            }
+            // low is in high half
+            low = mid+1;
+        }
+    }
+    
+    // no rotation in list, low at 0
+    return A[0];
+}

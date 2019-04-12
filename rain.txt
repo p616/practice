@@ -1,0 +1,132 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int TrapRain(vector<int>& v)
+{
+    if (v.empty())
+    return 0;
+    
+    // strip leading 0's
+    int begin = 0;
+    while (v[begin] == 0)
+    {
+        begin++;
+        
+        // all zeros
+        if (begin == v.size())
+        {
+            return 0;
+        }
+    }
+       
+    // 0 or 1 or 2 pillars  trap nothing
+    if (v.size() - begin < 3)
+    {
+        return 0;
+    }  
+    
+    // update begin while adjacent pillars continue to grow larger (4-5-3-1-2-6)
+    while (begin < v.size()-3 && v[begin] <= v[begin+1])
+    {
+        begin++;
+    }
+    
+    // adjacent pillars trap nothing, skip next one
+    int end = begin + 2;
+
+    // Rain is trapped, L to R, between a pillar and:
+    //  the first pillar of equal height or taller, or
+    //  the first of the tallest shorter pillars
+    
+    int rainBuckets = 0;
+    int maxPillar = -1;
+    int maxPillarIndex = -1;
+    
+    // adjacent pillars trap nothing, stop when only 2 left
+    while (begin < v.size()-2)
+    {
+        // Track max to right of begin
+        if (v[end] > maxPillar)
+        {
+            maxPillar = v[end];
+            maxPillarIndex = end;
+        }
+        end++;
+        
+        // Found a taller (or equal) pillar, or reached the end
+        if (v[begin] <= maxPillar || end == v.size())
+        {            
+            // Calculate buckets between pillars and update running total:
+            //  max buckets = rectangle formed between the indices, max height min pillar height
+            //  actual buckets = max less the pillars in between
+            int buckets = (maxPillarIndex - begin - 1) * min(v[begin], maxPillar);
+            for (int i=begin+1; i<maxPillarIndex; i++)
+            {
+                // min: handle 9-8-2-6 / 5-4-1-2 cases
+                //      4-3-2 scenario of 4-3-2-1-0-1
+                buckets -= min(v[i], maxPillar);
+            }
+            
+            // skip if negative: 1-7-5  
+            if (buckets > 0)
+            {
+                rainBuckets += buckets;
+                begin = maxPillarIndex;
+            }
+            else
+            {
+                // 5-4-1-2 scenario (must go to indx2)
+                begin++;
+            }
+            
+            // update new start index while adjacent pillars continue to grow larger (8-2-8-9-0-1-7-7-9)
+            while (begin < v.size()-3 && v[begin] <= v[begin+1])
+            {
+                begin++;
+            }
+            
+            // Next...
+            end = begin + 2;
+            maxPillar = -1;
+            maxPillarIndex = -1;
+        }
+    }
+
+    return rainBuckets;
+}
+
+int main()
+{	
+
+    //41121402
+    //31215
+    //10213132113
+    //504121310131
+    //504121610131
+    //41214601112
+    //4121501112
+    //0102101321202
+
+    //1002
+    //00000300204
+    //300204
+    
+    // 0
+    // 1
+    // 11 
+    // 0000
+    // 00001
+    // 0000011
+        
+    //432101
+    //41214601112
+    
+    vector<int> v = {5,4,1,2};
+    
+    cout << "Trapping " << TrapRain(v) << " units";
+    
+	return 0;
+}

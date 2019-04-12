@@ -1,0 +1,30 @@
+    vector<int> twoSum(vector<int>& nums, int target)
+    {
+        vector<int> ret;
+        
+        // both mate index and mate value are unique, but want
+        //  to lookup based on value
+        map<int,int/*mate, index*/> mates;
+        
+        for (int i = 0; i<nums.size(); ++i)
+        {
+            int mate = target - nums[i]; 
+            
+            auto it = mates.find(mate);
+            
+            if (it == mates.end())
+            {
+                // add *this* to map
+                mates.insert({nums[i], i});
+            }
+            else
+            {
+                // mate in map, done
+                ret.push_back(it->second);
+                ret.push_back(i);
+                break;
+            }
+        }
+        
+        return ret;
+    }

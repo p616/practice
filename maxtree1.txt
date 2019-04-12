@@ -1,0 +1,42 @@
+ Given an integer array with no duplicates. A maximum tree building on this array is defined as follow:
+
+    The root is the maximum number in the array.
+    The left subtree is the maximum tree constructed from left part subarray divided by the maximum number.
+    The right subtree is the maximum tree constructed from right part subarray divided by the maximum number.
+
+Construct the maximum tree by the given array and output the root node of this tree. 
+
+    TreeNode* constructTree(vector<int>& nums, int start, int end)
+    {  
+        if (end <= start)
+        {
+            return NULL;
+        }
+        
+        // find index of max value
+        int max = nums[start];
+        int maxIndex = start;
+        for (int i=(start+1); i<end; ++i)
+        {
+            if (nums[i] > max)
+            {
+                max = nums[i];
+                maxIndex = i;
+            }
+        }
+        
+        TreeNode *root = new TreeNode(nums[maxIndex]);
+        root->left = constructTree(nums, start, maxIndex);
+        root->right = constructTree(nums, (maxIndex+1), end);
+        
+        return root;                
+    }
+    
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) 
+    {
+        if (nums.size() == 0)
+        {
+            return NULL;            
+        }
+        return constructTree(nums, 0, nums.size());
+    }

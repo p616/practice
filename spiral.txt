@@ -1,0 +1,62 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<vector<int> > generateMatrix(int A)
+{
+    vector<vector<int>> spiral;
+    for (int i = 0; i < A; ++i)
+    {
+        vector<int> row(A, 0);
+        spiral.push_back(row);
+    }
+
+    // if A is odd, recursively write the outside of an AxA, A-2xA-2 ... 1x1
+    // if A is even, recursively write the outside of an AxA, A-2xA-2 ... 2x2
+
+    int num = 0;
+    int row = 0;
+    while (A > 0)
+    {
+        // write the top of the outside square (L->R)
+        for (int i = row; i < A; ++i)
+        {
+            cout << row << "," << i << endl;
+            spiral[row][i] = num++;
+        }
+        // write down the right side of outside square (T->B)
+        for (int i = row + 1; i < A; ++i)
+        {
+            cout << i << "," << A - 1 << endl;
+            spiral[i][A-1] = num++;
+        }
+        // write the bottom of the outside square (R->L)
+        for (int i = A - 2; i >= row; i--)
+        {
+            cout << A - 1 << "," << i << endl;
+            spiral[A-1][i] = num++;
+        }
+        // write up the left side of the outside square (B->T)
+        for (int i = A - 2; i >= row + 1; i--)
+        {
+            cout << i << "," << row << endl;
+            spiral[i][row] = num++;
+        }
+
+        // adjust row for next inner square, size = A-2
+        A--;
+        row++;
+    }
+
+    return spiral;
+}
+
+int main()
+{
+    vector<vector<int>> v = generateMatrix(4);
+    return 0;
+}

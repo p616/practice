@@ -1,0 +1,89 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include <climits>
+
+using namespace std;
+
+class MyStack
+{
+  private:
+    stack<int> s;
+    int max;
+
+  public:
+    MyStack() { max = numeric_limits<int>::min(); }
+
+    void Push(int n);
+    int Pop();
+    int Max() { return max; }
+};
+
+void MyStack::Push(int n)
+{
+  if (s.empty())
+  {
+    max = n;
+    s.push(n);
+  }
+  else if (n > max)
+  {
+    s.push(2*n - max);
+    max = n;
+  }
+  else
+  {
+    s.push(n);
+  }
+}
+
+int MyStack::Pop()
+{
+  int n = s.top();
+  s.pop();
+
+  int ret = n;
+
+  if (!s.empty() && n > max)
+  {
+    ret = max;
+    max = max*2 - n;
+  }
+
+  return ret;
+}
+
+
+int main() 
+{
+    int n;
+    cin >> n;
+
+    MyStack myStack;
+    for (int i=0; i<n; ++i)
+    {
+      int op;
+      cin >> op;
+
+      if (op == 1)
+      {
+        int num;
+        cin >> num;
+
+        myStack.Push(num);
+      }
+      else if (op == 2)
+      {
+        myStack.Pop();
+      }
+      else 
+      {
+        int max = myStack.Max();
+        cout << max << endl;
+      }
+    }
+    return 0;
+}

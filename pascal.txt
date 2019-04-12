@@ -1,0 +1,58 @@
+Pascal's triangle:
+
+Given numRows = 5,
+Return
+
+[
+     [1],
+     [1,1],
+     [1,2,1],
+     [1,3,3,1],
+     [1,4,6,4,1]
+]
+
+
+vector<vector<int> > Solution::solve(int A) 
+{
+    vector<vector<int>> pascal;
+    
+    if (A == 0)
+    {
+        return pascal;
+    }
+    
+    // fill first row
+    vector<int> row = {1};
+    pascal.push_back(row);
+    if (A == 1)
+    {
+        return pascal;
+    }
+    
+    // fill rest from prev
+    for (int i=1; i<A; ++i)
+    {   
+        int mid = (i/2);
+        
+        // first elem is always 1
+        row.clear();
+        row.push_back(1);
+        
+        // fill first half from prev
+        for (int j=0; j<mid; ++j)
+        {
+            int sum = (pascal[i-1][j] + pascal[i-1][j+1]);
+            row.push_back(sum);
+        }
+        
+        // fill last half from first half
+        for (int j=(i % 2 == 0 ? mid-1 : mid); j>=0; j--)
+        {
+            row.push_back(row[j]);
+        }
+        
+        pascal.push_back(row);
+    }
+    
+    return pascal;
+}

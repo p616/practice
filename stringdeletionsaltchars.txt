@@ -1,0 +1,20 @@
+// Complete the alternatingCharacters function below.
+int alternatingCharacters(string s) 
+{
+    int deletions = 0;
+
+    char currChar = s[0];
+    for (int i=1; i<s.size(); i++)
+    {
+        if (s[i] == currChar)
+        {
+            deletions++;
+        }
+        else
+        {
+            currChar = s[i];
+        }
+    }
+
+    return deletions;
+}

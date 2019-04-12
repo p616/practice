@@ -1,0 +1,45 @@
+// output number where product of digits = input (n)
+
+int main() {
+	int T;
+	cin >> T;
+	
+	for (int t=0; t<T; ++t)
+	{
+	    int n;
+	    cin >> n;
+	    
+	    // handle single digit
+	    if (n < 10)
+	    {
+	        cout << n << endl;
+	        continue;
+	    }
+	    
+	    // on success n = 1
+	    // on fail divisor = 1
+	    string digits = "";
+	    int divisor = 9;
+	    while ( (n != 1) && (divisor > 1) )
+	    {
+	        if ( (n % divisor) == 0 )
+	        {
+	            digits = (to_string(divisor) + digits);
+	            n /= divisor;
+	        }
+	        else
+	        {
+	            divisor--;
+	        }
+	    }
+	    
+	    if ( n != 1 )
+	    {
+	        digits = "-1";
+	    }
+	    
+		cout << digits << endl;
+	}
+	
+	return 0;
+}

@@ -1,0 +1,166 @@
+Given a string representing a code snippet, you need to implement a tag validator to parse the code and return whether it is valid. A code snippet is valid if all the following rules hold:
+
+    The code must be wrapped in a valid closed tag. Otherwise, the code is invalid.
+    A closed tag (not necessarily valid) has exactly the following format : <TAG_NAME>TAG_CONTENT</TAG_NAME>. Among them, <TAG_NAME> is the start tag, and </TAG_NAME> is the end tag. The TAG_NAME in start and end tags should be the same. A closed tag is valid if and only if the TAG_NAME and TAG_CONTENT are valid.
+    A valid TAG_NAME only contain upper-case letters, and has length in range [1,9]. Otherwise, the TAG_NAME is invalid.
+    A valid TAG_CONTENT may contain other valid closed tags, cdata and any characters (see note1) EXCEPT unmatched <, unmatched start and end tag, and unmatched or closed tags with invalid TAG_NAME. Otherwise, the TAG_CONTENT is invalid.
+    A start tag is unmatched if no end tag exists with the same TAG_NAME, and vice versa. However, you also need to consider the issue of unbalanced when tags are nested.
+    A < is unmatched if you cannot find a subsequent >. And when you find a < or </, all the subsequent characters until the next > should be parsed as TAG_NAME (not necessarily valid).
+    The cdata has the following format : <![CDATA[CDATA_CONTENT]]>. The range of CDATA_CONTENT is defined as the characters between <![CDATA[ and the first subsequent ]]>.
+    CDATA_CONTENT may contain any characters. The function of cdata is to forbid the validator to parse CDATA_CONTENT, so even it has some characters that can be parsed as tag (no matter valid or invalid), you should treat it as regular characters.
+
+
+class Solution {
+public:
+    bool isValid(string code) 
+    {
+        int len = code.length();
+        
+        // smallest valid = <A></A>
+        if (len < 7)
+        {
+            return false;
+        }
+        
+        bool cdata = false;
+        bool opentag = false;
+        bool closetag = false;
+        
+        stack<string> tags;
+        
+        int index = 0;
+        while (index < len)
+        {
+            char c = code[index];
+            
+            // Rule 1
+            if (index == 0 && c != '<')
+            {
+                return false;
+            }
+            
+            // Rule 6 and 8 : When find < must parse to > as TAG_NAME unless
+            //  inside CDATA or is start of CDATA
+            if (c == '<' && !cdata)
+            {
+                // if index = 0 must be opentag to be valid
+                
+                // closetag
+                if (index != 0 && index + 1 < len && code[index+1] == '/')
+                {
+                    // proceed to validate tag
+                    index += 2;
+                    closetag = true;
+                }
+                // Rule 7: Length of CDATA start is 9 ( "<![CDATA[" )
+                else if (index != 0 && index + 9 <= len && strncmp(&code[index], "<![CDATA[", 9) == 0)
+                {
+                    // proceed to validate cdata
+                    index += 9;
+                    cdata = true;
+                }
+                else
+                {
+                    // proceed to validate tag
+                    index++;
+                    opentag = true;                    
+                }
+            }
+            
+            // Rule 6 : When find < or </ must parse to > as TAG_NAME
+            if (opentag || closetag)
+            {
+                string tag = "";
+        
+                while (index < len)
+                {
+                    c = code[index++];
+                    
+                    if (c == '>') 
+                    {
+                       break;
+                    }
+                    // Rule 3 : Valid tag name is upper case
+                    else if (isupper(c))
+                    {
+                        tag += c;
+                    }
+                    else
+                    {
+                        return false;
+                    }  
+                }
+                
+                // Rule 3 : Valid tag name has len 1-9
+                if (tag.length() == 0 || tag.length() > 9)
+                {
+                    return false;
+                }
+                
+                if (opentag)
+                {
+                    tags.push(tag); 
+                    opentag = false; 
+                }
+                else
+                {
+                    if (tags.empty())
+                    {
+                        return false;
+                    }
+                    
+                    string opentag = tags.top();
+                    tags.pop();
+                    
+                    if (opentag != tag)
+                    {
+                        return false;
+                    }
+                    
+                    // done?
+                    if (index == len)
+                    {
+                        if (tags.empty())
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (tags.empty())
+                    {
+                        return false;
+                    }
+                    
+                    closetag = false;
+                }                
+            }
+            else if (cdata)
+            {
+                // all chars valid between cdata start and end ("]]>")
+                while (index < len)
+                {
+                    c = code[index];
+                    
+                    if (c == ']' && index + 3 <= len && strncmp(&code[index],"]]>", 3) == 0)
+                    {
+                        index += 3;
+                        cdata = false;
+                        break;
+                    }
+                    
+                    index++;
+                }
+            }
+            else
+            {
+                index++;
+            }
+                     
+        }
+        
+        return false;        
+    }
+};

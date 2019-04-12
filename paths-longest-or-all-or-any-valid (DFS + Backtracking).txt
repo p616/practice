@@ -1,0 +1,173 @@
+// OR: Any path thru matrix given only these moves: <...> = SAME
+
+============================
+
+#include <iostream>
+using namespace std;
+
+#define N 4
+
+// OR:
+// total number of paths thru maze from 0,0 to N,N 
+// 1 = valid move, 0 = blocked
+// all paths = DFS with backtracking
+
+bool IsValid(int x, int y)
+{
+    return (x >= 0 && y >= 0 && x < N && y < N);
+}
+
+void WalkTheMaze(int maze[][N], int x, int y, int &count)
+{
+    // if reached the final pos, found one path 
+    if (x == N-1 && y == N-1)
+    {
+        count++;
+        return;
+    }
+    
+    // if x and y are inside the maze and not blocked...
+    if (IsValid(x,y) && maze[x][y] == 1)
+    {
+        // mark it blocked and try all paths from it
+        maze[x][y] = 0;
+        WalkTheMaze(maze, x+1, y, count);
+        WalkTheMaze(maze, x-1, y, count);
+        WalkTheMaze(maze, x, y+1, count);
+        WalkTheMaze(maze, x, y-1, count);
+        // backtrack
+        maze[x][y] = 1;
+    }
+
+}
+
+int main() {
+// 7 and 9
+	int maze[][4] = {  {1,1,1,1},
+	                    {1,1,0,1},
+	                    {0,1,0,1},
+	                    {1,1,1,1}};
+	            
+	int count = 0;
+	WalkTheMaze(maze, 0, 0, count);
+	cout << count;        
+	return 0;
+}
+
+----
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+#define R 3
+#define C 3
+
+// OR:
+// print all (shortest) paths thru RxC matrix
+// shortest = can only move forward, down, or diagonal 
+// all paths = DFS with backtracking
+
+bool IsValid(int x, int y)
+{
+    return (x >= 0 && y >= 0 && x < R && y < C);
+}
+
+void WalkTheMatrix(int matrix[R][C], int x, int y, vector<int> &path)
+{
+    // if reached the final pos, found one path 
+    if (x == R-1 && y == C-1)
+    {
+        for (int n : path)
+        {
+            cout << n << " ";
+        }
+        cout << matrix[x][y] << "\n";
+        return;
+    }
+    
+    // if x and y are inside the maze
+    if (IsValid(x,y))
+    {
+        // add it to the current path and try all paths from it
+        path.push_back(matrix[x][y]);
+        WalkTheMatrix(matrix, x+1, y, path);
+        WalkTheMatrix(matrix, x, y+1, path);
+        WalkTheMatrix(matrix, x+1, y+1, path);
+        // backtrack
+        path.pop_back();
+    }
+
+}
+
+int main() {
+	int matrix[R][C] = {  {1,2,3},
+	                    {4,5,6},
+	                    {7,8,9}};
+	            
+	vector<int> path;
+	WalkTheMatrix(matrix, 0, 0, path);
+	return 0;
+}
+
+====
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+#define R 3
+#define C 3
+
+// OR: Longest path = Combine find all with greedy (check length > max when found)
+
+bool IsValid(int x, int y)
+{
+    return (x >= 0 && y >= 0 && x < R && y < C);
+}
+
+void WalkTheMatrix(int matrix[R][C], int x, int y, vector<int> &path, int &maxPath)
+{
+    // if reached the final pos, found one path 
+    if (x == R-1 && y == C-1)
+    {
+        for (int n : path)
+        {
+            cout << n << " ";
+        }
+        cout << matrix[x][y] << "\n";
+        
+        if (path.size()+1 > maxPath)
+        {
+            maxPath = path.size()+1;
+        }
+        return;
+    }
+    
+    // if x and y are inside the maze
+    if (IsValid(x,y))
+    {
+        // add it to the current path and try all paths from it
+        path.push_back(matrix[x][y]);
+        WalkTheMatrix(matrix, x+1, y, path, maxPath);
+        WalkTheMatrix(matrix, x, y+1, path, maxPath);
+        WalkTheMatrix(matrix, x+1, y+1, path, maxPath);
+        // backtrack
+        path.pop_back();
+    }
+
+}
+
+int main() {
+	int matrix[R][C] = {  {1,2,3},
+	                    {4,5,6},
+	                    {7,8,9}};
+	            
+	vector<int> path;
+	int maxPath = 0;
+	WalkTheMatrix(matrix, 0, 0, path, maxPath);
+	cout << "MaxPath=" << maxPath;
+	return 0;
+}

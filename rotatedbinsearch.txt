@@ -1,0 +1,121 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int search(const vector<int> &A, int B) 
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+
+    
+    int len = A.size();
+    
+    cout << len << endl;
+    
+    if (len == 0)
+    {
+        return -1;
+    }
+    
+    int low = 0;
+    int high = (len-1);
+    
+    while (low <= high)
+    {
+        int mid = (low + ((high-low)/2));
+        
+        cout << low << ":" << A[low] << " ";
+        cout << mid << ":" << A[mid] << " ";
+        cout << high << ":" << A[high] << endl;
+        
+        if (A[low] == B)
+        {
+            return low;
+        }
+        if (A[mid] == B)
+        {
+            return mid;
+        }
+        if (A[high] == B)
+        {
+            return high;
+        }    int len = A.size();
+    
+    //cout << len << endl;
+    
+    if (len == 0)
+    {
+        return -1;
+    }
+    
+    int low = 0;
+    int high = (len-1);
+    
+    while (low <= high)
+    {
+        int mid = (low + ((high-low)/2));
+        
+        //cout << low << " " << mid << " " << high << endl;
+        
+        if (A[low] == B)
+        {
+            return low;
+        }
+        if (A[mid] == B)
+        {
+            return mid;
+        }
+        if (A[high] == B)
+        {
+            return high;
+        }
+        
+        // Normal ordering from low-mid
+        // EX: 0 - 180
+        if (A[low] < A[mid])
+        {
+            if ( (B > A[low]) && (B < A[mid]) )
+            {
+                high  = (mid - 1);
+            }
+            else
+            {
+                low = (mid + 1);
+            }
+        }
+        else 
+        {
+            // Reverse ordering from low-mid
+            // EX: 180 - 77
+            if ( (B < A[low]) && (B < A[mid]) )
+            {
+                high  = (mid - 1);
+            }
+            else
+            {
+                low = (mid + 1);
+            }
+        }
+    }
+    
+    //cout << low << " " << high << endl;
+    
+    return -1;
+}
+
+
+int main() {
+	vector<int> v = {180, 181, 182, 183, 184, 187, 188, 189, 191, 192, 193, 194, 
+	195, 196, 201, 202, 203, 204, 3, 4, 5, 6, 7, 8, 9, 10, 14, 16, 17, 18, 19, 
+	23, 26, 27, 28, 29, 32, 33, 36, 37, 38, 39, 41, 42, 43, 45, 48, 51, 52, 53, 
+	54, 56, 62, 63, 64, 67, 69, 72, 73, 75, 77, 78, 79, 83, 85, 87, 90, 91, 92, 
+	93, 96, 98, 99, 101, 102, 104, 105, 106, 107, 108, 109, 111, 113, 115, 116, 
+	118, 119, 120, 122, 123, 124, 126, 127, 129, 130, 135, 137, 138, 139, 143, 
+	144, 145, 147, 149, 152, 155, 156, 160, 162, 163, 164, 166, 168, 169, 170, 
+	171, 172, 173, 174, 175, 176, 177};
+	cout << search(v, 42);
+	return 0;
+}

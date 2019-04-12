@@ -1,0 +1,109 @@
+On a 2-dimensional grid, there are 4 types of squares:
+
+    1 represents the starting square.  There is exactly one starting square.
+    2 represents the ending square.  There is exactly one ending square.
+    0 represents empty squares we can walk over.
+    -1 represents obstacles that we cannot walk over.
+
+Return the number of 4-directional walks from the starting square to the ending square, that walk over every non-obstacle square exactly once.
+
+
+    
+    // represents the change in ROW/COL for each of 4 potential moves off a square
+    vector<int> ROWMASK { 0, 0,  1, -1 };
+    vector<int> COLMASK { 1, -1, 0,  0 };
+    
+    int isSolution(vector<vector<int>>& grid)
+    {
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for (int j=0; j<grid[i].size(); ++j)
+            {
+                // all grid positions should be -1 if on path
+                // except for end square = 2 
+                // any squares not hit = 0
+                if (grid[i][j] == 0)
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    // can move to square with 0's or 2 (the end)
+    bool isValidMove(vector<vector<int>>& grid, int x, int y)
+    {
+        if ( (x >=0 && x < grid.size()) &&
+             (y >=0 && y < grid[x].size()) )
+        {
+            if ( (grid[x][y] == 0) ||
+                 (grid[x][y] == 2) )
+            return true;
+        }
+        return false;
+    }
+    
+    int uniquePathsIII(vector<vector<int>>& grid) 
+    {
+        // find the starting square
+        int x = -1;
+        int y = -1;
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for (int j=0; j<grid[i].size(); ++j)
+            {
+                if (grid[i][j] == 1)
+                {
+                    x = i;
+                    y = j;
+                    break;
+                }
+            }
+        }
+        
+        int count = 0;
+        uniquePaths(grid, x, y, count);
+        return count;
+    }
+    
+    void uniquePaths(vector<vector<int>>& grid, 
+                     int x, int y, 
+                     int& count)
+    {
+        // end case
+        if (grid[x][y] == 2)
+        {
+            // if at end square
+            // have solution if hit all other squares
+            if (isSolution(grid))
+            {
+                count++;
+            }
+            return;
+        }
+        
+        // invalidate this square
+        grid[x][y] = -1;        
+          
+        // for each possible direction, determine if it can lead to a solution
+        // at any square, there are 4 possible moves
+        for (int i=0; i<4; ++i)
+        {
+            // determine which of the possible moves doesn't fall off
+            // the ends of the grid and whose cell value is either 0 or 2 
+            // (1 = start, -1 = invalid move) 
+            int newX = (x + ROWMASK[i]);
+            int newY = (y + COLMASK[i]);
+                    
+            if (isValidMove(grid, newX, newY))
+            {               
+                // try this path
+                uniquePaths(grid, newX, newY, count);
+           }
+        }
+        
+        // backtrack 
+        grid[x][y] = 0;
+    }

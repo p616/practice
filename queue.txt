@@ -1,0 +1,153 @@
+
+class Queue
+{
+public:
+  Queue();
+
+  void Push(int n);
+  int Pop();
+  void Print();
+
+private:
+  stack<int> s1;
+  stack<int> s2;
+
+  stack<int> *pMain;
+  stack<int> *pHold;
+};
+
+Queue::Queue() 
+{  
+  pMain = &s1;
+  pHold = &s2;
+}
+
+void Queue::Push(int n)
+{
+  // Push onto the Main stack
+  pMain->push(n);
+
+  /*
+    // Move current stack temporarily to hold stack
+    while (!pMain->empty())
+    {
+      pHold->push(pMain->top());
+      pMain->pop();
+    }
+
+    // Push new value on empty stack
+    pMain->push(n);
+
+    // Move the hold data back to the main stack
+    while (!pHold->empty())
+    {
+      pMain->push(pHold->top());
+      pHold->pop();
+    }
+    */
+}
+
+int Queue::Pop()
+{
+  int front = -1;
+
+  // If Hold stack empty, fill it with data from Main stack
+  if (pHold->empty())
+  {
+    while (!pMain->empty())
+    {
+      pHold->push(pMain->top());
+      pMain->pop();
+    }
+  }
+
+  // Return the top of the Hold stack
+  if (!pHold->empty())
+  {
+    front = pHold->top();
+    pHold->pop();
+  }
+
+  return front;
+
+  /*
+  int top = pMain->top();
+  pMain->pop();
+  return top;
+  */
+}
+
+void Queue::Print()
+{
+  // Print top of Hold stack
+  if (pHold->empty())
+  {
+    while (!pMain->empty()) {
+      pHold->push(pMain->top());
+      pMain->pop();
+    }
+  }
+  cout << pHold->top() << endl;
+
+  // cout << pMain->top() << endl;
+}
+
+class MyQueue {
+public:
+    /** Initialize your data structure here. */
+    MyQueue() {
+        
+    }
+    
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        sPush.push(x);        
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        if (sPop.empty())
+        {
+            while (!sPush.empty())
+            {
+                sPop.push(sPush.top());
+                sPush.pop();
+            }
+        }
+        
+        int ret = sPop.top();
+        sPop.pop();
+        return ret;             
+    }
+    
+    /** Get the front element. */
+    int peek() {
+        if (sPop.empty())
+        {
+            while (!sPush.empty())
+            {
+                sPop.push(sPush.top());
+                sPush.pop();
+            }
+        }      
+        return sPop.top();
+    }
+    
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return (sPush.empty() && sPop.empty());
+    }
+    
+private:
+    stack<int> sPush;
+    stack<int> sPop;   
+};
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * bool param_4 = obj.empty();
+ */

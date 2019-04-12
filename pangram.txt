@@ -1,0 +1,29 @@
+int main()
+{
+    string s;
+    getline(cin>>ws, s);
+    
+    set<char> used;   
+    for (int i=0; i<s.length(); ++i)
+    {
+        used.insert(toupper(s[i]));
+    }
+    
+    string missing = "";
+    for (char c = 'A'; c <= 'Z'; ++c)
+    {
+        if (used.find(c) == used.end())
+        {
+            missing += c;
+        }
+    } 
+    
+    if (missing.empty())
+    {
+        missing = "-";
+    }
+
+    cout << missing;
+    
+	return 0;
+}

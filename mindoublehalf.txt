@@ -1,0 +1,71 @@
+More formally, 2D can choose two such indices i and j, and one integer x such that x is a divisor of ai, and change powers as following: ai=ai/x, aj=aj·*x
+
+1 2 3 4 5
+In the first example, the farmer can reduce the power of the 4-th machine by 2 times, and increase the power of the 1-st machine by 2 times, then the powers will be: [2,2,3,2,5].
+14
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+int main() 
+{
+	int count;
+	cin >> count;
+	
+	vector<int> v;
+	int sum = 0;
+	for (int i=0; i<count; ++i)
+	{
+	    int n;
+	    cin >> n;
+	    sum += n;
+	    v.push_back(n);
+	}
+	
+	sort(v.begin(), v.end());
+	
+	int maxsum = sum;
+	for (int i=0; i<(count-1); ++i)
+	{
+	    bool found = false;
+	    
+	    int divisor = v[i];
+	    if (divisor == 1)
+	    {
+	        continue;
+	    }
+	    
+	    int currsum = sum;
+	    
+	    int index = (count - 1);
+	    while ( (index > i) && (divisor <= sqrt(v[index])) )
+	    {
+    	    if ((v[index] % divisor) == 0)
+    	    {
+                found = true;
+    	        break;
+    	    }
+    	    index--;
+	    }
+	    
+	    if (found) 
+	    {
+	            currsum -= (v[index] - (v[index]/divisor));
+		    currsum += ((v[0]*divisor) - v[0]);
+		    if (currsum > maxsum)
+		    {
+		        maxsum = currsum;
+		    }
+	    }
+	}
+	
+	cout << maxsum;
+	return 0;
+}
+
+	return 0;
+}

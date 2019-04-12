@@ -1,0 +1,83 @@
+/*
+ * For the unweighted graph, <name>:
+ *
+ * 1. The number of nodes is <name>_nodes.
+ * 2. The number of edges is <name>_edges.
+ * 3. An edge exists between <name>_from[i] to <name>_to[i].
+ *
+ */
+int findShortest(int graph_nodes, vector<int> graph_from, vector<int> graph_to, vector<long> ids, int val) 
+{
+    // shortest = bfs
+    queue<int> q;
+    vector<bool> visited(graph_nodes,false);
+
+    // find start node
+    int node = 1;
+    for (auto n : ids)
+    {
+      if (n == val)
+      {
+        break;
+      }
+      node++;
+    }
+  // no matches for color
+    if (node > graph_nodes)
+    {
+      return -1;
+    }
+
+    // push start
+    q.push(node);
+    visited[node-1] = true;
+
+    // solve here
+    int path = -1;
+
+    while (!q.empty())
+    {
+      int node = q.front();
+      q.pop();
+
+      if (ids[node-1] == val)
+      {
+        // either the first of color, or the last
+        path++;
+        if (path > 0)
+        {
+          // it's the last
+          return path;
+        }
+      }
+      else if (path != -1)
+      {
+        // found the first, update the path length
+        path++;
+      }
+
+      bool deadend = true;
+      for (int i=0; i<graph_nodes; i++)
+      {
+        if (graph_from[i] == node && !visited[graph_to[i]-1])
+        {
+          visited[graph_to[i]-1] = true;
+          deadend = false;
+          q.push(graph_to[i]);
+        }
+        if (graph_to[i] == node && !visited[graph_from[i]-1])
+        {
+          visited[graph_from[i] - 1] = true;
+          q.push(graph_from[i]);
+        }
+      }
+
+      if (deadend && path != -1)
+      {
+        path--;
+      }
+    }
+
+  return -1;
+}
+

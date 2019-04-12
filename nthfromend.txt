@@ -1,0 +1,46 @@
+
+
+ListNode* Solution::removeNthFromEnd(ListNode* A, int B) 
+{
+    if (A == NULL)
+    {
+        return NULL;
+    }
+    
+    ListNode *pLeft = A;
+    ListNode *pRight = A;
+
+    // set pRight = kth from left
+    int k = 0;
+    while ((pRight->next != NULL) && (k < B))
+    {
+        pRight = pRight->next;
+        k++;
+    }
+    
+    // if is k too big for the list, remove head
+    if ((pRight->next == NULL) && (k < B))
+    {
+        
+        ListNode *tbd = A;
+        A = A->next;
+        free(tbd);
+    }
+    else
+    {
+        // pRight is pointing to kth node
+        // navigate both left and righ to end
+        // pLeft will = kth from last
+        while (pRight->next != NULL)
+        {
+            pRight = pRight->next;
+            pLeft = pLeft->next;
+        }
+        
+        ListNode *tbd = pLeft->next;
+        pLeft->next = pLeft->next->next;
+        free(tbd);
+    }
+    
+    return A;
+}

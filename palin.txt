@@ -1,0 +1,67 @@
+#include <iostream>
+using namespace std;
+
+int Solution::isPalindrome(int A) 
+{
+    // negative not palin
+    if (A < 0)
+    {
+        return false;
+    }
+    
+    int reverseNum = 0;
+    int N = A;
+    while (N > 0)
+    {
+       reverseNum *= 10;
+       reverseNum += (N % 10);
+       N /= 10;
+    }
+    
+    return (reverseNum == A);
+}
+
+bool isPalin(string s)
+{
+    char *p = &s[0];
+    char *e = &s[s.size()-1];
+    
+    while (p < e)
+    {
+        if (*p++ != *e--)
+        {
+          return false;
+        }
+    }
+    
+    return true;
+}
+
+int main() {
+	int n;
+	cin >> n;
+	
+	for (int i=0; i<n; ++i)
+	{
+	    string s;
+	    cin >> s;
+	    
+	    int indx = 0;
+	    while (isPalin(s) && indx++ < s.size())
+	    {
+	        char ch = s[0];
+	        s = s.substr(1, s.size()-1);
+	        s += ch;
+	    }
+	    
+	    if (isPalin(s))
+	    {
+	        cout << -1 << endl;
+	    }
+	    else
+	    {
+	        cout << s << endl;
+	    }
+	}
+	return 0;
+}

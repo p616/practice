@@ -1,0 +1,205 @@
+
+#include <iostream>
+using namespace std;
+
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <deque>
+
+using namespace std;
+
+
+
+class TreeNode
+{
+public:
+    TreeNode(int _data) : data(_data), left(nullptr), right(nullptr) {}
+    ~TreeNode() {}
+    
+    int Data() { return data; }
+    TreeNode * Left() { return left.get(); }
+    TreeNode * Right() { return right.get(); }
+    
+    void Fill(int left, int right);
+    
+private:
+    int data;
+    std::unique_ptr<TreeNode> left;
+    std::unique_ptr<TreeNode> right;
+};
+
+void TreeNode::Fill(int lData, int rData)
+{
+    if (lData >= 0)
+        left = std::unique_ptr<TreeNode>(new TreeNode(lData));
+    if (rData >= 0)
+        right = std::unique_ptr<TreeNode>(new TreeNode(rData));
+}
+class MyBinaryTree
+{
+public:
+    MyBinaryTree();
+    ~MyBinaryTree();
+    
+    void PrintPreOrder() { return PrintPreOrder(head.get()); }
+
+    int GetPathSums();
+    
+    TreeNode * Head() { return head.get(); }
+    
+    vector<vector<int>> ZigZag();
+    
+    void SubSums();
+
+    
+private:
+    // sum of all paths from root where lowest level in path (root=0)
+    //  is highest significance in pathsum
+    // i.e. head = 2; left = 1; right = 3: sum = 21 + 23 = 44
+    int finalPathSum;
+    
+    std::unique_ptr<TreeNode> head;
+    
+    void PrintPreOrder(TreeNode * node);
+    
+    // recursive PreOrder traversal (HLR)
+    // currPathSum = running total of pathSum to leaf
+    void GetPathSums(TreeNode *node, int &currPathSum);
+    
+};
+
+MyBinaryTree::MyBinaryTree()
+{
+    //      2
+    //    3   4
+    //  1   5
+    head = std::unique_ptr<TreeNode>(new TreeNode(2));
+    head.get()->Fill(3, 4);
+    head->Left()->Fill(1,5);
+    head->Left()->Right()->Fill(-1, 1);
+    head->Right()->Fill(-1, 2);
+    head->Right()->Right()->Fill(1, 2);
+    head->Right()->Right()->Left()->Fill(2, 1);
+    
+    finalPathSum = 0;
+}
+
+MyBinaryTree::~MyBinaryTree()
+{
+}
+
+int MyBinaryTree::GetPathSums()
+{
+    int currPathSum = 0;
+    GetPathSums(head.get(), currPathSum);
+    return finalPathSum;
+}
+
+void MyBinaryTree::GetPathSums(TreeNode *node, int &currPathSum)
+{
+    // PreOrder traversal (HLR) with backtrack
+    
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    // Add this node's data to current path sum
+    currPathSum *= 10;
+    currPathSum += node->Data();
+    
+    // If this is a leaf, update final sum
+    // Otherwise, continue down the current Path
+    if (node->Left() == nullptr && node->Right() == nullptr)
+    {
+        finalPathSum += currPathSum;
+    }
+    else
+    {
+        GetPathSums(node->Left(), currPathSum);
+        GetPathSums(node->Right(), currPathSum);
+    }
+    
+    // end of current path, backtrack
+    currPathSum -= node->Data();
+    currPathSum /= 10;
+}
+
+void MyBinaryTree::PrintPreOrder(TreeNode * node)
+{
+    if (node == nullptr)
+        return;
+        
+    cout << node->Data() << endl;
+    
+    PrintPreOrder(node->Left());
+    PrintPreOrder(node->Right());
+}
+
+vector<vector<int>> MyBinaryTree::ZigZag()
+{
+        vector<vector<int>> zigzag;
+        
+        deque<TreeNode*> q;
+        q.push_back(head.get());
+        
+        int currlevel = 0;
+        
+        while (!q.empty())
+        {
+            int levelnodes = q.size();
+            
+            vector<int> levels;
+            
+            while (levelnodes > 0)
+            {
+                TreeNode *node = q.front();
+                q.pop_front();
+                if (currlevel % 2 == 0)
+                {
+                    levels.push_back(node->Data());
+               
+                }
+                else
+                {
+                     levels.insert(levels.begin(), node->Data());
+                }
+                if (node->Left() != nullptr)
+                {
+                    q.push_back(node->Left());
+                }
+                if (node->Right() != nullptr)
+                {
+                    q.push_back(node->Right());
+                }
+                
+                levelnodes--;
+                
+            }
+            
+            zigzag.push_back(levels);
+            
+            currlevel++;
+        }
+        return zigzag;
+}
+
+int main() 
+{
+	MyBinaryTree tree;
+	tree.PrintPreOrder();
+	
+	vector<vector<int>> zz = tree.ZigZag();
+	
+	for (auto l : zz)
+	{
+	    for (auto n : l)
+	    {
+	        cout << n << " ";
+	    }
+	    cout << endl;
+	}
+
+	return 0;
+}

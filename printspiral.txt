@@ -1,0 +1,64 @@
+Input: A = 4.
+Output:
+
+4 4 4 4 4 4 4 
+4 3 3 3 3 3 4 
+4 3 2 2 2 3 4 
+4 3 2 1 2 3 4 
+4 3 2 2 2 3 4 
+4 3 3 3 3 3 4 
+4 4 4 4 4 4 4 
+
+
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> prettyPrint(int A) 
+{
+    
+    int size = (A*2)-1;
+    
+    /*
+    vector<vector<int>> pattern;
+    pattern.reserve(size);
+    for (int i=0; i<size; ++i)
+    {
+        pattern[i].reserve(size);
+    }
+    */
+    
+    vector<vector<int>> pattern(size, vector<int>(size));
+    
+    int low = 0;
+    int high = size-1;
+    for (int i=A; i>0; i--)
+    {
+        for (int j=low; j<=high; ++j)
+        {
+            pattern[low][j] = i;
+            pattern[high][j] = i;
+            pattern[j][low] = i;
+            pattern[j][high] = i;
+        }
+        low ++;
+        high--;
+    }
+    
+    return pattern;
+}
+
+int main() {
+	vector<vector<int>> spiral = prettyPrint(4);
+	for (auto V : spiral)
+	{
+	    for (auto v : V)
+	    {
+	        cout << v << " ";
+	    }
+	    cout << endl;
+	}
+}

@@ -1,0 +1,78 @@
+You're given an array a. You should repeat the following operation k times: find the minimum non-zero element in the array, print it, and then subtract it from all the non-zero elements of the array. If all the elements are 0s, just print 0.
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	int n;
+	int ops;
+	vector<int> v;
+	
+	cin >> n;
+	cin >> ops;
+	
+	for (int i = 0; i<n; ++i)
+	{
+	    int x;
+	    cin >> x;
+	    v.push_back(x);
+	}
+	
+	sort(v.begin(), v.end());
+	int start = 0;
+	for (int j=0; j<ops; ++j)
+	{
+    	int min = 0;
+    	if (j==0)
+    	{
+    	    for (int h=start; h<v.size(); ++h)
+    	    {
+    	        if (v[h] != 0)
+    	        {
+    	            start = h+1;
+    	            min = v[h];
+    	            break;
+    	        }
+    	    }    	    
+    	}
+    	else
+    	{
+    	    min = v[start++];
+    	}
+    	
+
+
+
+	    if (min == 0)
+	    {
+    		for (; j<ops; ++j)
+    		{
+    			cout << min << endl;
+    		
+    		}
+    		return 0;
+	    }
+	    
+         cout << min << endl;       
+         
+         for (int i=start; i<v.size(); ++i)
+
+
+        {
+            //if (v[i] != 0)
+            //{
+                v[i] = (v[i] - min);
+                if (v[i] == 0)
+                {
+                    start++;
+                }
+            //}
+        }
+	}
+	return 0;
+}

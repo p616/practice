@@ -1,0 +1,107 @@
+Write stack class with GetMin fn 
+(not given access to MinStack definintion...)
+
+
+// um, designing a class, with globals
+// no access to class definition to add member vars
+// and that is about as stupid as it gets
+
+class MyMinStack
+{
+public:
+    MyMinStack();
+    
+    void push(int x);
+    void pop();
+    int top();
+    int getMin();
+    
+private:
+
+    vector<int> stackV; 
+    
+    int current_min;
+    vector<int> mins;
+};
+
+MyMinStack::MyMinStack() : current_min(-1)
+{
+}
+
+void MyMinStack::push(int x) 
+{
+    // is this a new min?
+    if ( stackV.empty() || (x < current_min) )
+    {
+        mins.push_back(current_min);
+        current_min = x;
+    }
+    
+    stackV.push_back(x);
+}
+
+void MyMinStack::pop() 
+{
+    if (!stackV.empty())
+    {
+        // if popping min, revert to prev min
+        if (top() == current_min)
+        {
+             if (mins.empty())
+            {
+                current_min = -1;
+            }
+            else
+            {
+                current_min = mins.back();
+                mins.pop_back();
+            }
+        }
+        stackV.pop_back();
+    }
+}
+
+int MyMinStack::top() 
+{
+    if (stackV.empty())
+    {
+        return -1;
+    }
+    return stackV.back();
+}
+
+int MyMinStack::getMin() 
+{
+    return current_min;
+}
+
+
+
+// global
+MyMinStack *myStack;
+
+MinStack::MinStack() 
+{
+    myStack = new MyMinStack();
+}
+
+void MinStack::push(int x) 
+{
+    myStack->push(x);
+}
+
+void MinStack::pop() 
+{
+    myStack->pop();
+}
+
+int MinStack::top() 
+{
+    return myStack->top();
+}
+
+int MinStack::getMin() 
+{
+    return myStack->getMin();
+}
+

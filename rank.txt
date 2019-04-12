@@ -1,0 +1,36 @@
+Given list of scores with dense ranking:
+
+•The player with the highest score is ranked number  on the leaderboard. 
+•Players who have equal scores receive the same ranking number, and the next player(s) receive the immediately following ranking number.
+
+And list of player scores:
+
+Return list of player's rank after each game
+
+// THIS IS SIMPLER, AND SHORTER, BUT FAILS 4 TIMED TESTS
+// C# VERSION PASSES
+
+
+// Complete the climbingLeaderboard function below.
+vector<int> climbingLeaderboard(vector<int> scores, vector<int> alice) 
+{
+    set<int> rankScores(scores.begin(), scores.end());
+
+    vector<int> ret;
+    for (int score : alice)
+    {
+        // insert returns pair<iterator,bool>
+        auto rankAlice = rankScores.insert(score);
+
+        // determine Alice's rank and add to return vector
+        ret.push_back(distance(rankAlice.first, rankScores.end()));
+
+        // remove from scores set if added
+        if (rankAlice.second)
+        {
+            rankScores.erase(rankAlice.first);
+        }
+    }
+
+    return ret;
+}

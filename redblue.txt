@@ -1,0 +1,142 @@
+#include <iostream>
+#include <map>
+#include <array>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+bool isUnique(string pattern, map<char,string> &patternMap)
+{
+    for (auto it : patternMap)
+    {
+        if (it.second == pattern)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool RedBlueBlueRed(string pattern, string input, array<int,256> countArray, map<char,string> &patternMap)
+{   
+    int inputLen = input.length();
+    int patternLen = pattern.length();
+    
+    // base case fpr recursion 
+    if (patternLen == 0)
+    {
+        // input valid for pattern if now also empty
+        return (inputLen == 0);
+    }
+    
+    char c = pattern[0];    
+    int index = static_cast<int>(c);
+    int count = countArray[index];
+
+    // if pattern map is storing a subpattern for this char, 
+    //  verify that pattern is at beginning of input string
+    auto it = patternMap.find(c);   
+    if (it != patternMap.end())
+    {
+        string subPattern = it->second;
+        if (subPattern.length() > inputLen || 
+            strncmp(input.data(), subPattern.data(), subPattern.length() != 0))
+        {
+            // invalid
+            return false;
+        }
+       
+        // valid so far, recurse for next pattern char
+        return RedBlueBlueRed
+        (
+                    pattern.data() + 1, 
+                    input.data() + subPattern.length(), 
+                    countArray, patternMap
+        );
+    }
+
+    // calculate maximum possible subpattern for this char
+    int patternMax = (inputLen - patternLen + count) / count;
+    
+    // try each possible subpattern length until a valid one is found, starting with max
+    int start = patternMax;
+    int end = 1;
+    for (int i=patternMax; i>=end; i--)
+    {
+        // too long
+        if (i*count > inputLen)
+        {
+            continue;
+        }
+        
+        string subPattern = input.substr(0, i);  
+           
+        // subpatterns must be unique    
+        if (!isUnique(subPattern, patternMap))
+        {
+            continue;
+        }
+
+
+        // verify there are "count" instances of current subPattern choice in input   
+        for (int j = 1; j < count; j++)
+        {
+            if (strstr(input.data() + (i * j), subPattern.data()) == NULL)
+            {
+                subPattern = "";
+                break;
+            }
+        }
+
+        if (subPattern != "")
+        {  
+            // one of the possible subPatterns seems valid  
+            // save it in hash map and recurse for next char
+            // if not valid, backtrack
+
+            patternMap.insert({c, subPattern});
+
+            if (RedBlueBlueRed(pattern.data() + 1, input.data() + i, countArray, patternMap))
+            {
+                // done
+                return true;
+            }
+            
+            patternMap.erase(patternMap.find(c));
+            subPattern = "";
+        }
+    }
+    
+    return false;
+}
+
+/*
+ * Complete the function below.
+ */
+int wordpattern(string pattern, string input) 
+{
+  // array holding:
+  //    count for each unique char in pattern (indexed by ASCII value)
+  array<int,256> countArray;
+
+  countArray.fill(0);
+  for (char c : pattern) 
+  {
+    int index = static_cast<int>(c);
+    countArray[index]++;
+  }
+
+  // hash map holding:
+  //    key = char from pattern string
+  //    value = subpattern string it represents
+  map<char,string> patternMap;
+
+  return (RedBlueBlueRed(pattern, input, countArray, patternMap) ? 1 : 0);
+}
+
+
+int main() {
+    cout << wordpattern("ABA", "xyzxtzxyz");
+	return 0;
+}

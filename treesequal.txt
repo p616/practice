@@ -1,0 +1,55 @@
+// Equality and FlipEquality almost exactly the same
+
+
+    bool equals(TreeNode *root1, TreeNode *root2)
+    {
+        if (root1 == nullptr && root2 == nullptr)
+        {
+            return true;
+        }
+        
+        if (root1 == nullptr || root2 == nullptr)
+        {
+            return false;
+        }
+        
+	// if val so far not equal, break the recursion
+        if (root1->val != root2->val)
+        {
+            return false;
+        }
+        
+        if (equals(root1->left, root2->left) && equals(root1->right, root2->right))
+        {
+            return true;
+        }
+        
+        return false;           
+    }
+
+    bool flipEquiv(TreeNode* root1, TreeNode* root2) 
+    { 
+        if (root1 == nullptr && root2 == nullptr)
+        {
+            return true;
+        }
+        
+        if (root1 == nullptr || root2 == nullptr)
+        {
+            return false;
+        }
+                
+        // if val so far not equal, break the recursion
+        if (root1->val != root2->val)
+        {
+            return false;
+        }
+        
+        if (flipEquiv(root1->left, root2->left) && flipEquiv(root1->right, root2->right) ||
+            flipEquiv(root1->left, root2->right) && flipEquiv(root1->right, root2->left))
+        {
+            return true;
+        }
+        
+        return false;           
+    }  

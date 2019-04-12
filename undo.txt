@@ -1,0 +1,100 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <stack>
+using namespace std;
+
+class TextEditor
+{
+    public:
+        TextEditor() : S("") { }
+
+        void Append(string W);
+        void Delete(int k);
+        void Undo();
+
+        void PrintChar(int k) { cout << S[k-1] << endl; }
+
+    private:
+        string S;
+        stack<string> undoStack;
+};
+
+void TextEditor::Append(string s)
+{
+     undoStack.push(S);
+     S += s;
+}
+
+void TextEditor::Delete(int k)
+{
+    undoStack.push(S);
+    if (k == S.length())
+    {
+        S.clear();
+    }
+    else
+    {
+        S = S.substr(0, (S.length()-k));
+    }
+}
+
+void TextEditor::Undo()
+{
+    S = undoStack.top();
+    undoStack.pop();
+}
+
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+
+    int Q;
+    cin >> Q;
+
+    TextEditor te;
+
+    for (int i=0; i<Q; ++i)
+    {
+        int op;
+        cin >> op;
+        
+        switch (op)
+        {
+        case 1:
+        {
+            string s;
+            cin >> s;
+
+            te.Append(s);
+            break;
+        }
+        case 2:
+        {
+            int k;
+            cin >> k;
+
+            te.Delete(k);
+            break;
+        }
+        case 3:
+        {
+            int k;
+            cin >> k;
+
+            te.PrintChar(k);
+            break;
+        }
+        case 4:
+        {
+            te.Undo();
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return 0;
+}

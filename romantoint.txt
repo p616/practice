@@ -1,0 +1,136 @@
+// int to roman numeral <= 3999
+
+int processOnes(string roman, int &pos)
+{
+    if (roman[pos+1] == 'X')
+    {
+        pos += 2;
+        return 9;
+    }
+    else if (roman[pos+1] == 'V')
+    {
+        pos += 2;
+        return 4;
+    }
+    
+    int rToI = 0;
+    while (roman[pos] == 'V' || roman[pos] == 'I')
+    {
+        if (roman[pos] == 'I')
+        {
+            rToI += 1;
+        }
+        else if (roman[pos] == 'V')
+        {
+            rToI += 5;
+        }
+        pos++;
+    }
+    
+    return rToI;
+}
+
+int processTens(string roman, int &pos)
+{
+    if (roman[pos+1] == 'C')
+    {
+        pos += 2;
+        return 90;
+    }
+    else if (roman[pos+1] == 'L')
+    {
+        pos += 2;
+        return 40;
+    }
+    
+    int rToI = 0;
+    while (roman[pos] == 'L' || roman[pos] == 'X')
+    {
+        if (roman[pos] == 'X')
+        {
+            rToI += 10;
+        }
+        else if (roman[pos] == 'L')
+        {
+            rToI += 50;
+        }
+        pos++;
+    }
+    
+    return rToI;
+}
+
+int processHundreds(string roman, int &pos)
+{
+    if (roman[pos+1] == 'M')
+    {
+        pos += 2;
+        return 900;
+    }
+    else if (roman[pos+1] == 'D')
+    {
+        pos += 2;
+        return 400;
+    }
+    
+    int rToI = 0;
+    while (roman[pos] == 'C' || roman[pos] == 'D')
+    {
+        if (roman[pos] == 'C')
+        {
+            rToI += 100;
+        }
+        else if (roman[pos] == 'D')
+        {
+            rToI += 500;
+        }
+        pos++;
+    }
+    
+    return rToI;
+}
+
+int processThousands(string roman, int &pos)
+{
+    int rToI = 0;
+    while (roman[pos] == 'M')
+    {
+        rToI += 1000;
+        pos++;
+    }
+    return rToI;
+}
+
+int Solution::romanToInt(string A) 
+{
+    int rToI = 0;
+    
+    int pos = 0;
+    while (pos < A.length())
+    {
+        char c = A[pos];
+        switch (c)
+        {
+        case 'M':
+            rToI += processThousands(A, pos);
+            break;
+        case 'D':
+        case 'C':
+            rToI += processHundreds(A, pos);
+            break;        
+        case 'L':
+        case 'X':
+            rToI += processTens(A, pos);
+            break;        
+        case 'V':
+        case 'I':
+            rToI += processOnes(A, pos);
+            break;
+        default:
+            return -1;
+        }
+    }
+    
+    return rToI;
+}
+

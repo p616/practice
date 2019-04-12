@@ -1,0 +1,30 @@
+Given two sequences pushed and popped with distinct values, return true if and only if this could have been the result of a sequence of push and pop operations on an initially empty stack.
+
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) 
+    {
+        stack<int> s;
+        int iPush = 0;
+        for (int pop : popped)
+        {
+            if (s.empty() || s.top() != pop)
+            {
+                for (int i = iPush; i<pushed.size(); i++)
+                {
+                    if (pushed[i] != pop)
+                    {     
+                        s.push(pushed[i]);
+                    }
+                    else
+                    {
+                        iPush= i+1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                s.pop();
+            }
+        }
+        return s.empty();        
+    }

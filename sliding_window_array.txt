@@ -1,0 +1,54 @@
+A=[1, 2, 1, 3, 4, 3] and K = 3
+
+All windows of size K are
+
+[1, 2, 1]
+[2, 1, 3]
+[1, 3, 4]
+[3, 4, 3]
+
+So, we return an array [2, 3, 3, 2].
+
+
+
+vector<int> Solution::dNums(vector<int> &A, int B) 
+{
+    vector<int> ret;
+    if (B > A.size())
+    {
+        return ret;
+    }
+    
+    // init map with first window
+    // stop just prior to B, will be added in loop below
+    map<int,int> uniques;
+    for (int i=0; i<B-1; ++i)
+    {
+        uniques[A[i]]++;
+    }
+    
+    // for each window of size B
+    int start = 0;
+    for (int end = B-1; end < A.size(); end++)
+    {
+        // current window already contains first (B-1) elements
+        // just need to append the last one
+        uniques[A[end]]++;
+        
+        // update return vector with count of uniques in this windows
+        ret.push_back(uniques.size());
+        
+        // drop the first element in the window
+        if (uniques[A[start]] == 1)
+        {
+            uniques.erase(A[start]);
+        }
+        else
+        {
+            uniques[A[start]]--;
+        }
+        start++;
+    }
+    
+    return ret;
+}

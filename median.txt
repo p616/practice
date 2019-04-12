@@ -1,0 +1,101 @@
+// time limit exceeded
+
+double getMedian(const vector<int> &v, int low, int high)
+{
+    int elementsLeft = ((high - low) + 1); 
+    int mid = (low + (elementsLeft/2));
+    
+    // even : return average of 2 middle elements
+    if ((elementsLeft % 2) == 0)
+    {
+        double median = ((double)(v[mid-1] + v[mid])/2.0);
+        return median;
+    }
+    
+    return v[mid];
+}
+
+double Solution::findMedianSortedArrays(const vector<int> &A, const vector<int> &B) 
+{
+    double median;
+    
+    int lenA = A.size();
+    int lenB = B.size();
+    
+    if (lenA == 0 && lenB == 0)
+    {
+        return -1;
+    }
+
+    int lowA = 0;
+    int highA = (lenA-1);
+        int lowB = 0;
+    int highB = (lenB-1);  
+    
+    // increment low and decrement high (comparing both arrays)
+    // until all values in at least one of the arrays has been looked at
+    while ( (lowA <= highA) && (lowB <= highB) )
+    {
+        if ((lowA == highA) && (lowB == highB))
+        {
+            break;
+        }
+        // increment lowest value pos (in either in A or B)
+        if (A[lowA] < B[lowB])
+        {
+            lowA++;
+        }
+        else
+        {
+            lowB++;
+        }
+        
+        // decrement highest value pos (in either in A or B)
+        if (A[highA] > B[highB])
+        {
+            highA--;
+        }
+        else
+        {
+            highB--;
+        }
+    }
+    
+
+    if ( (lowA == highA) && (lowB == highB) )
+    {
+        median = ((double)(A[lowA] + B[lowB]) / 2.0);    
+    }
+    else if ( (lowA > highA) && (lowB > highB) )
+    {
+        // already handled the both zero elements case elsewhere
+        // so, examined all elements of both arrays
+        // => median is low of one (high is negavive) and high of the other (low = len)
+        // this also covers the both one element case (were equal until afer one loop)
+        if (lowA == 0)
+        {
+            median = ((double)(A[lowA] + B[highB]) / 2.0);
+        }
+        else
+        {
+            median = ((double)(A[highA] + B[lowB]) / 2.0);
+        }
+    }
+    else if (lowA > highA)
+    {
+        // either A has zero elements and B doesn't
+        // or examined at all elements in A, but not in B
+        // => median is in B 
+        median = getMedian(B, lowB, highB);
+    }
+    else 
+    {
+        // either B has zero elements and A doesn't
+        // or examined at all elements in B but not in A
+        // => median is in A
+        median = getMedian(A, lowA, highA);
+    }
+    
+    return median;
+}
+

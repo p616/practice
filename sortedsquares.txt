@@ -1,0 +1,27 @@
+Given an array of integers A sorted in non-decreasing order, return an array of the squares of each number, also in sorted non-decreasing order.
+
+
+    vector<int> sortedSquares(vector<int>& A) 
+    {
+        vector<int> squares;
+        
+        int l = 0;
+        int r = (A.size() - 1);
+        while (l <= r)
+        {
+            if (abs(A[l]) >= abs(A[r]))
+            {
+                squares.push_back(A[l]*A[l]);
+                l++;
+            }
+            else
+            {
+                squares.push_back(A[r]*A[r]);
+                r--;
+            }           
+        } 
+        
+        reverse(squares.begin(), squares.end());
+        
+        return squares;
+    }

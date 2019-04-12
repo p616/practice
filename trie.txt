@@ -1,0 +1,187 @@
+/*
+ * Complete the contacts function below.
+ */
+
+struct TrieNode
+{
+  TrieNode(char ch)
+  {
+    c = ch;
+    isWord = false;
+  }
+
+  char c;
+  vector<TrieNode*> children;
+  bool isWord;
+};
+
+class Trie
+{
+public:
+  Trie();
+
+  void Add(string s);
+  int Find(string pre);
+
+private:
+  TrieNode *head;
+
+  void FindAll(TrieNode *t, int &found);
+};
+
+Trie::Trie()
+{
+  head = new TrieNode('\0');
+}
+
+// returns false if try to add:
+//	name with existing prefix
+// 	or prefix of exisiting word
+bool Trie::Add(string s) 
+{
+  TrieNode *p = head;
+  TrieNode *charNode = nullptr;
+
+  bool addedNew = false;
+
+  for (char c : s) 
+  {
+    charNode = nullptr;
+    for (TrieNode *t : p->children) 
+    {
+      if (t->c == c) 
+      {
+        charNode = t;
+        break;
+      }
+    }
+
+    if (charNode == nullptr) 
+    {
+      addedNew = true;
+      charNode = new TrieNode(c);
+      p->children.push_back(charNode);
+    }
+    else if (charNode->isWord)
+    {
+      return false;
+    }
+
+    p = charNode;
+  }
+
+  charNode->isWord = true;
+  return addedNew;
+}
+
+
+int Trie::Find(string pre)
+{
+  TrieNode *p = head;
+  TrieNode *prefixNode = nullptr;
+
+  for (char c : pre)
+  {
+    prefixNode = nullptr;
+    for (TrieNode *t : p->children) 
+    {
+      if (t->c == c) 
+      {
+        prefixNode = t;
+        break;
+      }
+    }
+
+    if (prefixNode == nullptr) 
+    {
+      return 0;
+    }
+
+    p = prefixNode;
+  }
+
+  int found = 0;
+  if (prefixNode->isWord)
+  {
+      found = 1;
+  }
+  FindAll(prefixNode, found);
+
+  return found;
+}
+
+void Trie::FindAll(TrieNode *t, int &found)
+{
+    for (TrieNode *n : t->children)
+    {
+        if (n->isWord)
+        {
+            found++;
+        }
+        if (!n->children.empty())
+        {
+            FindAll(n, found);
+        }
+    }
+}
+
+
+vector<int> contacts(vector<vector<string>> queries) 
+{
+    /*
+     * Write your code here.
+     */
+     vector<int> counts;
+
+     Trie trie;
+
+     for (int i=0; i<queries.size(); i++)
+     {
+       string op = queries[i][0];
+       if (op == "add") 
+       {
+          trie.Add(queries[i][1]);
+       }
+       else if (op == "find")
+       {
+         counts.push_back(trie.Find(queries[i][1]));
+       }
+
+     }
+
+     return counts;
+
+}
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+    int numWords;
+    cin >> numWords;
+
+    Trie trie;
+
+    bool failed = false;
+    string word;
+ 
+    for (int i = 0; i < numWords; ++i) {
+
+      cin >> word;
+
+      if (!trie.Add(word))
+      {
+        failed = true;
+        break;
+      }
+    }
+
+    if (failed)
+    {
+      cout << "BAD SET\n";
+      cout << word;
+    }
+    else
+    {
+      cout << "GOOD SET\n";
+    }
+    return 0;
+}

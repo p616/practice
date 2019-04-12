@@ -1,0 +1,138 @@
+// 0 <= 1 >= 2
+
+// Complete the triplets function below.
+long triplets(vector<int> a, vector<int> b, vector<int> c) 
+{
+    long triples = 0;
+
+    //set<int> sa(a.begin(), a.end());
+    //set<int,greater<int>> sb(b.begin(), b.end());
+    //set<int> sc(c.begin(), c.end());
+
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+    sort(c.begin(), c.end());
+
+    long an = 0;
+    long cn = 0;
+
+    int preva = -1;
+    int prevb = -1;
+    int prevc = -1;
+
+    int indexA = 0;
+    int indexC = 0;
+
+    for (int i: b)
+    {
+        if (prevb == i)
+        {
+            continue;
+        }
+        prevb = i;
+
+        preva = -1;
+        int j;
+        for (j=indexA; j<a.size(); ++j)
+        {
+            if (preva == a[j])
+            {
+                continue;
+            }
+            preva = a[j];
+        
+            if (i >= a[j])
+            {
+                an++;
+            }
+            else 
+            {
+                indexA = j;
+                break;
+            }
+        }
+        if (an == a.size() || j == a.size())
+        {
+            indexA = a.size();
+        }
+
+        prevc = -1;
+        int k;
+        for (k=indexC; k<c.size(); ++k)
+        {
+            if (prevc == c[k])
+            {
+                continue;
+            }
+            prevc = c[k];
+
+            if (i >= c[k])
+            {
+                cn++;
+            }
+            else 
+            {
+                indexC = k;
+                break;
+            }
+        }
+        if (cn == c.size() || k == c.size())
+        {
+            indexC = c.size();
+        }
+
+        triples += an*cn;
+    }
+
+/*
+    //int previ = -1;
+    //int prevj = -1;
+    //int prevk = -1;
+
+    for (int i : sa)
+    {
+        //if (previ == i)
+        //{
+         //   continue;
+        //}
+        //previ = i;
+
+        for (int j : sb)
+        {
+            //if (prevj == j)
+            //{
+            //    continue;
+            //}
+            //prevj = j;
+
+            if (i <= j)
+            {
+                for (int k : sc)
+                {
+                    //if (prevk == k)
+                    //{
+                    //    continue;
+                    //}
+                    //prevk = k;
+
+                    if (j >= k)
+                    {
+                        triples++;
+                    }
+                    else
+                    {
+                        //prevk = -1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                //prevj = -1;
+                break;
+            }
+        }
+    }
+*/    
+    return triples;
+}

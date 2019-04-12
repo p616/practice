@@ -1,0 +1,47 @@
+max sum of all "non-empty" paths...?
+only passed some test cases
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int maxpath(vector<int> parent, vector<int> values, int curr)
+{
+    int sum = values[curr];
+    for (int i = 0; i < parent.size(); ++i)
+    {
+        if (parent[i] == curr)
+        {
+            sum += maxpath(parent, values, i);
+        }
+    }
+    return sum;
+}
+
+int bestSumAnyTreePath(vector<int> parent, vector<int> values)
+{
+    int maxsum = numeric_limits<int>::min();
+    int sum = 0;
+    for (int node = 0; node < values.size(); node++)
+    {
+        // get maxpath for this root
+        sum = maxpath(parent, values, node);
+        if (sum > maxsum)
+        {
+            maxsum = sum;
+        }
+    }
+
+    return maxsum;
+}
+
+int main()
+{
+    vector<int> p = { -1, 0, 1, 2, 0 };
+    vector<int> v = { -300, 10, 10, -3, 10 };
+
+    cout << bestSumAnyTreePath(p, v);
+
+    return 0;
+}

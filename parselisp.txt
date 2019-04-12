@@ -1,0 +1,301 @@
+ You are given a string expression representing a Lisp-like expression to return the integer value of.
+
+The syntax for these expressions is given as follows.
+
+An expression is either an integer, a let-expression, an add-expression, a mult-expression, or an assigned variable. Expressions always evaluate to a single integer.
+
+(An integer could be positive or negative.)
+
+A let-expression takes the form (let v1 e1 v2 e2 ... vn en expr), where let is always the string "let", then there are 1 or more pairs of alternating variables and expressions, meaning that the first variable v1 is assigned the value of the expression e1, the second variable v2 is assigned the value of the expression e2, and so on sequentially; and then the value of this let-expression is the value of the expression expr.
+
+An add-expression takes the form (add e1 e2) where add is always the string "add", there are always two expressions e1, e2, and this expression evaluates to the addition of the evaluation of e1 and the evaluation of e2.
+
+A mult-expression takes the form (mult e1 e2) where mult is always the string "mult", there are always two expressions e1, e2, and this expression evaluates to the multiplication of the evaluation of e1 and the evaluation of e2.
+
+For the purposes of this question, we will use a smaller subset of variable names. A variable starts with a lowercase letter, then zero or more lowercase letters or digits. Additionally for your convenience, the names "add", "let", or "mult" are protected and will never be used as variable names.
+
+Finally, there is the concept of scope. When an expression of a variable name is evaluated, within the context of that evaluation, the innermost scope (in terms of parentheses) is checked first for the value of that variable, and then outer scopes are checked sequentially. It is guaranteed that every expression is legal. Please see the examples for more details on scope.
+
+Evaluation Examples:
+
+Input: (add 1 2)
+Output: 3
+
+Input: (mult 3 (add 2 3))
+Output: 15
+
+Input: (let x 2 (mult x 5))
+Output: 10
+
+Input: (let x 2 (mult x (let x 3 y 4 (add x y))))
+Output: 14
+Explanation: In the expression (add x y), when checking for the value of the variable x,
+we check from the innermost scope to the outermost in the context of the variable we are trying to evaluate.
+Since x = 3 is found first, the value of x is 3.
+
+Input: (let x 3 x 2 x)
+Output: 2
+Explanation: Assignment in let statements is processed sequentially.
+
+Input: (let x 1 y 2 x (add x y) (add x y))
+Output: 5
+Explanation: The first (add x y) evaluates as 3, and is assigned to x.
+The second (add x y) evaluates as 3+2 = 5.
+
+Input: (let x 2 (add (let x 3 (let x 4 x)) x))
+Output: 6
+Explanation: Even though (let x 4 x) has a deeper scope, it is outside the context
+of the final x in the add-expression.  That final x will equal 2.
+
+Input: (let a1 3 b2 (add a1 1) b2) 
+Output 4
+Explanation: Variable names can contain digits after the first character.
+
+
+
+
+    int evaluateVarExpr(string s, map<string,int> varMap)
+    {
+        int val = -1;
+        if (s[0] == '(')
+        {
+            val = parseExpr(s, varMap);
+        }
+        else
+        {
+            if (isdigit(s[0]) || s[0] == '-')
+            {
+                // is a number
+                val = atoi(s.data());
+            }
+            else
+            {
+                // is a variable
+                // look for it in varMap
+                auto it = varMap.find(s);
+                if (it != varMap.end())
+                {
+                    val = it->second;
+                }
+                // else error?
+            }
+        }  
+        
+        return val;
+    }
+    
+    int letOp(vector<string> vars, vector<string> varexpr, string letexpr, map<string,int> varMap)
+    {
+        // evaluate vars and add to varMap
+        for (int i=0; i<varexpr.size(); ++i)
+        {
+            string s = varexpr[i];
+            int val = evaluateVarExpr(s, varMap);
+            
+            auto it = varMap.find(vars[i]);
+            if (it == varMap.end())
+            {
+                varMap.insert({vars[i], val});
+            }
+            else
+            {
+                it->second = val;
+            }
+        }  
+        
+        // evaluate let expr
+        int ret = evaluateVarExpr(letexpr, varMap);
+                
+        return ret;
+    }
+    
+    int addOp(string e1, string e2, map<string,int> varMap)
+    {
+        // evaluate let's before all else...?
+        int val1 = evaluateVarExpr(e1, varMap);
+        int val2 = evaluateVarExpr(e2, varMap);
+        return (val1 + val2);
+    }
+    
+    int multOp(string e1, string e2, map<string,int> varMap)
+    {
+        // evaluate let's before all else...?
+        int val1 = evaluateVarExpr(e1, varMap);
+        int val2 = evaluateVarExpr(e2, varMap);
+        return (val1 * val2);        
+    }
+    
+    void parseLet(string expr, vector<string> &vars, vector<string> &varexprs, string &letexpr)
+    {       
+        // start from the back to get letexpr
+        if (expr[expr.size()-1] == ')')
+        {
+            int pos = expr.size()-1;            
+            int parens = 1;
+            
+            while (parens != 0)
+            {
+                pos = expr.find_last_of("()", pos-1); 
+                if (expr[pos] == ')')
+                {
+                    parens++;
+                }
+                else
+                {
+                    parens--;
+                }
+            }
+            
+            // want to include the closing paren in letexpr
+            letexpr = expr.substr(pos, expr.size()-pos); 
+            // skip preceding space
+            expr = expr.substr(0, pos);
+        }
+        else
+        {
+            int pos = expr.rfind(' ');
+            letexpr = expr.substr(pos+1, expr.length()-pos-1); 
+            expr = expr.substr(0, pos);
+        } 
+        
+        // now var expr var expr ...
+        while (!expr.empty())
+        {
+            // var
+            int pos = expr.find(' ');
+            vars.push_back(expr.substr(0, pos));
+            expr = expr.substr(pos+1, expr.length()-pos-1); 
+            
+            // next : var or expr
+            string varexpr;           
+            if (expr[0] == '(')  
+            {         
+                int pos = 0;            
+                int parens = 1;
+                while (parens != 0)
+                {
+                    pos = expr.find_first_of("()", pos+1); 
+                    if (expr[pos] == '(')
+                    {
+                        parens++;
+                    }
+                    else
+                    {
+                        parens--;
+                    }
+                }
+                // want to include the closing paren in e1
+                varexpr = expr.substr(0, pos+1);                
+                if (varexpr == expr)
+                {
+                    // the end of the string 
+                    expr = "";
+                }
+                else
+                {
+                    expr = expr.substr(pos+2, expr.size()-pos-2);  
+                }
+            }
+            else
+            {
+                int pos = expr.find(' ');
+                if (pos != string::npos)
+                {
+                    varexpr = expr.substr(0, pos); 
+                    expr = expr.substr(pos+1, expr.length()-pos-1);
+                }
+                else
+                {
+                    // the end of the string
+                    varexpr = expr;
+                    expr = "";
+                }
+            }            
+            varexprs.push_back(varexpr);
+        }
+    }
+    
+    void parseAddMult(string expr, string &e1, string &e2)
+    {
+        if (expr[0] == '(')  
+        {         
+            int pos = 0;            
+            int parens = 1;
+            
+            while (parens != 0)
+            {
+                pos = expr.find_first_of("()", pos+1); 
+                if (expr[pos] == '(')
+                {
+                    parens++;
+                }
+                else
+                {
+                    parens--;
+                }
+            }
+            
+            // want to include the closing paren in e1
+            e1 = expr.substr(0, pos+1);
+            // skip space in between
+            e2 = expr.substr(pos+2, expr.size()-pos-2);            
+        }
+        else
+        {
+            int pos = expr.find(' ');
+            e1 = expr.substr(0, pos);
+            e2 = expr.substr(pos+1, expr.length()-pos-1);
+        }
+    }    
+    
+    int parseExpr(string expr, map<string,int> varMap)
+    {
+        switch (expr[1])    
+        {
+        case 'l':
+        {
+            // +5 for start "(let "
+            // -6 to stip off trailing ")"
+            expr = expr.substr(5, expr.length()-6); 
+            
+            vector<string> vars;
+            vector<string> varexprs;
+            string letexpr;
+            parseLet(expr, vars, varexprs, letexpr);
+            
+            return letOp(vars, varexprs, letexpr, varMap);
+        }
+        case 'a':
+        {
+            // +5 for start "(add "
+            // -6 to stip off trailing ")"
+            expr = expr.substr(5, expr.length()-6); 
+            
+            string e1;
+            string e2;
+            parseAddMult(expr, e1, e2);
+            
+            return addOp(e1, e2, varMap);
+        }
+        case 'm':
+            // +6 for start "(mult "
+            // -7 to stip off trailing ")"
+            expr = expr.substr(6, expr.length()-7); 
+                
+            string e1;
+            string e2;
+            parseAddMult(expr, e1, e2);
+            
+            return multOp(e1, e2, varMap);
+        }
+        
+        return -1;
+    }
+    
+    int evaluate(string expression) 
+    {
+        int ret;
+        map<string,int> varMap;
+        ret = parseExpr(expression, varMap);
+        return ret;
+    }

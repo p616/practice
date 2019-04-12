@@ -1,0 +1,81 @@
+Suppose there is a circle. There are N petrol pumps on that circle. Petrol pumps are numbered 
+0 to (N-1) (both inclusive). 
+
+You have two pieces of information corresponding to each of the petrol pump: (1) the amount of petrol that particular petrol pump will give, and (2) the distance from that petrol pump to the next petrol pump.
+
+Initially, you have a tank of infinite capacity carrying no petrol. You can start the tour at any of the petrol pumps. Calculate the first point from where the truck will be able to complete the circle. Consider that the truck will stop at each of the petrol pumps. The truck will move one kilometer for each litre of the petrol.
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+/*
+ * Complete the truckTour function below.
+ */
+int truckTour(vector<vector<int>> petrolpumps) 
+{
+  // vector of "cost" per pump = how much it can add - how far to next station
+  vector<int> v;
+  for (auto pump : petrolpumps)
+  {
+    v.push_back(pump[0]-pump[1]);
+  }
+
+  int numPumps = v.size();
+  for (int i=0; i<numPumps; ++i)
+  {
+    // can't start loop at a negative valued pump
+    if (v[i] < 0)
+    {
+      continue;
+    }
+
+    int cost = 0;
+    for (int j=0; j<numPumps; ++j)
+    {
+      int pumpIndex = ((i+j)%numPumps);
+      cost += v[pumpIndex];
+      if (cost < 0)
+      {
+        break;
+      }
+    }
+
+    // done?
+    if (cost >= 0)
+    {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<vector<int>> petrolpumps(n);
+    for (int petrolpumps_row_itr = 0; petrolpumps_row_itr < n; petrolpumps_row_itr++) {
+        petrolpumps[petrolpumps_row_itr].resize(2);
+
+        for (int petrolpumps_column_itr = 0; petrolpumps_column_itr < 2; petrolpumps_column_itr++) {
+            cin >> petrolpumps[petrolpumps_row_itr][petrolpumps_column_itr];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    int result = truckTour(petrolpumps);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}

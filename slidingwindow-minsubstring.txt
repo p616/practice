@@ -1,0 +1,134 @@
+#include <iostream>
+#include <unordered_map>
+#include <limits>
+
+using namespace std;
+
+// Find minimum substring of s containing all letters in t
+
+// Ex: ADOBECODEBANC, ABC 
+//     ADOBEC
+//     BECODEB => CODEBA 
+//     BANC
+
+bool slideWindow(string s, unordered_map<char, int>& charMap, int& start)
+{
+    bool done = false;
+    while (!done)
+    {
+        while ((++start < s.length()) && 
+               (charMap.find(s[start]) == charMap.end()));
+        
+        // if no next char from map in string, nothing more to check
+        if (start == s.length())
+        {
+            break;
+        }
+    
+        // is this an extra?
+        if (charMap[s[start]] < 0)
+        {
+            charMap[s[start]]++;
+        }
+        else
+        {
+            done = true;
+        }
+    } 
+    
+    return done;
+}
+
+string minWindow(string s, string t) 
+{
+    // initialize map with count of each char in t 
+    // will decrement as each char found 
+    // and incremented if removed from sliding window
+    unordered_map<char, int> charMap;
+    for (char c : t)
+    {
+        charMap[c]++;
+    }
+
+    // count of chars to find in s
+    int charsToFind = charMap.size();
+    
+    // result
+    string ans = "";
+    int len = numeric_limits<int>::max();
+    
+    // initialize sliding window to first char from map
+    int start = -1;
+    while ((++start < s.length()) && 
+           (charMap.find(s[start]) == charMap.end()));  
+    int end = start;
+        
+    // start sliding window
+    while (end < s.length())
+    {
+        char startchar = s[start];
+        char endchar = s[end++];
+        
+        //cout << startchar << " "  << endchar << endl;
+        
+        // is current char in map?
+        if (charMap.find(endchar) != charMap.end())
+        {
+            if ((charMap[endchar] == 0) && (startchar == endchar))
+            {
+                // found an extra occurrence of start char
+                // update start to next char from map, skipping any extras
+                if (!slideWindow(s, charMap, start)) 
+                {
+                    // reached end of string, return answer
+                    return ans;
+                }
+                
+                // can skip rest of loop
+                continue;
+            }
+            else
+            {
+                // decrement count of charsToFind and update map
+                charMap[endchar]--;
+                if (charMap[endchar] == 0) 
+                {
+                    charsToFind--;
+                }
+            }
+        }
+        
+        // if charsToFind == 0, means we found an answer
+        // try to trim the window by sliding start to the right
+        if (charsToFind == 0)
+        {
+            // store new answer if smaller than previously best
+            if (end-start < len)
+            {
+                len = end - start;
+                ans = s.substr(start, end - start); 
+                //cout << ans << endl;
+            }
+            
+            // remove first char from sliding window and increment count of charsToFind
+            charMap[startchar]++;
+            charsToFind++; 
+            
+            // update start to next char from map, skipping any extras
+            if (!slideWindow(s, charMap, start)) 
+            {
+                // reached end of string, return answer
+                return ans;
+            }
+        }
+    }
+    
+    return ans;        
+}
+    
+
+int main() 
+{
+	cout << minWindow("a", "a");
+	return 0;
+}

@@ -1,0 +1,44 @@
+#include <iostream>
+
+using namespace std;
+
+class MyStack
+{
+    public:
+    
+        MyStack()
+        {
+            curr = 0;
+        }
+        
+        void push(unsigned int n)
+        {
+            if (curr < 256)
+                arr[curr++] = n;
+        }
+        unsigned int pop()
+        {
+            if (curr > 0)
+                return arr[--curr];
+            return -1;
+        }
+        
+    private:
+        unsigned int arr[256];
+        unsigned int curr;
+};
+
+int main() {
+	cout<<"GfG!";
+	MyStack myStack;
+	myStack.push(1);
+	myStack.push(2);
+	myStack.push(3);
+	myStack.push(4);
+	cout<<myStack.pop();
+	cout<<myStack.pop();
+	cout<<myStack.pop();
+	cout<<myStack.pop();
+	cout<<myStack.pop();
+	return 0;
+}

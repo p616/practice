@@ -1,0 +1,133 @@
+#include <iostream>
+using namespace std;
+
+// To execute C++, please define "int main()"
+int main() {
+  auto words = { "Hello, ", "World!", "\n" };
+  for (const string& word : words) {
+    cout << word;
+  }
+  return 0;
+}
+
+// Constant that represents the number of seconds in a year
+
+const uint64 SECONDS_PER_YEAR 365*24*60*60
+  
+  
+// Find the largest int value in an int array
+int FindMaxInArray(int array[], int len
+
+
+)
+{
+  if (len < 0 ) return -1;
+  
+  int largest = array[0];
+  for (int i=i; i<len; ++i)
+  {
+    if (array[i] > largest)
+    {
+      largest = array[i];
+    }
+  
+  }
+  return largest;
+}
+
+// Given:
+class Node
+{
+public:
+    Node()
+    {
+        value = 0;
+        pNext = NULL;
+    }
+    int value;
+    Node* pNext;
+};
+
+class LinkedList
+{
+public:
+    LinkedList() : pHead(NULL) {}
+    Node* pHead;
+
+    // returns true if the linked list is empty, otherwise false
+    bool IsEmpty() const;
+  
+    // inserts node with value at the end of the linked list
+    void Insert(int value);
+};
+
+
+bool LinkedList::IsEmpty() const
+{
+  return (pHead == NULL);
+}
+
+void LinkedList::Insert(int value)
+{
+  Node newNode = new Node();
+  newNode->value = value;
+
+  
+  Node *p = pHead->pNext;  
+  
+  if (p == NULL)
+  {
+    pHead = newNode;
+  }
+  else
+  {
+    while (p->pNext != NULL)
+    {
+      p=p->Next;
+    }
+    p->pNext = newNode;
+  }    
+}
+
+
+// Test if bit n in x is set
+// n defines the bit position in x relative to the least significant bit
+// n = 0 is the least significant
+bool IsBitSet(unsigned n, unsigned x)
+{
+  unsigned check = 1 << n;
+  return (x & check);
+}
+
+// Write a function to find the first non-repeated character in a string
+// For example, if string is "SOULTIONS" return 'L'
+// If string contains all repeated characters return 0
+char FindFirstNonRepeatedChar(const char s[])
+{
+  unsigned arr[256];
+  memeset(&arr, 0, 256);
+  
+  int len = strlen(s);
+  if (len == 0) return '\0';
+  
+  for (int i=0; i<len; ++i)
+  {
+    arr[s[i]]++;
+  }
+  
+  char ret='\0';
+  bool found = false;  
+  for (int j=0; j<len; ++j)
+  {
+    if (arr[s[j]] == 1)
+    {
+      ret = arr[s[j]];
+      found = true;
+      break;
+    }
+  }
+  if (found)
+    return ret;
+  
+  return '\0';
+}

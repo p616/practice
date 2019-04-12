@@ -1,0 +1,38 @@
+Given an array A of non-negative integers, return an array consisting of all the even elements of A, followed by all the odd elements of A. 
+
+vector<int> sortArrayByParity(vector<int>& A) 
+    {
+        // position of first found odd and last found even
+        int oddPos = 0;
+        int evenPos = (A.size()-1);
+        
+        // swap first odd with last even
+        // when positions meet the odds are at the end, evens at beginning
+        while (oddPos < evenPos)
+        {
+            // find next odd, forward
+            while ( (oddPos != evenPos) && ((A[oddPos] & 1) == 0) )
+            {
+                oddPos++;
+            }
+            
+            // find next even, backward
+            while ( (oddPos != evenPos) && ((A[evenPos] & 1) != 0) )
+            {
+                evenPos--;
+            }
+            
+            // if the positions meet, done
+            if (oddPos == evenPos)
+            {
+                break;
+            }
+            
+            // swap 
+            int temp = A[oddPos];
+            A[oddPos] = A[evenPos];
+            A[evenPos] = temp;
+        }
+        
+        return A;
+    }

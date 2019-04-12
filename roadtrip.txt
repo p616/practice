@@ -1,0 +1,35 @@
+ The tank capacity of this model is v liters, and it spends exactly 1 liter of fuel for 1 kilometer of the way. At the beginning of the journey, the tank is empty. Sasha is located in the city with the number 1 and wants to get to the city with the number n. There is a gas station in each city. In the i-th city, the price of 1 liter of fuel is i dollars. It is obvious that at any moment of time, the tank can contain at most v liters of fuel.
+
+
+
+#include <iostream>
+using namespace std;
+
+int main() {
+	int cities;
+	cin >> cities;
+	
+	int capacity;
+	cin >> capacity;
+	
+	int gas_needed = cities-1;
+	int gas_in_tank = min(capacity,gas_needed);
+	int price = gas_in_tank;
+	
+    gas_needed -= gas_in_tank;
+
+    for (int i=2; i<cities; ++i)
+    {
+        if (gas_needed-- <= 0)
+        {
+            // coast rest of way
+            break;
+        }
+        // otherwise, one gallon per city
+        price += i;
+    }
+	
+	cout << price;
+	
+	return 0;
+}

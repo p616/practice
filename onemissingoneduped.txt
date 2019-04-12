@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+
+// returns v = { duped, missing }
+vector<int> repeatedNumber(const vector<int> &A) 
+{
+    // yes, all those stupid casts are necessary
+    
+    unsigned long long sumA = 0ULL;
+    unsigned long long sqrA = 0ULL;
+    
+    for (unsigned long long n : A)
+    {
+        sumA += n;
+        sqrA += (n * n);
+    }
+    
+    unsigned long long N = A.size();
+    unsigned long long sumN = ((N * (N + 1ULL)) / 2ULL);
+    unsigned long long sqrN = ((N * (N + 1ULL) * ((2ULL * N) + 1ULL)) / 6ULL);
+    
+    int x;
+    int y;
+    
+    // x = ((sumA - sumN) + y);
+    // x * x = ((sqrA - sqrN) + (y * y));
+    
+    // set (x * x) = sqrA/sqrN side = sumA/sumN side squared = (x) * (x)
+    // ((sqrA - sqrN) + (y * y)) = ( ((sumA - sumN) + y) * ((sumA - sumN) + y))
+    
+    // square the right side
+    // ((sqrA - sqrN) + (y * y)) = 
+                // ( ((sumA - sumN) * (sumA - sumN)) 
+                // + (2 * (sumA - sumN) * y) 
+                // + (y * y)  )
+               
+    // axe (y * y) from both sides
+    // (sqrA - sqrN) = ( ((sumA - sumN) * (sumA - sumN)) + (2 * (sumA - sumN) * y) )
+    
+    // isolate y factor on right
+    // (sqrA - sqrN) - ((sumA - sumN) * (sumA - sumN)) = (2 * (sumA - sumN) * y) 
+    
+    // solve for y
+    // ((sqrA - sqrN) - ((sumA - sumN) * (sumA - sumN))) / ((2 * (sumA - sumN)) = y 
+    
+    y = (int)((long long)((sqrA-sqrN) - ((sumA-sumN) * (sumA-sumN))) / 
+              (long long)(2LL * (sumA-sumN)) );
+              
+    x = ((sumA-sumN) + y);
+    
+    vector<int> ret = {x, y};
+    return ret;
+}
+
+int main()
+{
+    vector<int> input = { 1,3,3,4,5 };
+    vector<int> oneandone = repeatedNumber(input);
+    cout << "missing=" << oneandone[1] << " duped=" << oneandone[0];
+    return 0;
+}
