@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace MyGen
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            bool isInputValid = false;
+
+            // Enter two ints: 5 5
+            UInt64 rows = 0;
+            UInt64 cols = 0;
+            string input;
+            input = Console.ReadLine();
+            string[] inputs = input.Split((string[])null, StringSplitOptions.RemoveEmptyEntries);
+            if (inputs.Length == 2)
+            {
+                if (UInt64.TryParse(inputs[0], out cols) &&
+                    UInt64.TryParse(inputs[1], out rows))
+                {
+                    isInputValid = true;
+                }
+            }
+
+            // enter N on first line N ints on next line 
+            UInt32 n = Convert.ToUInt32(Console.ReadLine());
+            int[] arr = Array.ConvertAll(Console.ReadLine().Split(' '), arTemp => Convert.ToUInt32(arTemp));
+
+            // enter N on first line N ints on next line 
+            UInt32 n2 = Convert.ToUInt32(Console.ReadLine());
+            List<List<int>> arr2 = new List<List<int>>(6);
+            for (int i = 0; i < n; ++i)
+            {
+                string[] elements = Console.ReadLine().Split(' ');
+                arr2.Add(new List<int>());
+                foreach (var item in elements)
+                {
+                    arr2[i].Add(int.Parse(item));
+                }
+            }
+
+            CompassDirection dir;
+            char ch = Console.Read();
+            if (Enum.IsDefined(typeof(CompassDirection), (int)Char.ToUpper(ch)))
+            {
+                dir = (CompassDirection)Char.ToUpper(ch);
+                isInputValid = true;
+            }
+        }
+    }
+
+    class MyGen
+    {
+        internal enum CompassDirection { North = 'N', South = 'S', East = 'E', West = 'W', None = 0 };
+
+        private UInt64 Rows;
+        private UInt64 Cols;
+        private bool[,] Grid;
+
+        public MyGen(UInt64 rows, UInt64 cols)
+        {
+            int[,] arr = { { 1, 2 }, { 3, 4 } };
+            int[,] arr2 = new int[2, 2] { { 1, 2 }, { 3, 4 } };
+           
+            int[][] jagged = new int[5][];
+            for (int i = 0; i < 5; ++i)
+            {
+                jagged[i] = new int[3];
+            }
+
+            Rows = rows;
+            Cols = cols;
+            Grid = new bool[rows, cols];
+        }
+
+        private int passarray(int n, int[] ar)
+        {
+        }
+    }
+}

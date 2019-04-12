@@ -7,30 +7,76 @@ And list of player scores:
 
 Return list of player's rank after each game
 
-// THIS IS SIMPLER, AND SHORTER, BUT FAILS 4 TIMED TESTS
-// C# VERSION PASSES
 
-
-// Complete the climbingLeaderboard function below.
-vector<int> climbingLeaderboard(vector<int> scores, vector<int> alice) 
-{
-    set<int> rankScores(scores.begin(), scores.end());
-
-    vector<int> ret;
-    for (int score : alice)
+   // Complete the climbingLeaderboard function below.
+    static int[] climbingLeaderboard(int[] scores, int[] alice) 
     {
-        // insert returns pair<iterator,bool>
-        auto rankAlice = rankScores.insert(score);
+        // return vector : init to 1
+        // array is increasing => once rank becomes 1 can exit loop below
+        int[] aliceRank = Enumerable.Repeat(1, alice.Length).ToArray();
 
-        // determine Alice's rank and add to return vector
-        ret.push_back(distance(rankAlice.first, rankScores.end()));
+        // create distinct list from scores and reverse it so is in increasing order  
+        int[] rankScores = scores.Distinct().ToArray();
+        Array.Sort(rankScores);
 
-        // remove from scores set if added
-        if (rankAlice.second)
+        // scoreIndex tracks previous index found by BinarySearch
+        // since alice array is increasing, next search can start there
+        int currentGame = 0;
+        int scoreIndex = 0;
+        foreach (int score in alice)
         {
-            rankScores.erase(rankAlice.first);
-        }
-    }
+            // BinarySearch returns:
+            // - index of matching score, or
+            // - bitwise complement of index of first element larger than alice's score
+            // - bitwise complement of index of largest score + 1 (alice's score largest)
+            scoreIndex = Array.BinarySearch(rankScores, 
+                                            scoreIndex, // search start index
+                                            (rankScores.Length - scoreIndex), // length
+                                            score);
 
-    return ret;
-}
+            // rankScores is distinct, so rankScores.Length is lowest rank without alice
+            // rankScores is increasing, so lowest rank assinged to index = 0  
+            // determine alice's rank based on result of BinarySearch     
+            int rank = 0;
+            if (scoreIndex >= 0)
+            {
+                // found exact match : rank is same as the found item's rank 
+                // next BinarySearch should start with matched item's index       
+                rank = (rankScores.Length - scoreIndex);               
+            }
+            else
+            {
+                // scoreIndex is negative = bitwise complement of... 
+                scoreIndex = ~scoreIndex;
+
+                // ...index of first element larger than alice's score
+                if (scoreIndex < rankScores.Length)
+                {
+                    // rank is one lower (i.e one # larger) than the larger score
+                    // next BinarySearch should start just prior to the larger score
+                    rank = ((rankScores.Length - scoreIndex) + 1);
+                    scoreIndex = Math.Max(scoreIndex - 1, 0);
+                }
+                // ...or index of largest element in list + 1 (i.e. rankScores.Length)
+                else
+                {
+                    // score is larger than all elements : rank = 1, alone
+                    // there will be no next BinarySearch : done
+                    rank = 1;
+                }
+            }
+
+            // alice's scores array is inreasing =>
+            // if current rank = 1, all rest will be 1 as well => 
+            // done
+            if (rank == 1)
+            {
+                break;
+            }
+
+            // set alice's current rank in return vector and continue
+            aliceRank[currentGame++] = rank;
+        }
+
+        return aliceRank;
+    }

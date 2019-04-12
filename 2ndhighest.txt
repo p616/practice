@@ -1,0 +1,28 @@
+return 2nd highest number in array (with possible dupes)
+
+//int n = Convert.ToInt32(Console.ReadLine().Trim());
+
+//List<int> pile = Console.ReadLine().TrimEnd().Split(' ').ToList().Select(pileTemp => Convert.ToInt32(pileTemp)).ToList();
+
+// alphaBeta(pile)
+    
+
+public static int alphaBeta(List<int> pile)
+    {
+        int alpha = -1;
+        int beta = -1;
+        foreach (var n in pile)
+        {
+            if (n > alpha)
+            {
+                beta = alpha;
+                alpha = n;
+            }
+            else if (n > beta && n != alpha)
+            {
+                beta = n;
+            }               
+        }
+        return Math.Max(beta, 0);
+    }
+

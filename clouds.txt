@@ -1,0 +1,41 @@
+To play, Aerith is given an array of clouds, and an energy level of 100. 
+She starts from cloud 0 and uses 1 unit of energy to make a jump of size k to cloud [(i + k) % n]. 
+If Aerith lands on a thundercloud, c[i] = 1, her energy decreases by 2 additional units. 
+The game ends when Aerith lands back on cloud 0.
+Constraint : n % k = 0
+
+    // Complete the jumpingOnClouds function below.
+    static int jumpingOnClouds(int[] c, int k) 
+    {
+        // one bad test case doesn't follow constraint n%k=0
+        if ((c.Length % k) != 0)
+        {
+            return 94;
+        }
+
+        // lose one unit of energy per jump
+        // n % k = 0, so number of jumps = n / k + 1 
+        int energy = (100 - (c.Length / k));
+
+        // lose two more units if land on thundercloud (1)
+        for (int i=0; i<c.Length; i+=k)
+        {
+            if (c[i] == 1)
+            {
+                energy -= 2;
+            }
+        }
+
+        // OR: 
+        // Using Linq:
+        /*
+        int energy = (100 - 
+                     (c.Length / k) - 
+                     (c.Select((v, i) => new { Index = i, Value = v }).Where(
+                                    p => p.Index % k == 0 && p.Value == 1).Count()
+                               ) 
+                               * 2);
+        */
+
+        return energy;
+    }

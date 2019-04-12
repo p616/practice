@@ -1,0 +1,63 @@
+return the lexigraphically largest string of length 5 whose sum of differences with all the names is maximal
+
+Take for example, names = ["bubby", "bunny", "berry"], with length 3. Then, the name that you should choose is "zzzzz" as this name has no common character with any name in the names list and is also lexicographically the largest.
+        
+//int n = Convert.ToInt32(Console.ReadLine().Trim());
+
+//List<string> names = new List<string>();
+//for (int i = 0; i < n; i++)
+//{
+//string namesItem = Console.ReadLine();
+//names.Add(namesItem);
+//}
+
+//string result = Result.productName(names);
+
+    public static string productName(List<string> names)
+    {
+        // find lexigraphically highest unused char for each of  
+        // the 5 char positions in names and save in StringBuilder
+        StringBuilder sb = new StringBuilder("zzzzz");
+        for (int i=0; i<5; ++i)
+        {
+            // build map of chars and their counts per position
+            Dictionary<Char,int> charCount = new Dictionary<Char,int>();
+            
+            // loop through names list and generate char count map
+            for (int j=0; j<names.Count; ++j)
+            {
+                Char currChar = names[j][i];
+                if (charCount.ContainsKey(currChar))
+                {
+                    charCount[currChar]++;
+                }
+                else
+                {
+                    charCount.Add(currChar, 1);
+                }
+            }
+            
+            // if all letters of alphabet found, default to char with lowest count
+            Char highestChar = 'a';            
+            if (charCount.Count == 26)
+            {
+                highestChar = charCount.OrderBy(key => key.Value).FirstOrDefault().Key;
+            }
+            else
+            {
+                // at least one char unused across names
+                // find lexigraphically highest one
+                for (char ch = 'z'; ch != 'a'; ch--)
+                {
+                    if (!charCount.ContainsKey(ch))
+                    {
+                        highestChar = ch;
+                        break;
+                    }
+                }
+            }
+ 
+            sb[i] = highestChar;
+        }
+        return sb.ToString();
+    }
