@@ -1,170 +1,47 @@
-Count magic squares from input (row sum = col sum)
+permute : print all possible orderings of a string
+      ex: hat: hat hta aht ath tha tah
+      ex: aaa: aaa aaa aaa aaa aaa aaa
 
-PERMUTE:
-
-EX:
-i = 0 1 2 3
-    A B A C
-pos = 0, 
-s[0] = A
-
-Start swapping s[pos] with s[i] following it:
-i = pos + 1 = 1 
-
-Since s[pos] != s[i], swap and recur.
-
-i = 2, s[pos] == s[i], don't swap
-
-i = 3,  s[pos] != s[i], swap and recur. 
-
-
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <set>
-#include <algorithm>
-
-using namespace std;
-
-bool IsMagicSquare(vector<vector<int> >& grid)
+void permute(string s, string p)
 {
-    // initialize sum from row #1
-    int sum = (grid[0][0] + grid[0][1] + grid[0][2]);
-
-    // verify other 2 rows have same sum
-    if ((grid[1][0] + grid[1][1] + grid[1][2]) != sum)
+    // when s is empty, p contains current permutation
+    if (s.empty())
     {
-        return false;
-    }
-    if ((grid[2][0] + grid[2][1] + grid[2][2]) != sum)
-    {
-        return false;
-    }
-
-    // verify all 3 columns have the same sum
-    if ((grid[0][0] + grid[1][0] + grid[2][0]) != sum)
-    {
-        return false;
-    }
-    if ((grid[0][1] + grid[1][1] + grid[2][1]) != sum)
-    {
-        return false;
-    }
-    if ((grid[0][2] + grid[1][2] + grid[2][2]) != sum)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-// Returns true if s[curr] does NOT match with any of the 
-// characters following s[start] 
-bool shouldPermute(string s, int start, int curr)
-{
-    for (int i = start; i < curr; ++i)
-    {
-        if (s[i] == s[curr])
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-// takes string of digits and generates all set permutations of those numbers
-void permute(string& s, int pos, int N, set<string>& permutations)
-{
-    // end recursion
-    if (pos == N)
-    {
-        // add current permutation to result set
-        permutations.insert(s);
+        cout << p.data() << endl;
         return;
     }
 
-    // swap current 1x1 with all chars that follow and permute the rest
-    for (int i = pos; i < N; ++i)
+    for (int i = 0; i < s.length(); ++i)
     {
-        // Continue for s[i] iff it  doesn't match 
-        // with any of the characters after s[pos] 
-        if (shouldPermute(s, pos, i))
-        {
-            swap(s[pos], s[i]);
-            permute(s, pos + 1, N, permutations);
-            // backtrack
-            swap(s[pos], s[i]);
-        }
+        // append each char to end of current permutation one by one
+        // and permute the remaining characters 
+        permute(s.substr(0,i) + s.substr(i+1,s.length()-i-1), p + s[i]);
     }
-
 }
 
-// if : [] (char c) { return (c != ','); 
-void my_copy_if(string src, string& dst)
-{
-    int pos = 0;;
-    //for (char c : src)
-    for (int i = 0; i < src.size(); ++i)
-    {
-        if (src[i] != ',')
-        {
-            dst[pos++] = src[i];
-        }        
-    }
-    dst[pos] = '\0';
-}
 
 int main()
 {
-    // init a 3x3 grid with input
-    // determine if it's magic
-    // do the same for all grids possible from input
-    // print count of total number of magic grids
-    int count = 0;
+    permute("hat", "");
+    return 0;
+}
 
-    // get comma separated set of numbers
-    string s;
-    cin >> s;
-
-    // NOTE: numbers all single digit ==> can strip out commas
-    //copy_if(s.begin(), s.end(), s.begin(), [] (char c) { return (c != ','); } );'
-    my_copy_if(s, s);
-
-    // get set of all unique permutations of numbers in input string 
-    set<string> inputCombos;
-    permute(s, 0, 9, inputCombos);
-
-    // create 3x3 grid for testing magic squares
-    vector<vector<int> > grid;
-    for (int i = 0; i < 3; ++i)
+// OR
+void permute(char *s, int left, int right)
+{
+    // when s is empty, p contains current permutation
+    if (left == right)
     {
-        vector<int> row(3, 0);
-        grid.push_back(row);
+        cout << s.data() << endl;
+        return;
     }
 
-    set<string>::iterator it = inputCombos.begin();
-    for (; it != inputCombos.end(); ++it)
+    for (int i = left; i < right; ++i)
     {
-        // for each unique combination of input
-        // create a 3x3 grid from it and test for "magic" property
-        string combo = *it;
-        int pos = 0;
-        for (int i = 0; i < 3; ++i)
-        {
-            for (int j = 0; j < 3; ++j)
-            {
-                char c = combo[pos++];
-                grid[i][j] = c - '0';
-            }
-        }
-
-        // test if magic
-        if (IsMagicSquare(grid))
-        {
-            count++;
-        }
+        // append each char to end of current permutation one by one
+        // and permute the remaining characters 
+        swap(s + left, s + i);
+        permute(s, left + 1, right);
+        swap(s + left, s + i);
     }
-
-    cout << count;
 }

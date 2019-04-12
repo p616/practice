@@ -1,0 +1,50 @@
+There are N watchtowers built in a row. Each watchtower can only accommodate one person. Some of them are already occupied by members of the Night's Watch. Since the members of the Night's Watch do not get along, no two consecutive towers can be occupied at any moment.
+
+Arya heard that the wildlings are planning an attack. She is not satisfied by the current security, so she plans to place more members of the Night's Watch in the empty towers. What is the maximum number of people she can place in the towers such that no two consecutive towers are occupied afterwards? Note that Arya may not remove anyone from already occupied towers.
+
+
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int T;
+    cin >> T;
+
+    for (int i = 0; i < T; ++i)
+    {
+        int N;
+        cin >> N;
+
+        string s;
+        cin >> s;
+
+        int replace = 0;
+
+        bool found1 = false;
+        int count = 0;
+        for (int j = 0; j < N; ++j)
+        {
+            if (s[j] == '0')
+            {
+                count++;
+            }
+            else
+            {
+                if (!found1 && count % 2 == 0)
+                    count++;
+                else if (found1 && count % 2 == 0)
+                    count--;
+                replace += (count / 2);
+                count = 0;
+                found1 = true;
+            }
+        }
+        if (!found1 || count % 2 == 0)
+            count++;
+        replace += (count / 2);       
+        cout << replace << endl;
+    }
+        return 0;
+}

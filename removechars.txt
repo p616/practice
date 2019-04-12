@@ -1,0 +1,61 @@
+remove chars in remove from str
+
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+void RemoveChars(char str[], char remove[])
+{
+    char *curr = str;
+    char *next = str;
+    while (*next != '\0')
+    {
+        if ( strchr(remove, tolower(*next)) == NULL &&
+             strchr(remove, toupper(*next)) == NULL )
+        {
+            *curr = *next;
+            curr++;
+        }
+        next++;
+    }
+    *curr = '\0';
+}
+
+void RemoveChars(string &s, string r)
+{
+    int currPos = 0;
+    int nextPos = 0;
+    while (nextPos < s.length())
+    {
+        if ( r.find(tolower(s[nextPos])) == string::npos &&
+             r.find(toupper(s[nextPos])) == string::npos )
+        {
+            s[currPos++] = s[nextPos];
+        }
+        nextPos++;
+    }
+    s[currPos] = '\0';
+}
+
+
+int main()
+{
+    char str[] = "Battle of the Vowels: HAWAII vs. GROZNY";
+    char remove[] = "aeiOu";
+
+    cout << str << endl;
+    RemoveChars(str, remove);
+    cout << str << endl;
+    cout << endl;
+
+    string s = "Battle of the Vowels: HAWAII vs. GROZNY";
+    string r = "aeiOu";
+
+    cout << s.data() << endl;
+    RemoveChars(s, r);
+    cout << s.data() << endl;
+    cout << endl;
+    return 0;
+}
+

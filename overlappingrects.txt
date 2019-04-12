@@ -1,0 +1,78 @@
+struct point
+{
+    int x;
+    int y;
+};
+
+
+struct rect
+{
+    point UL;
+    point LR;
+};
+
+
+// MINE: MAX OF 7 COMPARISONS
+
+// if leftmost x's for each rect are equal, overlap depends on y
+// otherwise one rect's leftmost x must fall within the range of the other
+bool xAxisOverlap(rect A, rect B)
+{
+    // when rect B's left x is greater than rect A's, rect A is farther left
+    //  ==> rect B's left x must be less than rect A's rightmost x for overlap
+    if (A.UL.x < B.UL.x)
+    {
+        return (B.UL.x < A.LR.x);
+    }
+    // when rect A's left x is greater than rect B's, rect B is farther left
+    //  ==> rect A's left x must be less than rect B's rightmost x for overlap
+    else if (B.UL.x < A.UL.x)
+    {
+        return (A.UL.x < B.LR.x);
+    }
+    // else (A.UL.x == B.UL.x)
+
+    // if left x for both rects equal, overlap depends on y
+    return true;
+}
+
+// if highest y's for each rect are equal, overlap depends on x
+// otherwise one rect's highest y must fall within the range of the other
+bool yAxisOverlap(rect A, rect B)
+{
+    // when rect B's highest y is less than rect A's, rect A is higher
+    //  ==> rect B's highest y must be greater than rect A's lowest y for overlap
+    if (B.UL.y < A.UL.y)
+    {
+        return (A.UL.y < B.LR.y);
+    }
+    // when rect A's highest y is less than rect B's, rect B is higher
+    //  ==> rect A's highest y must be greater than rect B's lowest y for overlap
+    else if (A.UL.y < B.UL.y)
+    {
+        return (B.UL.y < A.LR.y);
+    }
+    // else (A.UL.y == B.UL.y)
+
+    // if highest y for both rects equal, overlap depends on x
+    return true;
+}
+
+// rectangles are parallel to x axis
+bool overlap(rect A, rect B)
+{
+    return (xAxisOverlap(A, B) && yAxisOverlap(A, B));
+}
+
+
+
+// OPT: MAX OF 4 COMPARISONS
+
+// Do not overlap when A above B, A below B, A to right of B, A to left of B
+bool overlap(rect A, rect B)
+{
+	return ( (A.UL.y < B.LR.y) ||
+		 (A.LR.y > B.UL.y) ||
+		 (A.UL.x > B.LR.x) ||
+		 (A.LR.x < B.UL.x) );
+}

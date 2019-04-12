@@ -1,0 +1,229 @@
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode *child;
+
+    ListNode(int v, ListNode *c) : val(v), next(NULL), child(c) {}
+};
+
+class LinkedList
+{
+public:
+    LinkedList() : head(NULL), tail(NULL) {}
+
+    bool InsertAfter(ListNode* node, int val, ListNode *child = NULL);
+    bool DeleteElement(ListNode *node);
+
+    void PrintList();
+
+    void PrintFlat();
+
+ //private:
+    ListNode *head;
+    ListNode *tail;
+
+    void PrintFlat(ListNode *root);
+};
+
+void
+LinkedList::PrintList()
+{
+    if (head == NULL)
+    {
+        cout << "Empty List\n";
+        return;
+    }
+
+    ListNode *p = head;
+    while (p != NULL)
+    {
+        cout << p->val << " ";
+        p = p->next;
+    }
+    cout << endl;
+    cout << "Head = " << head->val << " Tail = " << tail->val << endl;
+}
+
+bool
+LinkedList::InsertAfter(ListNode *node, int val, ListNode *c)
+{
+    // empty list
+    // set head and tail
+    if (head == NULL)
+    {
+        if (node != NULL)
+        {
+            return false;
+        }
+        head = new ListNode(val, c);
+        tail = head;
+        return true;
+    }
+
+    // insert at front (new head)
+    // op doesn't afftect tail
+    if (node == NULL)
+    {
+        ListNode *temp = head;
+        head = new ListNode(val, c);
+        head->next = temp;
+        return true;
+    }
+
+    // find node in list
+    ListNode *p = head;
+    while (p != NULL && p != node)
+    {
+        p = p->next;
+    }
+
+    // node not found
+    if (p == NULL)
+    {
+        return false;
+    }
+
+    // insert at end
+    // update tail
+    if (p->next == NULL)
+    {
+        p->next = new ListNode(val, c);
+        tail = p->next;
+        return true;
+    }
+
+    // insert in middle, after p
+    ListNode *next = p->next;
+    p->next = new ListNode(val, c);
+    p->next = next;
+    return true;
+}
+
+bool
+LinkedList::DeleteElement(ListNode *node)
+{
+    // empty list
+    if (node == NULL)
+    {
+        return false;
+    }
+
+    // delete head
+    if (node == head)
+    {
+        // one element list
+        // NULL out head and tail
+        if (head->next == NULL)
+        {
+            delete head;
+            head = NULL;
+            tail = NULL;
+        }
+        else
+        {
+            ListNode *del = head;
+            head = head->next;
+            delete del;
+        }
+        return true;
+    }
+
+
+    // if list only has one element, node must = head (handled above)
+    // know list has at least 2 elements
+
+    // find node in list
+    ListNode *prev = head;
+    ListNode *deleteMe = head->next;
+    while (deleteMe != node && deleteMe != NULL)
+    {
+        prev = deleteMe;
+        deleteMe = deleteMe->next;
+    }
+    // node not found
+    if (deleteMe == NULL)
+    {
+        return false;
+    }
+
+    // if deleted the tail, reset tail
+    if (deleteMe == tail)
+    {
+        tail = prev;
+    }
+
+    // delete the node
+    prev->next = deleteMe->next;
+    delete deleteMe;
+
+
+    return true;
+}
+
+void LinkedList::PrintFlat()
+{
+    PrintFlat(head);
+    cout << endl;
+}
+
+void LinkedList::PrintFlat(ListNode *root)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+
+    ListNode *p = root;
+    while (p != NULL)
+    {
+        cout << p->val << " ";
+
+        PrintFlat(p->child);
+
+        p = p->next;
+    }
+}
+
+int main()
+{
+    LinkedList l1;
+    assert(l1.InsertAfter(NULL, 7) == true);
+    assert(l1.InsertAfter(NULL, 6) == true);
+    assert(l1.InsertAfter(NULL, 5) == true);
+    assert(l1.InsertAfter(NULL, 4) == true);
+    assert(l1.InsertAfter(NULL, 3) == true);
+    l1.PrintList();
+    LinkedList l2;
+    assert(l2.InsertAfter(NULL, 10) == true);
+    assert(l2.InsertAfter(NULL, 9) == true);
+    assert(l2.InsertAfter(NULL, 8) == true);
+    assert(l2.InsertAfter(NULL, 2, l1.head) == true);
+    assert(l2.InsertAfter(NULL, 1) == true);
+    l2.PrintList();
+    LinkedList l3;
+    assert(l3.InsertAfter(NULL, -2, l1.head) == true);
+    assert(l3.InsertAfter(NULL, -1, l2.head) == true);
+    l3.PrintList();
+    LinkedList l4;
+    assert(l4.InsertAfter(NULL, 400, l3.head) == true);
+    assert(l4.InsertAfter(NULL, 300) == true);
+    assert(l4.InsertAfter(NULL, 200, l2.head) == true);
+    assert(l4.InsertAfter(NULL, 100, l1.head) == true);
+    l4.PrintList();
+
+    cout << endl;
+    l1.PrintFlat();
+    l2.PrintFlat();
+    l3.PrintFlat();
+    l4.PrintFlat();
+
+    return 0;
+}
+
+

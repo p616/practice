@@ -1,0 +1,159 @@
+#include <iostream>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+
+// chessboard with N rows(numbered 1 through N) and N columns(numbered 1 through N);
+// a square in row r and column c is denoted by(r, c)
+
+// K rooks on the chessboard in such a way that no two rooks attack each other.
+// place as many other rooks as possible on the chessboard in such a way that afterwards, 
+// no two rooks on the chessboard attack each other.
+
+
+
+
+// SubTask 1 passed, but time limit exceeded on SubTasks 2 and 3
+/*
+// returns true if specified column is free of rooks
+bool IsColumnFree(vector<vector<int>> &board, int N, int col)
+{
+    for (int row = 0; row < N; ++row)
+    {
+        if (board[row][col] == 1)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+// returns lowest unoccupied column for specified row
+// -1 indiates the specified row is already occupied
+int GetUnoccupiedColumn(vector<vector<int>> &board, int N, int row)
+{
+    // find  lowest unoccupied column in specified row
+    // return -1 if specified row is already occupied
+    int newcol = -1;
+    for (int col = 0; col < N; ++col)
+    {
+        // if this row already occupied (= a rook in any column) return
+        if (board[row][col] == 1)
+        {
+            return -1;
+        }
+        // else save lowest free column index (if no rooks occupy the column in other rows)
+        else if ( (newcol == -1) && IsColumnFree(board, N, col) )
+        {
+            newcol = col;
+        }
+    }
+    return newcol;
+}
+*/
+
+int main()
+{
+    int T;
+    cin >> T;
+
+    for (int i = 0; i < T; ++i)
+    {
+        int N;
+        cin >> N;
+
+        // initialize N x N board with 0's
+        /*
+        vector<vector<int>> board;
+        for (int i = 0; i < N; ++i)
+        {
+            vector<int> row;
+            row.assign(N, 0);
+            board.push_back(row);
+        }
+        */
+
+        int K;
+        cin >> K;
+
+        // save occupied rows/columns in sorted sets
+        set<int> occupiedRows;
+        set<int> occupiedCols;
+        for (int i = 0; i < K; ++i)
+        {
+            int x;
+            int y;
+            cin >> x;
+            cin >> y;
+
+            // input row/column numbers are 1-based (not 0-based)
+            //board[x-1][y-1] = 1;
+
+            occupiedRows.insert(x);
+            occupiedCols.insert(y);
+        }
+
+        // rooks can move horizontally or vertically, any number of spaces (but not diagonally)
+        // so, want to place one rook in each available row (= row not already containing an initial rook)
+        // MAX rooks on NxN board = N
+
+        vector<pair<int, int>> cells;
+
+
+        /*
+        for (int row = 0; row < N; ++row)
+        {
+            int col = GetUnoccupiedColumn(board, N, row);
+
+            // if this row not already occupied, place new rook on board and save cell to result vector
+            if (col != -1)
+            {
+                board[row][col] = 1;
+                // board rows/cols are 1-based
+                cells.push_back({ row + 1, col + 1 });
+            }
+        }
+        */
+
+        int currentRow = 1;
+        int currentCol = 1;
+
+        // first row/col not less than 1st (= or greater or not found)
+        auto lowestRow = occupiedRows.lower_bound(1);
+        auto lowestCol = occupiedCols.lower_bound(1);
+
+        for (int i = 1; i <= (N - K); ++i)
+        {
+            pair<int, int> cell;
+
+            // currentRow in set, find next lowest
+            while (lowestRow != occupiedRows.end() && currentRow == *lowestRow)
+            {
+                lowestRow = occupiedRows.upper_bound(currentRow++);
+            }
+            cell.first = currentRow++;
+            lowestRow = occupiedRows.lower_bound(currentRow);
+
+            // currentCol in set, find next lowest
+            while (lowestCol != occupiedCols.end() && currentCol == *lowestCol)
+            {
+                lowestCol = occupiedCols.upper_bound(currentCol++);
+            }
+            cell.second = currentCol++;
+            lowestCol = occupiedCols.lower_bound(currentCol);
+
+            cells.push_back(cell);
+        }
+
+        // print the results
+        cout << cells.size() << " ";
+        for (auto p : cells)
+        {
+            cout << p.first << " " << p.second << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}

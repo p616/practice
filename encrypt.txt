@@ -1,0 +1,63 @@
+Encrypt:
+Replace letters 'a'-'m' with 'n'-'z'
+Replace letters 'n'-'z' with 'a'-'m'
+Replace letters 'A'-'M' with 'N'-'Z'
+Replace letters 'N'-'Z' with 'A'-'M'
+Replace digits '0'-'4' with '5'-'9'
+Replace digits '5'-'9' with '0'-'4' 
+
+#include <iostream>
+#include <cassert>
+#include <vector>
+#include <map>
+#include <string>
+
+
+using namespace std;
+
+int main()
+{
+    int T;
+    cin >> T;
+
+    for (int t = 0; t < T; ++t)
+    {
+        int len;
+        cin >> len;
+
+        string s;
+        getline(cin >> ws, s);
+
+        for (int i=0; i<len; ++i)
+        {
+            char c = s[i];
+            if (c >= '0' && c <= '4')
+            {
+                s.replace(i, 1, 1, (c + 5));
+            }
+            else if (c >= '5' && c <= '9')
+            {
+                s.replace(i, 1, 1, (c - 5));
+            }
+            else if (c >= 'A' && c <= 'M')
+            {
+                s.replace(i, 1, 1, (c + 13));
+            }
+            else if (c >= 'N' && c <= 'Z')
+            {
+                s.replace(i, 1, 1, (c - 13));
+            }
+            else if (c >= 'a' && c <= 'm')
+            {
+                s.replace(i, 1, 1, (c + 13));
+            }
+            else if (c >= 'n' && c <= 'z')
+            {
+                s.replace(i, 1, 1, (c - 13));
+            }
+        }
+
+        cout << s << endl;
+    }
+    return 0;
+}

@@ -1,0 +1,16 @@
+// Draw 1/8th of circle centered at 0,0 with radius r
+// x^2 + y^2 = r2
+// 	y = +- sqrt(r^2 - x^2)
+// 	Only pos : y = sqrt(r^2 - x^2)
+// Range of X?
+//      Once past 1/8, are farther out than you are up
+//      So, until x > y
+
+int x = 0;
+int y = radius;
+while (y <= x)
+{
+	y = sqrt(r^2 - x^2);
+	setpixel(x,y);
+ 	x++;
+}

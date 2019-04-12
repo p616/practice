@@ -1,0 +1,207 @@
+#include <iostream>
+#include <array>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+// changes in row / col pos corresponding to the 4 moves = { left, up, right, down }
+vector<int> ROWMASK = {  0, -1, 0, 1 };
+vector<int> COLMASK = { -1,  0, 1, 0 };
+
+bool IsValidMove(vector<vector<int>>& board, int rows, int cols, int player, int x, int y)
+{
+    if (x >= 0 && y >= 0 && x < rows && y < cols)
+    {
+        // 0 indicates an open grid position, valid for placing a castle
+        // a cell holding the player id indicates an existing castle, valid for passing thru
+        if (board[x][y] == 0 || board[x][y] == player)
+        {
+            return true;
+        }
+        // invalid cell values: -1 (blocked cell) or digit != player (non-player castle)
+     }
+    return false;
+}
+
+bool MakeMyMoves(vector<vector<int>>& board, int rows, int cols, int player, int x, int y, int speed)
+{
+    // end recursion case
+    if (board[x][y] == 0)
+    {
+        // found an empty cell, claim it
+        board[x][y] = player;
+        return true;
+    }
+    else if (speed == 0)
+    {
+        // this was the last possible try
+        return false;
+    }
+    
+    // mark current cell blocked 
+    // keep original value for restore (could be castle or )
+    int currcell = board[x][y];
+    board[x][y] = -1;
+    
+    
+    // *** need to try each of the four move options at every value of k *** //
+    // *** currently, this will only try each direction once *** //
+
+
+    // number of possible moves off a given cell is 4 : left or up or right or down
+    // try to find an open cell within "speed" moves of current
+    for (int i=0; i<4; ++i)
+    {    
+        int newX = (x + ROWMASK[i]);
+        int newY = (y + COLMASK[i]);
+        if (IsValidMove(board, rows, cols, player, newX, newY))
+        {
+            // test to see if there is a path thru this cell to success
+            // number of moves left to find an empty cell = speed-1 
+            if (MakeMyMoves(board, rows, cols, player, newX, newY, speed-1))
+            {
+                // found an empty cell an claimed it, no need to keep looking
+                // backtrack (restore original cell value)
+                board[x][y] = currcell;
+                return true;
+            }
+        }
+    }
+    
+    // backtrack (restore original cell value)
+    board[x][y] = currcell;
+    
+    return false;
+}
+
+void GetPlayerCastles(vector<vector<int>>& board, int rows, int cols, 
+                             int player, vector<pair<int,int>>& castles)
+{
+    for (int i=0; i<rows; ++i)
+    {
+        for (int j=0; j<cols; ++j)
+        {
+            if (board[i][j] == player)
+            {
+                castles.push_back({i,j});
+            }
+        }
+    }
+}
+
+void play(vector<vector<int>>& board, int rows, int cols, int players, vector<int>& speeds)
+{
+    // add players to blocked set if they cannot make a move
+    // once in set a player's turn gets skipped for rest of game
+    set<int> blockedPlayers;
+    while (blockedPlayers.size() != players)
+    {
+        for (int i=0; i<players; ++i)
+        {
+            // blockedPlayers set holds blocked player id (1..players)
+            if (blockedPlayers.find(i+1) != blockedPlayers.end())
+            {
+                vector<pair<int,int>> castles;
+                GetPlayerCastles(board, rows, cols, i+1, castles);
+                
+                // for each existing castle, find location for new castle 
+                bool blocked = true;
+                for (auto p : castles)
+                {
+                    if (MakeMyMoves(board, rows, cols, i+1, p.first, p.second, speeds[i]))
+                    {
+                        blocked = false;
+                    }
+                }
+                
+                // a player that can make no moves is blocked for rest of play 
+                if (blocked)
+                {
+                    blockedPlayers.insert(i+1);
+                }
+            }
+        }
+    }
+}
+
+int main() 
+{
+	int rows;
+	cin >> rows;
+	
+	int cols;
+	cin >> cols;
+	
+	int players;
+	cin >> players;
+	
+	vector<int> speeds;
+	for (int i=0; i<players; ++i)
+	{
+	    int s;
+	    cin >>s;
+	    
+	    speeds.push_back(s);
+	}
+	
+	// initialize the game board
+	// set empty cells ('.') = 0
+	// set blocked cells ('#') = -1
+    // player ids left as-is
+	vector<vector<int>> board;
+	for (int i=0; i<rows; ++i)
+	{
+	    vector<int> row;
+	    for (int j=0; j<cols; ++j)
+	    {
+	        char c;
+	        cin >> c;
+	        
+	        if (c == '.')
+	        {
+	            row.push_back(0);
+	        }
+	        else if (c == '#')
+	        {
+	            row.push_back(-1);
+	        }
+	        else
+	        {
+	            int p = (c - '0');
+	            row.push_back(p);
+	        }
+	    }
+	    board.push_back(row);
+	}
+	
+	// play the game
+	play(board, rows, cols, players, speeds);
+	
+	// count the castles on the finished game board
+	vector<int> castles(players, 0);
+	for (int i=0; i<rows; ++i)
+	{
+	    for (int j=0; j<cols; ++j)
+	    {
+	        // cell positions can be 0 or -1 or a player id (1..players)
+	        int id = board[i][j];
+	        if (id > 0)
+	        {
+	           castles[id-1]++;
+	        }
+	    }
+	}
+	
+	// print the results
+	for (int i=0; i<players; ++i)
+	{
+	    if (i != 0) 
+	    {
+	        cout << " ";
+	    }
+	    cout << castles[i];
+	}
+	
+	return 0;
+}

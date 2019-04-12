@@ -1,0 +1,180 @@
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+struct ListNode
+{
+    int val;
+    ListNode *next;
+
+    ListNode(int v) : val(v), next(NULL) {}
+};
+
+class LinkedList
+{
+public:
+    LinkedList() : head(NULL), tail(NULL) {}
+
+    bool InsertAfter(ListNode* node, int val);
+    bool DeleteElement(ListNode *node);
+
+    void PrintList();
+
+    //private:
+    ListNode *head;
+    ListNode *tail;
+};
+
+void
+LinkedList::PrintList()
+{
+    if (head == NULL)
+    {
+        cout << "Empty List\n";
+        return;
+    }
+
+    ListNode *p = head;
+    while (p != NULL)
+    {
+        cout << p->val << " ";
+        p = p->next;
+    }
+    cout << endl;
+    cout << "Head = " << head->val << " Tail = " << tail->val << endl;
+}
+
+bool
+LinkedList::InsertAfter(ListNode *node, int val)
+{
+    // empty list
+    // set head and tail
+    if (head == NULL)
+    {
+        if (node != NULL)
+        {
+            return false;
+        }
+        head = new ListNode(val);
+        tail = head;
+        return true;
+    }
+
+    // insert at front (new head)
+    // op doesn't afftect tail
+    if (node == NULL)
+    {
+        ListNode *temp = head;
+        head = new ListNode(val);
+        head->next = temp;
+        return true;
+    }
+
+    // find node in list
+    ListNode *p = head;
+    while (p != NULL && p != node)
+    {
+        p = p->next;
+    }
+
+    // node not found
+    if (p == NULL)
+    {
+        return false;
+    }
+
+    // insert at end
+    // update tail
+    if (p->next == NULL)
+    {
+        p->next = new ListNode(val);
+        tail = p->next;
+        return true;
+    }
+
+    // insert in middle, after p
+    ListNode *next = p->next;
+    p->next = new ListNode(val);
+    p->next = next;
+    return true;
+}
+
+bool
+LinkedList::DeleteElement(ListNode *node)
+{
+    // empty list
+    if (node == NULL)
+    {
+        return false;
+    }
+
+    // delete head
+    if (node == head)
+    {
+        // one element list
+        // NULL out head and tail
+        if (head->next == NULL)
+        {
+            delete head;
+            head = NULL;
+            tail = NULL;
+        }
+        else
+        {
+            ListNode *del = head;
+            head = head->next;
+            delete del;
+        }
+        return true;
+    }
+
+
+    // if list only has one element, node must = head (handled above)
+    // know list has at least 2 elements
+
+    // find node in list
+    ListNode *prev = head;
+    ListNode *deleteMe = head->next;
+    while (deleteMe != node && deleteMe != NULL)
+    {
+        prev = deleteMe;
+        deleteMe = deleteMe->next;
+    }
+    // node not found
+    if (deleteMe == NULL)
+    {
+        return false;
+    }
+
+    // if deleted the tail, reset tail
+    if (deleteMe == tail)
+    {
+        tail = prev;
+    }   
+    
+    // delete the node
+    prev->next = deleteMe->next;
+    delete deleteMe;
+
+
+    return true;
+}
+
+int main()
+{
+    LinkedList l;
+    assert(l.InsertAfter(NULL, 1) == true);
+    assert(l.InsertAfter(NULL, 2) == true);
+    assert(l.InsertAfter(NULL, 3) == true);
+    assert(l.InsertAfter(NULL, 4) == true);
+    assert(l.InsertAfter(NULL, 5) == true);
+    l.PrintList();
+    assert(l.DeleteElement(l.head->next->next) == true);
+    l.PrintList();
+    assert(l.DeleteElement(l.head) == true);
+    l.PrintList();
+    assert(l.DeleteElement(l.tail) == true);
+    l.PrintList();
+    return 0;
+}
