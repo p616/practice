@@ -1,38 +1,38 @@
-// time limit exceeded
+min edit distance (replace, delete, insert) to go
+from string A to string B
+
+
 int Solution::minDistance(string A, string B) 
 {
-    if (A.size() == 0)
+    int DP[A.size()+1][B.size()+1];
+    
+    for (int i=0; i<=A.size(); ++i)
     {
-        // only option is to insert into A the chars remaining in B
-        return B.size();
+        for (int j=0; j<=B.size(); ++j)
+        {
+            if (i==0)
+            {
+                DP[i][j] = j;
+            }
+            else if (j==0)
+            {
+                DP[i][j] = i;
+            }
+            else if (A[i-1] == B[j-1])
+            {
+                DP[i][j] = DP[i-1][j-1];
+            }
+            else
+            {
+                DP[i][j] = (1 + min(
+                                    min( DP[i][j-1], 
+                                         DP[i-1][j] ),
+                                    DP[i-1][j-1] )
+                            );
+            }
+        }
     }
     
-    if (B.size() == 0)
-    {
-        // only option is to delete the chars remaining in A
-        return A.size();
-    }
-    
-    // if last chars are the same, ignore and get dist for remainder
-    if (A[A.size()-1] == B[B.size()-1])
-    {
-        return minDistance( A.substr(0, A.size()-1), B.substr(0, B.size()-1) );
-    }
-    
-    // else try each possible action and determine min result
-    return (1 + 
-            min (
-                min (
-                    // assume insert char at end of A to = B
-                    // lop off last char from B and recurse
-                    minDistance( A, B.substr(0, B.size()-1) ),
-                    // assume delete last char of A
-                    // lop off last char from A and recurse
-                    minDistance( A.substr(0, A.size()-1), B ) 
-                    ),
-                // assume replace last char of A to = B
-                // lop off last chars from each and recurse)
-                minDistance( A.substr(0, A.size()-1), B.substr(0, B.size()-1) )
-                )
-            );
+    return DP[A.size()][B.size()];
 }
+  

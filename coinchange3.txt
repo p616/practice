@@ -1,0 +1,22 @@
+int Solution::coinchange2(vector<int> &coins, int total) 
+{
+    // sort coins
+    sort(coins.begin(), coins.end());
+    
+    // each index holds number of ways to get total = i
+    vector<unsigned long long> ways((total+1),0);
+    
+    // init ways[0] = 1 (only one way to get total of zero)
+    ways[0] = 1;
+    
+    for (int coin : coins)
+    {
+        for (int i=coin; i<(total+1); ++i)
+        {
+            ways[i] += ways[i-coin];
+            ways[i] = (ways[i] % 1000007);
+        }
+    }
+    
+    return (ways[total] % 1000007);
+}

@@ -1,0 +1,57 @@
+// ways to get amount from given set of coins
+
+    int coinChange(vector<int>& coins, int amount) 
+    {
+        vector<int> ways((amount + 1), 0);
+        
+        for (int c : coins)
+        {
+            for (int i=0; i<ways.size(); ++i)
+            {
+                if (i == 0)
+                {
+                    ways[i] = 1;
+                }
+                if (i >= c)
+                {
+                   ways[i] += ways[i-c];
+                }
+            }            
+        }
+        
+        return ways[amount]; 
+}
+
+
+
+// fewest coins needed to get to amount
+
+    int coinChange(vector<int>& coins, int amount) 
+    {
+        //vector<int> ways((amount + 1), 0);
+        vector<int> ways((amount + 1), numeric_limits<int>::max());
+        
+        for (int c : coins)
+        {
+            for (int i=0; i<ways.size(); ++i)
+            {
+                if (i == 0)
+                {
+                    //ways[i] = 1;
+                    ways[i] = 0;
+                }
+                if (i >= c)
+                {
+                    //ways[i] += ways[i-c];
+                    if (ways[i-c] != numeric_limits<int>::max())
+                    {
+                        ways[i] = min(ways[i], (1 + ways[i-c]));                      
+                    }                   
+                }
+            }            
+        }
+        
+        return ( ways[amount] == numeric_limits<int>::max() ? -1 : ways[amount] ); 
+    }
+
+    }

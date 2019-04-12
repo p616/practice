@@ -1,0 +1,62 @@
+We define subsequence as any subset of an array. 
+We define a subarray as a contiguous subsequence in an array. 
+
+Given an array, find the maximum possible sum among:
+1.all nonempty subarrays. 
+2.all nonempty subsequences. 
+
+Print the two values as space-separated integers on one line. 
+
+
+vector<int> maxSubarray(vector<int> arr) 
+{
+    vector<int> sums(2,0);
+
+    // special case
+    if (arr.size() == 0)
+    {
+        return sums;
+    }
+
+    // max subarray sum:
+    // DP[i] = max running sum ending at arr[i]
+    //       = arr[i] + running sum ending at arr[i-1] if > arr[i]
+    //       = arr[i] otherwise
+    // max sum = max(DP[0]..DP[n-1])
+    int DP[arr.size()];
+    DP[0] = arr[0];
+    int maxSubARRAYSum = DP[0];
+    
+    // max subsequence sum:
+    // any positive numbers? sum all positive numbers
+    // no positive numbers? largest negative, or zero
+    int maxSubSEQSum = arr[0];
+
+    // start at 1
+    for (int i=1; i<arr.size(); ++i)
+    {
+        // max subarray sum:
+        DP[i] = max((DP[i-1] + arr[i]), arr[i]);
+        maxSubARRAYSum = max(maxSubARRAYSum, DP[i]);
+
+        // max subsequence sum:
+
+        // if pos
+        if (arr[i] > 0)
+        {
+            // if subSEQSum currently tracking largest non-pos, reset
+            // otherwise add current element to running sum
+            maxSubSEQSum = ((maxSubSEQSum <= 0) ? arr[i] : (maxSubSEQSum + arr[i]));
+        }
+        // if neg or zero
+        else if (arr[i] <= 0)
+        {
+            // keep current non-pos or running sum if > current number
+            maxSubSEQSum = max(maxSubSEQSum, arr[i]);
+        }
+    }
+
+    sums[0] = maxSubARRAYSum;
+    sums[1] = maxSubSEQSum;
+    return sums;
+}

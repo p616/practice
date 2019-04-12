@@ -1,0 +1,58 @@
+DP: longest increasing subsequence
+
+int Solution::lis(const vector<int> &A) 
+{
+    // special case
+    if (A.size() == 0)
+    {
+        return 0;
+    }
+    
+    // Dynamic Programming : Tabulation (Bottom->Up)
+    
+    // lis[n] = lis ending at index n 
+    // can be defined as:
+    // lis[n] = (max(lis[j]) + 1), for 0 < j < n-1
+    // or lis[n] = 1 if none exist
+
+    // create vector for previously calcuated values 
+    // ex: lis[3] = lis for subsequence ending at element 4 (index 3)
+    vector<int> DP(A.size());
+    
+    // init lis[0] = lis ending at element 1 (index 0):
+    // one element subsequence of length 1 
+    // init maxlen = lis[0]
+    DP[0] = 1;
+    int maxlen = 1;
+    
+    for (int i=1; i<A.size(); ++i)
+    {
+        // default lis ending at any index is 1 (all prev higher)
+        DP[i] = 1;
+        for (int j = 0; j<i; ++j)
+        {
+            // if j->i is increasing
+            // lis[i] can extend lis ending at lower elem by one
+            if (A[i] > A[j])
+            {
+                 // but only update table if doing so would increase lis[i]
+                // ex: 3 5 2 10: lis[3] = 1, lis[5] = 2; lis[2] = 1;
+                // lis[10] = 2 (10 > 3)
+                // lis[10] = 3 (10 > 5)
+                // lis[10] = 3, not 2 (even though 10 > 2)
+                if (DP[i] < (DP[j] + 1))
+                {
+                    DP[i] = (DP[j] + 1);
+                }
+            }
+        }
+        
+        // update maxlen if found a longer one at this new index
+        if (DP[i] > maxlen)
+        {
+            maxlen = DP[i];
+        }
+    }
+    
+    return maxlen;
+}

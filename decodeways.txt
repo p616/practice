@@ -1,0 +1,134 @@
+A message containing letters from A-Z is being encoded to numbers using the following mapping:
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+
+Given a non-empty string containing only digits, determine the total number of ways to decode it.
+
+
+#include <iostream>
+
+using namespace std;
+
+int numDecodings(string s) 
+{        
+    // 6 = 1
+    // 67 = 1
+    // 675 = 1
+    // 6751 = 1
+    // 67512 = 1 * 2 = 2
+    // 675121 = 2 + (3-2) = 3
+    // 6751212 = 3 + (4-2) = 5
+    // 67512125 = 5
+    // 675121251 = 5
+    // 6751212512 = 5 * 2 = 10
+    // 67512125120 = 5 (now 1 and 20 are only choices, erases all 12's)
+           
+    // doubles:
+    // 11 - 19, 21 - 26
+    // front or back = 1 or 2
+    // back only = 3-6 for 1 or 2
+    // back only = 7-9 for 1 only
+    // 0 : only valid in combo with 1 or 2 (10 or 20)
+                    
+    // Init DP[0] to 1 (only one way to decode)
+     int DP[s.size()+1];
+    DP[0] = 1;
+    
+    // flag to track (possible) string of double encodings (ex: 1, 2, 12, 121, 21, 211...)
+    bool onARun = false;
+
+    // DP[1] = ways to decode string ending at s[0]
+    // DP[i] = ways to decode string ending at s[i-1]
+    // DP[s.size()] = ways to decode string (final char = s[s.size()-1])
+    for (int i=1; i<=s.size(); ++i)
+    {
+        char c = s[i-1];
+        
+        // more than one decode possible?
+        if ( (c == '1') || (c == '2') )
+        {
+            // 11 or 12 or 21 or 22 or 121...
+            if (onARun)
+            {
+                // very often = double: DP[i] = (DP[i-1] * 2);
+                DP[i] = (DP[i-1] + DP[i-2]);
+            }
+            // 51 or 52
+            else
+            {
+                // no change
+                DP[i] = DP[i-1];
+            }
+            onARun = true;
+        }
+        // not 1 or 2: either ends a "run" or is a no-op (or error)
+        else 
+        {
+            // special case
+            if (c == '0')
+            {
+                // found 10 or 20, or error
+                if (!onARun)
+                {
+                    // no way to decode
+                    return 0;
+                }
+
+                // otherwise revert to 2 spots prev in DP table                
+                // 675121251 = 5
+                // 6751212512 = 5 * 2 = 10
+                // 67512125120 = 5 (now 1 and 20 are only choices, erases all 12's)               
+                DP[i] = DP[i-2];
+            }
+            // double decode if preceeded by 1 only
+            else if ( (c == '7') || (c == '8') || (c == '9'))
+            {
+                // 17-19 or 117/127
+                if (onARun && s[i-2] == '1')
+                {
+                    // 17-19 or 117
+                    // very often = double: DP[i] = (DP[i-1] * 2);
+                    DP[i] = (DP[i-1] + DP[i-2]);
+                }
+                // 27-29 or 57-59
+                else
+                {
+                    // no change
+                    DP[i] = DP[i-1];
+                }
+            }
+            // 3-6: double decode if preceeded by 1 or 2
+            else 
+            {
+                // 13-16 or 23-26 or 113/126
+                if (onARun)
+                {
+                    // very often = double: DP[i] = (DP[i-1] * 2);
+                    DP[i] = (DP[i-1] + DP[i-2]);
+                }
+                // 53-56
+                else
+                {
+                    // no change
+                    DP[i] = DP[i-1];
+                }
+            }
+            
+            // reset the run flag
+            onARun = false;
+        }
+        
+        cout << i << " " << DP[i] << endl;
+    }
+    
+    return DP[s.size()];
+}   
+
+int main() 
+{
+	cout<<numDecodings("4757562545844617494555774581341211511296816786586787755257741178599337186486723247528324612117156948");
+	return 0;
+}

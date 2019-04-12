@@ -1,0 +1,50 @@
+A robot is located at the top-left corner of a m x n grid.
+
+The robot can only move either down or right at any point in time. 
+
+The robot is trying to reach the bottom-right corner of the grid.
+
+How many possible unique paths are there?
+
+
+    int uniquePaths(int m, int n) 
+    {
+        // DP[i][j] = count of ways to reach this square
+        int DP[m][n];
+        
+        // initialize start square to 1 (must be one way to "reach" start, right?)
+        DP[0][0] = 1;
+        
+        for (int i=0; i<m; ++i)
+        {
+            for (int j=0; j<n; ++j)
+            {               
+                // skip start : already initialized to 1                    
+                if ( (i == 0) && (j == 0) )
+                {
+                    continue;
+                }
+                
+                // max squares that can immediately reach DP[i][j] = 2 (from top or left)
+                // total ways to reach DP[i][j] = sum of ways to reach the top (and/or left)
+                int ways = 0;
+                
+                // if there is a top...
+                if (i > 0)
+                {
+                    ways += DP[i-1][j];
+                } 
+                
+                // if there is a left...
+                if (j > 0)   
+                {
+                    ways += DP[i][j-1];
+                }
+                
+                DP[i][j] = ways;
+            }
+        }
+        
+        // return ways to reach bottom right square
+        return DP[m-1][n-1];
+    }
