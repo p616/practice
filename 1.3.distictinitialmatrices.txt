@@ -1,0 +1,111 @@
+// RAN OUT OF TIME, SO COULDN'T TEST
+
+// Tested on my own, and works as I intended, so if my intent was right...
+
+
+
+For a A * B matrix of all distinct numbers from 1 to A * B, we first sort each column and then concatenate all columns in increasing order of indices to form an array of size A * B. Columns are numbered in increasing order from left to right.
+
+For example, if matrix is
+[1 5 6]
+[3 2 4]
+
+We first sort all columns to get
+
+[1 2 4]
+[3 5 6]
+
+Now, we concatenate columns in increasing order of indices to get an array
+
+[1, 3, 2, 5, 4, 6]
+
+Given this final array, you have to count how many distinct initial matrices are possible. Return the required answer modulo 109+7.
+
+Two matrices are distinct if:
+
+    Either their dimensions are different.
+    Or if any of the corresponding row in two matrices are different.
+
+Example:
+
+If input array is [1, 3, 2, 4], distinct initial matrices possible are:
+
+[1 3 2 4]
+-----------------------
+[1 2]
+[3 4]
+-----------------------
+[1 4]
+[3 2]
+-----------------------
+[3 2]
+[1 4]
+-----------------------
+[3 4]
+[1 2]
+-----------------------
+
+that is, a total of 5 matrices.
+
+
+#include <iostream>     // cin/cout
+#include <vector>
+#include <set>
+#include <map>
+#include <stack>
+#include <queue>
+#include <limits>       // numeric_limits<T>::max()
+#include <climits>      // INT_MAX
+#include <cmath>        // pow
+#include <algorithm>    // sort
+#include <utility>      // pair
+
+using namespace std;
+
+int cntMatrix(vector<int> &A) 
+{
+    int count = 1;
+    
+    int nums = A.size();
+    int divisor = 2;
+    int mate = (nums/2);
+    while (divisor <= mate)
+    {
+        if ((nums % divisor) == 0)
+        {
+            int rows = divisor;
+            int cols = mate; 
+            
+            int fact = rows;
+            int numsInCol = rows;
+            while (numsInCol > 2)
+            {
+                numsInCol--;
+                fact *= numsInCol;
+            }
+            count += (fact * cols);
+	    count = (count % (pow(10,9)+7)));
+            
+            if (rows != cols)
+            {
+                for (int j=rows; j<cols; ++j)
+                {
+                    fact *= (j+1);
+                }
+                count += (fact * rows);  
+		count = (count % (pow(10,9)+7)));             
+            }
+         }
+         
+         divisor++;
+         mate = (nums/divisor);
+    }
+    return ( count % (pow(10,9)+7) );
+}
+
+int main() 
+{
+    vector<int> v = {1, 3, 2, 4, 5, 6};
+	cout<<cntMatrix(v);
+	return 0;
+}

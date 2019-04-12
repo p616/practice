@@ -1,0 +1,110 @@
+Given two binary trees T1 and T2, you have to find minimum number of insertions to be done in T1 to make it structurally identical to T2. Return -1 if not possible.
+
+
+// FAILS THE MEMORY LIMIT TEST
+
+// B must look exactly like A, plus extra nodes
+// Traverse both
+// If Bnode->left NULL and Anode-left not NULL, can't be done
+// If Bnode->left NULL and Anode->left NULL OK
+// If Bnode->left not NULL and Anode-> NULL, insert into A
+
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+int Solution::cntMatrix(TreeNode* A, TreeNode* B) 
+{
+    if (A == NULL && B == NULL)
+    {
+        // already the same
+        return 0;
+    }
+    else if (B == NULL)
+    {
+        // not possible to add to A to get NULL
+        return -1;
+    }
+    
+    // traverse B in level order, building up A, if possible, and keeping count
+    queue<TreeNode*> qB;
+    qB.push(B);
+    
+    // if A is NULL min inserts will be number of nodes in B
+    queue<TreeNode*> qA;
+    if (A != NULL)
+    {
+        qA.push(A);  
+    }
+        int count = 0;
+    while (!qB.empty())
+    {
+        int nodesInLevel = qB.size();
+        for (int i=0; i<nodesInLevel; ++i)
+        {
+            TreeNode *nodeB = qB.front();
+            qB.pop();
+            
+            // if qA empty, tree A = NULL
+            TreeNode *nodeA = NULL;
+            if (qA.empty())
+            {
+                nodeA = new TreeNode(nodeB->val);
+                count++;
+            }
+            else
+            {
+                nodeA = qA.front();
+                qA.pop();
+            }
+            
+            if (nodeB->left != NULL)
+            {
+                qB.push(nodeB->left);
+                
+                if (nodeA->left == NULL)
+                {
+                    // left nodes can take identical vals
+                    nodeA->left = new TreeNode(nodeA->val);
+                    count++;
+                }
+                
+                qA.push(nodeA->left);
+           }
+            else if (nodeA->left != NULL)
+            {
+                return -1;
+            }
+            
+            if (nodeB->right != NULL)
+           {
+                qB.push(nodeB->right);
+                
+                if (nodeA->right == NULL)
+                {
+                    nodeA->right = new TreeNode(nodeA->val+1);
+                    count++;
+                }
+                
+                qA.push(nodeA->right);
+            } 
+            else if (nodeA->right != NULL)
+            {
+                return -1;
+            }
+        }
+    }
+
+    if (!qA.empty())
+    {
+        return -1;
+    }
+    
+    return count;
+}
