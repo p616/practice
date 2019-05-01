@@ -1,0 +1,67 @@
+
+
+int romanToInt(string s) 
+    {
+        int romanInt = 0;
+        
+        char prev = '\0';
+        for (char c : s) 
+        {
+            switch (c)
+            {
+            case 'M':
+                if (prev == 'C')
+                {
+                    romanInt -= 200;
+                }
+                romanInt += 1000;
+                break;
+            case 'D':
+                if (prev == 'C')
+                {
+                    romanInt -= 200;
+                }
+                romanInt += 500;
+                break;
+            case 'C':
+                if (prev == 'X')
+                {
+                    romanInt -= 20;
+                }
+                romanInt += 100;
+                break;
+            case 'L':
+                if (prev == 'X')
+                {
+                    romanInt -= 20;
+                }
+                romanInt += 50;
+                break;
+            case 'X':
+                if (prev == 'I')
+                {
+                    romanInt -= 2;
+                }
+                romanInt += 10;
+                break;
+            case 'V':
+                if (prev == 'I')
+                {
+                    romanInt -= 2;
+                }
+                romanInt += 5;
+                break;
+            case 'I':
+                romanInt += 1;
+                break;
+            default:
+                // bad input
+                return -1;
+            }
+            
+            prev = c;
+        }
+        
+        return romanInt;
+    }
+};
